@@ -138,12 +138,6 @@ class FringeManager:
         if event.key == 'delete':
             self.redo_image()
 
-
-
-
-
-
-
     def next_image(self):
         self.img_index = self.img_index + 1
         if self.img_index >= len(self.img_list):
@@ -168,8 +162,11 @@ class FringeManager:
     def redo(self,event):
         self.redo_image()
 
-    def calc(self, event):
-        self.calculate_output()
+    def calc0(self, event):
+        self.calculate_output(False)
+
+    def calcAll(self, event):
+        self.calculate_output(True)
 
     def redo_image(self):
         """
@@ -317,12 +314,14 @@ class FringeManager:
         fftitle =  '%6.3f' %(self.ffrac[key])
         self.fftext.set_text(fftitle)
 
-    def calculate_output(self):
+    def calculate_output(self, output_all_orders):
+
         out_filename = os.path.join(os.path.splitext(self.gauge_data_filename)[0]+ '-calcs-py.txt')
         out_filename = EasyDialogs.AskFileForSave(message='Select text file to save calculated resuts to',
                                                   savedFileName=out_filename)
-        fid = open(out_filename,'w')
+
         if out_filename:
+            fid = open(out_filename,'w')
             for gauge in self.gauge_data:
                 redkey = os.path.basename(gauge['RedFileName']).strip('"')
                 ffred = self.ffrac[redkey]
@@ -352,7 +351,13 @@ class FringeManager:
                     #print "changing dev to microinch!"
 
                 Observer = 'MTL'
-                for idev in range(0,10):
+
+                if output_all_orders:
+                    orders = range(0,10)
+                else:
+                    orders = [5]
+
+                for idev in orders:
 
                     DiffDev =  RD[idev]- GD[idev]
                     MeanDev = (RD[idev]+ GD[idev])/2.0
@@ -390,20 +395,18 @@ class FringeManager:
 
 if __name__ == '__main__':
 
-
-
     fig = figure(figsize=(8, 6), dpi=80)
     axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
     fig_menu = figure(figsize=(8,6), dpi=80)
 
     lman = FringeManager(axes,fig_menu)
 
-
-    axload = fig_menu.add_axes([0.1, 0.825, 0.2, 0.075])
-    axprev = fig_menu.add_axes([0.1, 0.725, 0.2, 0.075])
-    axnext = fig_menu.add_axes([0.1, 0.625, 0.2, 0.075])
-    axredo = fig_menu.add_axes([0.1, 0.525, 0.2, 0.075])
-    axcalc = fig_menu.add_axes([0.1, 0.425, 0.2, 0.075])
+    axload = fig_menu.add_axes([0.1, 0.825, 0.3, 0.075])
+    axprev = fig_menu.add_axes([0.1, 0.725, 0.3, 0.075])
+    axnext = fig_menu.add_axes([0.1, 0.625, 0.3, 0.075])
+    axredo = fig_menu.add_axes([0.1, 0.525, 0.3, 0.075])
+    axcalc0 = fig_menu.add_axes([0.1, 0.425, 0.3, 0.075])
+    axcalcAll = fig_menu.add_axes([0.1, 0.325, 0.3, 0.075])
 
     bload = Button(axload, 'Load')
     bload.on_clicked(lman.load)
@@ -417,16 +420,14 @@ if __name__ == '__main__':
     bredo = Button(axredo, 'Redo')
     bredo.on_clicked(lman.redo)
 
-    bcalc = Button(axcalc, 'Calculate')
-    bcalc.on_clicked(lman.calc)
+    bcalc0 = Button(axcalc0, 'Calculate Zero Order')
+    bcalc0.on_clicked(lman.calc0)
 
-
+    bcalcAll = Button(axcalcAll, 'Calculate All Orders')
+    bcalcAll.on_clicked(lman.calcAll)
 
 
     lman.load_gauge_data()
-
-
-
 
 
     show()
