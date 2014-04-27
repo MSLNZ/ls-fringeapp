@@ -1,13 +1,15 @@
 import numpy
 
 import matplotlib.image
-import matplotlib.nxutils as nx
+#import matplotlib.nxutils as nx
 import scipy.linalg.basic
 import matplotlib.mlab
 
 cos = numpy.cos
 sin = numpy.sin
 pi = numpy.pi
+from matplotlib.path import Path
+
 
 def roipoly(I, cs, rs):
 
@@ -21,6 +23,7 @@ def roipoly(I, cs, rs):
     mask a numpy array  where the points inside the
     polygon have value 1 and the points outside have value 0.
     now uses matplotlib.nxutils
+    2014-04-28 replaced matplotlib.nxutils with matplotlib.path
 
     """
     verts = numpy.vstack((rs, cs)).T
@@ -28,7 +31,9 @@ def roipoly(I, cs, rs):
     points = numpy.indices(I.shape).reshape(2, -1).T
     #print "points.shape ",points.shape, "verts.shape ", verts.shape
 
-    mask = nx.points_inside_poly(points, verts)
+    #mask = nx.points_inside_poly(points, verts)
+    p = Path(verts)
+    mask = p.contains_points(points)
     mask = mask.reshape(I.shape).astype(numpy.int)
 
     return mask
