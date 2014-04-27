@@ -16,7 +16,6 @@ import shelve
 import fringeprocess
 import gauge_length
 
-
 """
 event based
 open excel file event calls  N key load_gauge_data
@@ -70,7 +69,7 @@ class FringeManager:
     def process_image(self, ax, lasso_line, verts):
         """ called after polylasso finished, processes image and prints ff"""
         #print verts
-        print 'process image'
+        print ('process image')
         self.lasso_active = False
         xygb = numpy.fliplr(numpy.asarray(verts)[:3, :])
         self.canvas.draw_idle()
@@ -86,7 +85,7 @@ class FringeManager:
         text = ('%.6g\t'% ffrac +
                 img_basename +
                 '\t'+ ('%.5g\t'*(xygb.ravel().size) ) % tuple(xygb.ravel()))
-        print text
+        print (text)
         notes = EasyDialogs.AskString('Notes on fitting')
         if notes == None:
             notes =' '
@@ -116,14 +115,14 @@ class FringeManager:
             self.lasso = PolyLasso(event.inaxes, self.process_image)
             # acquire a lock on the widget drawing
             self.canvas.widgetlock(self.lasso)
-            print 'in lasso'
+            print ('in lasso')
 
     def keypress(self, event):
         """maps a key to opening new file
            careful in choice of keys as event is also passed to toolbar
            will replace this with/ add interface buttons
         """
-        print event.key
+        print (event.key)
 
         if event.inaxes is None:
             return
@@ -187,7 +186,7 @@ class FringeManager:
     def open_image(self):
         """opens image in imagelist at position image_index"""
         img_filename = self.img_list[self.img_index]
-        print img_filename
+        print (img_filename)
         parts = os.path.split(img_filename)
         self.img_filename = os.path.join(parts[0],'cropped',parts[1])
         img = Image.open(self.img_filename)
@@ -209,7 +208,7 @@ class FringeManager:
         if os.path.exists(self.shelf_filename):
             db = shelve.open(self.shelf_filename)
             if db.has_key(img_basename):
-                print 'found ',img_basename, ' on shelf'
+                print ('found ',img_basename, ' on shelf')
                 [ffrac, drawdata, timestr, notes] = db[img_basename]
                 self.ffrac[img_basename] = ffrac
                 self .annotate_fig(drawdata)
@@ -243,14 +242,14 @@ class FringeManager:
 
             parts = os.path.split(txt_name)
             self.shelf_filename = os.path.join(parts[0],'info.shf')
-            print self.shelf_filename
+            print (self.shelf_filename)
             if os.path.exists(self.shelf_filename):
                 db = shelve.open(self.shelf_filename)
                 for key in db.keys():
                     [ffrac, drawdata, timestr, notes] = db[key]
                     self.ffrac[key] = ffrac
                 db.close()
-                print self.ffrac
+                print (self.ffrac)
             #make list of images on left of figure
             #remove any previous text
             for text in self.gn_text_dict.itervalues():
@@ -310,7 +309,7 @@ class FringeManager:
         for cepts in interceptsg:
             self.axes.plot([0,maxx],[cepts,slopeg*maxx+cepts],'g-')
         key = os.path.basename(self.img_filename)
-        print key, type(key)
+        print (key, type(key))
         fftitle =  '%6.3f' %(self.ffrac[key])
         self.fftext.set_text(fftitle)
 
@@ -330,11 +329,11 @@ class FringeManager:
                 #calculation is always done in metric
                 if gauge['Units'].strip('"') != 'Metric':
                     nomsize = gauge['NominalSize'] * 25.4
-                    print "Calculating in Inch system"
+                    print ("Calculating in Inch system")
                 else:
                     nomsize = gauge['NominalSize']
                     #print "Calculating in Metric System"
-                print nomsize
+                print (nomsize)
                 RD, GD, bestindex = gauge_length.CalcGaugeLength( nomsize,
                                               gauge['TR'],
                                               gauge['TG'],
