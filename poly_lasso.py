@@ -25,6 +25,7 @@ class PolyLasso(Widget):
         *useblit* = *True* is the only thorougly tested option.
 
         """
+        print 'in poly lasso init', callback
         self.axes = ax
         self.figure = ax.figure
         self.canvas = self.figure.canvas
@@ -49,13 +50,6 @@ class PolyLasso(Widget):
             self.axes.draw_artist(self.line)
         self.canvas.blit(self.axes.bbox)
 
-    def do_callback(self, event):
-        """ idle_event callback after polygon is finalized. """
-        # Clear out callbacks.
-        for cid in self.cids:
-            self.canvas.mpl_disconnect(cid)
-        self.callback(self.axes, self.line, self.verts)
-        self.cleanup()
 
     def cleanup(self):
         """ Remove the lasso line. """
@@ -71,7 +65,7 @@ class PolyLasso(Widget):
         for cid in self.cids:
             self.canvas.mpl_disconnect(cid)
         self.cids = []
-
+        #print 'right click'
         # Greater than three verts, since a triangle
         # has a duplicate point to close the poly.
         if len(self.verts)>3:
@@ -80,7 +74,15 @@ class PolyLasso(Widget):
             # in the event that *callback* takes a long time. So, delay callback until
             # we get an idle event, which will signal that the closed polygon has also
             # been drawn.
-            self.cids.append(self.canvas.mpl_connect('idle_event', self.do_callback))
+            #2014-04-28 idle_event dosen't seem to happen
+            #polygon is drawn any way so call do_callback directly
+            #print 'before callback'
+            #self.cids.append(self.canvas.mpl_connect('idle_event', self.do_callback))
+
+            #print 'just before callback'
+            self.callback(self.axes, self.line, self.verts)
+            self.cleanup()
+
         else:
             print ('Need at least three vertices to make a polygon')
             self.cleanup()

@@ -1,0 +1,8 @@
+This the executable version in /build/exe.win32-2.7 was built using cx_freeze using the command:
+
+L:\python\WinPython-32bit-2.7.5.3\python-2.7.5\python.exe setup.py build
+
+
+The whole directory exe.win32-2.7 can be copied to a new computer fro installation
+
+http://stackoverflow.com/questions/22021297/share-image-from-mpldatacursor-with-others/22024663#22024663

@@ -2,7 +2,6 @@ import numpy
 
 import matplotlib.image
 #import matplotlib.nxutils as nx
-import scipy.linalg.basic
 import matplotlib.mlab
 
 cos = numpy.cos
@@ -450,7 +449,7 @@ def findfringes4E(s,frper,ci,ri,ccen,rcen,BW,pklist):
     mat = numpy.vstack((numpy.ones_like(xdata),
                         numpy.cos(xdata),
                         numpy.sin(xdata))).T
-    cf = scipy.linalg.basic.lstsq(mat, ytrunc)[0]
+    cf = numpy.linalg.lstsq(mat, ytrunc)[0]
 
 
 

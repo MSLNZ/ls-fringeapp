@@ -5,9 +5,10 @@ App to process whole files of images
 """
 from poly_lasso import PolyLasso
 import matplotlib
+matplotlib.use('TkAgg')
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
-import Image
+from PIL import Image
 import numpy
 import EasyDialogs
 import os.path
