@@ -3,20 +3,25 @@ EFH 15/12/2009
 App to process whole files of images
 
 """
+print "starting fringe app verion 3.0..."
 from poly_lasso import PolyLasso
+print "imported poly_lasso"
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
+print "imported matplotlib" 
 from PIL import Image
+print "imported PIL"
 import numpy
+print "imported numpy"
 import EasyDialogs
 import os.path
 import datetime
 import shelve
 import fringeprocess
 import gauge_length
-
+print "main imports finished"
 """
 event based
 open excel file event calls  N key load_gauge_data
