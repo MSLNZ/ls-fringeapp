@@ -7,7 +7,7 @@ from fringeprocess import shifthalf
 
 #Report No./Length/2009/790,16 June 2011
 RedWavelength  = 632.991470
-GreenWavelength  = 546.22705
+GreenWavelength  = 546.07498
 ObliquityCorrection  = 1.00000013
 
 def frac(number):
@@ -58,7 +58,7 @@ def CalcGaugeLength(NominalSize_mm,
 
 if __name__ == '__main__':
     RD,GD,BS = CalcGaugeLength(100,20.0,20.0,1000.0,50,0.5,0.0,11.5e-6)
-    print RD
-    print GD
-    print RD[BS], GD[BS]
+    print (RD)
+    print (GD)
+    print (RD[BS], GD[BS])
 

@@ -449,7 +449,7 @@ if __name__ == '__main__':
 
     delta_ciddor = nindex - data[:,4:5]
     delta_edlen = nindex - data[:,5:]
-    print 'max , min delta ciddor', numpy.max(delta_ciddor), numpy.min(delta_ciddor)
-    print 'max , min delta edlen', numpy.max(delta_edlen), numpy.min(delta_edlen)
-    print 'max , min ciddor ciddor', numpy.max(delta_ciddor[:,0]), numpy.min(delta_ciddor[:,0])
-    print 'max , min edlen edlen', numpy.max(delta_edlen[:,1]), numpy.min(delta_edlen[:,1])
+    print ('max , min delta ciddor', numpy.max(delta_ciddor), numpy.min(delta_ciddor))
+    print ('max , min delta edlen', numpy.max(delta_edlen), numpy.min(delta_edlen))
+    print ('max , min ciddor ciddor', numpy.max(delta_ciddor[:,0]), numpy.min(delta_ciddor[:,0]))
+    print ('max , min edlen edlen', numpy.max(delta_edlen[:,1]), numpy.min(delta_edlen[:,1]))
