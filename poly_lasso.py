@@ -25,7 +25,7 @@ class PolyLasso(Widget):
         *useblit* = *True* is the only thorougly tested option.
 
         """
-        print 'in poly lasso init', callback
+        print('in poly lasso init', callback)
         self.axes = ax
         self.figure = ax.figure
         self.canvas = self.figure.canvas
@@ -84,7 +84,7 @@ class PolyLasso(Widget):
             self.cleanup()
 
         else:
-            print ('Need at least three vertices to make a polygon')
+            print('Need at least three vertices to make a polygon')
             self.cleanup()
 
     def draw_update(self):
@@ -149,12 +149,12 @@ class manager(object):
 
     def callback(self, ax, lasso_line, verts):
 
-        print (verts)
+        print(verts)
         mask = points_inside_poly(zip(self.x, self.y), verts) == 1
-        print (self.x[mask])
-        print (self.y[mask])
+        print(self.x[mask])
+        print(self.y[mask])
         self.charge[mask] = -1
-        print (self.charge)
+        print(self.charge)
         self.lasso_line = lasso_line
 
         # not actually necessary ... scatter stores a ref to charge array
