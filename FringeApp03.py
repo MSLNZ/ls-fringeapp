@@ -95,7 +95,8 @@ class FringeManager:
                 img_basename +
                 '\t'+ ('%.5g\t'*(xygb.ravel().size) ) % tuple(xygb.ravel()))
         print (text)
-        notes = EasyDialogs.AskString('Notes on fitting')
+        # notes = EasyDialogs.AskString('Notes on fitting')
+        notes = None
         if notes == None:
             notes =' '
         timestr = datetime.datetime.now().isoformat(' ')
@@ -185,7 +186,7 @@ class FringeManager:
         db = shelve.open(shelfnm)
         img_basename = os.path.basename(self.img_filename)
 
-        if db.has_key(img_basename):
+        if img_basename in db:
             del db[img_basename]
         db.close()
         self.open_image()
@@ -216,15 +217,15 @@ class FringeManager:
         #check if image has an entry in directory's shelf file
         #if so use it to annotate image
 
-        if os.path.exists(self.shelf_filename):
-            db = shelve.open(self.shelf_filename)
-            if db.has_key(img_basename):
-                print ('found ',img_basename, ' on shelf')
-                [ffrac, drawdata, timestr, notes] = db[img_basename]
-                self.ffrac[img_basename] = ffrac
-                self .annotate_fig(drawdata)
-                self.lasso_active = False
-            db.close()
+        #if os.path.exists(self.shelf_filename):
+        db = shelve.open(self.shelf_filename)
+        if img_basename in db:
+            print ('found ',img_basename, ' on shelf')
+            [ffrac, drawdata, timestr, notes] = db[img_basename]
+            self.ffrac[img_basename] = ffrac
+            self .annotate_fig(drawdata)
+            self.lasso_active = False
+        db.close()
         self.canvas.draw()
 
     def load_gauge_data(self):
@@ -258,13 +259,14 @@ class FringeManager:
             parts = os.path.split(txt_name)
             self.shelf_filename = os.path.join(parts[0],'info.shf')
             print (self.shelf_filename)
-            if os.path.exists(self.shelf_filename):
-                db = shelve.open(self.shelf_filename)
-                for key in list(db.keys()):
-                    [ffrac, drawdata, timestr, notes] = db[key]
-                    self.ffrac[key] = ffrac
-                db.close()
-                print (self.ffrac)
+            #if os.path.exists(self.shelf_filename):
+            print('loading info.shf')
+            db = shelve.open(self.shelf_filename)
+            for key in list(db.keys()):
+                [ffrac, drawdata, timestr, notes] = db[key]
+                self.ffrac[key] = ffrac
+            db.close()
+            print (self.ffrac)
             #make list of images on left of figure
             #remove any previous text
             for text in iter(self.gn_text_dict.values()):

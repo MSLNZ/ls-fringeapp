@@ -243,25 +243,26 @@ def findpeaks2(y):
 
     y[y <= thresh] = numpy.nan
 
-    #check indexing in following line
-    loc = numpy.arange(len(y))
-   
-    pkloc = [0]
-   
-    j=0
-    for i in range(0,len(y)-3):
-       
-        if ((y[i+1]>=y[i]) & (y[i+1]>=y[i+2])):
-            pkloc[j] = i+1
-            j=j+1
-            pkloc.append(0)
-        
-    pkloc.pop()    
+    # check indexing in following line
+    loc = numpy.arange(len(y) - 3)
+
+    # loop version of vectorized code
+    # pkloc = [0]
+    #
+    # j=0
+    # for i in range(0,len(y)-3):
+    #
+    #     if ((y[i+1]>=y[i]) & (y[i+1]>=y[i+2])):
+    #         pkloc[j] = i+1
+    #         j=j+1
+    #         pkloc.append(0)
+    #
+    # pkloc.pop()
        
     #print(len(pkloc))    
      
     #original code
-    #pkloc = loc[(y[1:-2]>=y[0:-3]) & (y[1:-2]>=y[2:-1])] + 1
+    pkloc = loc[(y[1:-2] >= y[0:-3]) & (y[1:-2] >= y[2:-1])] + 1.0
     
 
 
@@ -296,18 +297,19 @@ def findpeaks2(y):
                 pkloc[k] = numpy.nan
 
 
-    indexes_to_delete = []
+    # indexes_to_delete = []
     #%EFH 15/10/02
     #%sometimes no peaks are found in transition area
-    #if len(pkloc) >=1:
-        #pkloc = pkloc[numpy.isnan(pkloc)==0]	#%Remove false peaks.
-    if len(pkloc) >=1:
-        for j in range(0,len(pkloc)):
-            if math.isnan(pkloc[j]): 
-                indexes_to_delete.append(j) 
+    if (len(pkloc) >= 1) & numpy.isnan(numpy.sum(pkloc)):
+        pkloc = pkloc[numpy.isnan(pkloc) == 0]  # %Remove false peaks.
 
-       
-    pkloc = numpy.delete(pkloc,indexes_to_delete)
+    # if len(pkloc) >=1:
+    #     for j in range(0,len(pkloc)):
+    #         if math.isnan(pkloc[j]):
+    #             indexes_to_delete.append(j)
+
+    # pkloc = numpy.delete(pkloc,indexes_to_delete)
+
     return pkloc
 
 def findfringes2(y,BW,pklist):
@@ -361,20 +363,20 @@ def findfringes2(y,BW,pklist):
     yfit = 2*numpy.abs(Y[I])*(cos(2*pi*f0*t + phi))/N
     yt = -yfit
 
-    loc = numpy.arange(len(yt))
+    loc = numpy.arange(len(yt) - 3)
 
-    #cmy code to take out line commented below
-    pkloc = [0]
-    j=0
-    for i in range(0,len(yt)-3):
-       
-        if ((yt[i+1]>=yt[i]) & (yt[i+1]>=yt[i+2])):
-            pkloc[j] = i+1
-            j=j+1
-            pkloc.append(0)
-
-    pkloc.pop()
-    #pkloc = loc[(yt[1:-2]>=yt[0:-3]) & (yt[1:-2]>=yt[2:-1])] + 1
+    #cmy code that is equivalent to single line numpy vectorization
+    # pkloc = [0]
+    # j=0
+    # for i in range(0,len(yt)-3):
+    #
+    #     if ((yt[i+1]>=yt[i]) & (yt[i+1]>=yt[i+2])):
+    #         pkloc[j] = i+1
+    #         j=j+1
+    #         pkloc.append(0)
+    #
+    # pkloc.pop()
+    pkloc = loc[(yt[1:-2]>=yt[0:-3]) & (yt[1:-2]>=yt[2:-1])] + 1.0
 
 
 
@@ -485,7 +487,7 @@ def findfringes4E(s,frper,ci,ri,ccen,rcen,BW,pklist):
     mat = numpy.vstack((numpy.ones_like(xdata),
                         numpy.cos(xdata),
                         numpy.sin(xdata))).T
-    cf = numpy.linalg.lstsq(mat, ytrunc)[0]
+    cf = numpy.linalg.lstsq(mat, ytrunc, rcond=None)[0]
 
 
 
@@ -496,21 +498,23 @@ def findfringes4E(s,frper,ci,ri,ccen,rcen,BW,pklist):
 
 
     yt = -yfit
-    loc = numpy.arange(len(yt))
 
+    loc = numpy.arange(len(yt) - 3)
 
-    pkloc = [0]
-    j=0
-    for i in range(0,len(yt)-3):
-       
-        if ((yt[i+1]>=yt[i]) & (yt[i+1]>=yt[i+2])):
-            pkloc[j] = i+1+offset
-            j=j+1
-            pkloc.append(0)
+    # loop form of following vectored code
+    # pkloc = [0]
+    # j=0
+    # for i in range(0,len(yt)-3):
+    #
+    #     if ((yt[i+1]>=yt[i]) & (yt[i+1]>=yt[i+2])):
+    #         pkloc[j] = i+1+offset
+    #         j=j+1
+    #         pkloc.append(0)
+    #
+    #
+    # pkloc.pop()
 
-
-    pkloc.pop()
-    #pkloc = loc[(yt[1:-2]>=yt[0:-3]) & (yt[1:-2]>=yt[2:-1])] + 1 + offset
+    pkloc = loc[(yt[1:-2]>=yt[0:-3]) & (yt[1:-2]>=yt[2:-1])] + 1.0 + offset
 
     #% Find real fringe positions closest to the "mock" ones.
     cstart = ccen
