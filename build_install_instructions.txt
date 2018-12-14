@@ -1,4 +1,0 @@
-The executable in this directory fringe_app_03.py was produced using 
-pyinstaller -F --upx-dir="C:\Users\e.howick\Downloads\upx391w\upx391w" fringe_app_03.py
-
-To use either run this file or copy to any location and run
