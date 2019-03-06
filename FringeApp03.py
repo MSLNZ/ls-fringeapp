@@ -23,6 +23,15 @@ import gauge_length
 
 matplotlib.use("TkAgg")
 
+# These values should be read from xml file
+# xml files should be under GIT control
+# Report No./Length/2009/790,16 June 2011
+# RedWavelength = 632.991470
+RedWavelength = 632.991417
+GreenWavelength = 546.22705  # mise en pratique
+ObliquityCorrection = 1.00000013
+
+
 """
 event based
 open excel file event calls  N key load_gauge_data
@@ -41,28 +50,28 @@ add buttons for basic functions - done
 """
 # data type for reading in comma delimited files specifying measurement data and file names
 DTRG = np.dtype(
-                [
-                    ("NominalSize", float),
-                    ("SerialNo", (str, 16)),
-                    ("RedDateTime", float),
-                    ("GreenDateTime", float),
-                    ("SetId", (str, 16)),
-                    ("PlatenId", int),
-                    ("Observer", (str, 16)),
-                    ("Side", int),
-                    ("ExpCoeff", float),
-                    ("Units", (str, 16)),
-                    ("TR", float),
-                    ("TG", float),
-                    ("PR", float),
-                    ("PG", float),
-                    ("HR", float),
-                    ("HG", float),
-                    ("PlatenPos", int),
-                    ("RedFileName", (str, 256)),
-                    ("GreenFileName", (str, 256)),
-                ]
-            )
+    [
+        ("NominalSize", float),
+        ("SerialNo", (str, 16)),
+        ("RedDateTime", float),
+        ("GreenDateTime", float),
+        ("SetId", (str, 16)),
+        ("PlatenId", int),
+        ("Observer", (str, 16)),
+        ("Side", int),
+        ("ExpCoeff", float),
+        ("Units", (str, 16)),
+        ("TR", float),
+        ("TG", float),
+        ("PR", float),
+        ("PG", float),
+        ("HR", float),
+        ("HG", float),
+        ("PlatenPos", int),
+        ("RedFileName", (str, 256)),
+        ("GreenFileName", (str, 256)),
+    ]
+)
 
 DTR = np.dtype(
     [
@@ -292,8 +301,12 @@ class FringeManager:
                 img_list = list(self.gauge_data[:]["RedFileName"])
                 img_list.extend(list(self.gauge_data[:]["GreenFileName"]))
             else:
-                self.gauge_data = np.loadtxt(txt_name, dtype=DTR, delimiter=",",
-                                             usecols=(0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17))
+                self.gauge_data = np.loadtxt(
+                    txt_name,
+                    dtype=DTR,
+                    delimiter=",",
+                    usecols=(0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17),
+                )
                 img_list = list(self.gauge_data[:]["RedFileName"])
 
             img_list = [name.strip('"') for name in img_list]
@@ -366,8 +379,6 @@ class FringeManager:
                 ypos = ypos - 0.03
 
             self.open_image()
-
-
 
     def annotate_fig(self, drawdata):
         [
@@ -446,6 +457,8 @@ class FringeManager:
                     ffred * 100,
                     ffgreen * 100,
                     gauge["ExpCoeff"],
+                    RedWavelength,
+                    GreenWavelength,
                 )
 
                 # translate metric values for deviations (nanometres) to imperial values (microinches)

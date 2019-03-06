@@ -5,11 +5,7 @@ import numpy as np
 from refractiveindex import RefractiveIndex
 from fringeprocess import shifthalf
 
-# Report No./Length/2009/790,16 June 2011
-# RedWavelength = 632.991470
-RedWavelength = 632.991417
-GreenWavelength = 546.22705 #mise en pratique
-ObliquityCorrection = 1.00000013
+ObliquityCorrection  = 1.00000013
 
 
 def frac(number):
@@ -17,7 +13,17 @@ def frac(number):
 
 
 def calcgaugelength(
-    nominalsize_mm, rtemp_c, gtemp_c, pressure_mb, humidity_rh, ffred, ffgreen, expcoeff
+    nominalsize_mm,
+    rtemp_c,
+    gtemp_c,
+    pressure_mb,
+    humidity_rh,
+    ffred,
+    ffgreen,
+    expcoeff,
+    redwavelength,
+    greenwavelength,
+    formula=0,
 ):
 
     # %Search the range (Nominal Size ? Nfringes * red  fringe spacing)
@@ -25,10 +31,14 @@ def calcgaugelength(
     nfringes = 5
     mindiff = 1000
 
-    redindex = RefractiveIndex(rtemp_c, pressure_mb, humidity_rh, RedWavelength)
-    greenindex = RefractiveIndex(gtemp_c, pressure_mb, humidity_rh, GreenWavelength)
-    redfringespacing_nm = (RedWavelength * ObliquityCorrection) / (2.0 * redindex)
-    greenfringespacing_nm = GreenWavelength * ObliquityCorrection / (2.0 * greenindex)
+    redindex = RefractiveIndex(
+        rtemp_c, pressure_mb, humidity_rh, redwavelength, formula
+    )
+    greenindex = RefractiveIndex(
+        gtemp_c, pressure_mb, humidity_rh, greenwavelength, formula
+    )
+    redfringespacing_nm = (redwavelength * ObliquityCorrection) / (2.0 * redindex)
+    greenfringespacing_nm = (greenwavelength * ObliquityCorrection) / (2.0 * greenindex)
     nominalsizeattr_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (rtemp_c - 20))
     nominalsizeattg_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (gtemp_c - 20))
     ffrednominalsize = frac(nominalsizeattr_nm / redfringespacing_nm)
@@ -58,9 +68,3 @@ def calcgaugelength(
 
     return reddeviations_nm, greendeviations_nm, bestsolutionindex
 
-
-if __name__ == "__main__":
-    RD, GD, BS = calcgaugelength(1.0, 19.98434, 19.98434, 1005.01, 47.5, 53.07, 56.08, 9.5e-6)
-    print(RD)
-    print(GD)
-    print(RD[BS], GD[BS])

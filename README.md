@@ -7,11 +7,12 @@ TODO
     [ ] investigate 0.4e-3 relative difference in fringe fraction between this version and 2016 runs
          the uncertainty for finrge fraction is 2 * 2.3 nm/633 nm = 0.0073 whics is much larger 
          than 0.0004
-    [ ] use xml file for wavelengths
+    [A] use xml file for wavelengths
 
     TODO features
     
-    [ ] able to process red images without green images. Issue #1
+    [ ]  able to process red images without green images. Issue #1
+    [ ]  use separate temperatures for air and gauge block Issue #2
     
     TODO bugs
     [ ] redo is not working?
@@ -22,10 +23,11 @@ TODO
     [x] gauge_length.py
     [x ] FringeApp03.py
     [ ] tkinter application window should be in main
+    [ ] 
     
     TODO testing
     [x] overall continuity of results test for array2frac
-    [ ] tests for CalcGaugeLength
+    [x] tests for CalcGaugeLength
     [ ] tests for RefractiveIndex
     
     Unit tests
