@@ -39,6 +39,49 @@ add a text display to show a list of gauges in current file and whether ff have 
 add buttons for basic functions - done
 
 """
+# data type for reading in comma delimited files specifying measurement data and file names
+DTRG = np.dtype(
+                [
+                    ("NominalSize", float),
+                    ("SerialNo", (str, 16)),
+                    ("RedDateTime", float),
+                    ("GreenDateTime", float),
+                    ("SetId", (str, 16)),
+                    ("PlatenId", int),
+                    ("Observer", (str, 16)),
+                    ("Side", int),
+                    ("ExpCoeff", float),
+                    ("Units", (str, 16)),
+                    ("TR", float),
+                    ("TG", float),
+                    ("PR", float),
+                    ("PG", float),
+                    ("HR", float),
+                    ("HG", float),
+                    ("PlatenPos", int),
+                    ("RedFileName", (str, 256)),
+                    ("GreenFileName", (str, 256)),
+                ]
+            )
+
+DTR = np.dtype(
+    [
+        ("NominalSize", float),
+        ("SerialNo", (str, 16)),
+        ("RedDateTime", float),
+        ("SetId", (str, 16)),
+        ("PlatenId", int),
+        ("Observer", (str, 16)),
+        ("Side", int),
+        ("ExpCoeff", float),
+        ("Units", (str, 16)),
+        ("TR", float),
+        ("PR", float),
+        ("HR", float),
+        ("PlatenPos", int),
+        ("RedFileName", (str, 256)),
+    ]
+)
 
 
 class FringeManager:
@@ -65,6 +108,7 @@ class FringeManager:
         self.ff_text_dict = {}
         self.gn_text_dict = {}
         self.shelf_filename = ""
+        self.red_green = True
 
         self.fig_menu = menu
 
@@ -236,34 +280,22 @@ class FringeManager:
         # txt_name = EasyDialogs.AskFileForOpen(message='Select text file written by excel')
         if txt_name:
             self.gauge_data_filename = txt_name
+            # determine if we're using green as well as red
+            # this should be coded more generically and allow for dropping green completly.
+            with open(txt_name) as f:
+                line1 = f.readline()
+            ncols = line1.count(",")
+            self.red_green = ncols == 19
 
-            dt = np.dtype(
-                [
-                    ("NominalSize", float),
-                    ("SerialNo", (str, 16)),
-                    ("RedDateTime", float),
-                    ("GreenDateTime", float),
-                    ("SetId", (str, 16)),
-                    ("PlatenId", int),
-                    ("Observer", (str, 16)),
-                    ("Side", int),
-                    ("ExpCoeff", float),
-                    ("Units", (str, 16)),
-                    ("TR", float),
-                    ("TG", float),
-                    ("PR", float),
-                    ("PG", float),
-                    ("HR", float),
-                    ("HG", float),
-                    ("PlatenPos", int),
-                    ("RedFileName", (str, 256)),
-                    ("GreenFileName", (str, 256)),
-                ]
-            )
+            if self.red_green:
+                self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=DTRG)
+                img_list = list(self.gauge_data[:]["RedFileName"])
+                img_list.extend(list(self.gauge_data[:]["GreenFileName"]))
+            else:
+                self.gauge_data = np.loadtxt(txt_name, dtype=DTR, delimiter=",",
+                                             usecols=(0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17))
+                img_list = list(self.gauge_data[:]["RedFileName"])
 
-            self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=dt)
-            img_list = list(self.gauge_data[:]["RedFileName"])
-            img_list.extend(list(self.gauge_data[:]["GreenFileName"]))
             img_list = [name.strip('"') for name in img_list]
             img_list.sort()
             self.img_list = img_list
@@ -309,31 +341,33 @@ class FringeManager:
                     color="red",
                 )
                 self.ff_text_dict[img_basename] = text
+                if self.red_green:
+                    img_basename = os.path.basename(gauge["GreenFileName"]).strip('"')
+                    greentext = img_basename[:-17]
+                    text = self.fig_menu.text(
+                        0.35, ypos, greentext, horizontalalignment="left", fontsize=12
+                    )
+                    self.gn_text_dict[img_basename] = text
+                    try:
+                        fftext = "%6.3f" % (self.ffrac[img_basename])
+                    except:
+                        fftext = "NA"
 
-                img_basename = os.path.basename(gauge["GreenFileName"]).strip('"')
-                greentext = img_basename[:-17]
-                text = self.fig_menu.text(
-                    0.35, ypos, greentext, horizontalalignment="left", fontsize=12
-                )
-                self.gn_text_dict[img_basename] = text
-                try:
-                    fftext = "%6.3f" % (self.ffrac[img_basename])
-                except:
-                    fftext = "NA"
-
-                text = self.fig_menu.text(
-                    0.55,
-                    ypos,
-                    fftext,
-                    horizontalalignment="left",
-                    fontsize=12,
-                    color="green",
-                )
-                self.ff_text_dict[img_basename] = text
+                    text = self.fig_menu.text(
+                        0.55,
+                        ypos,
+                        fftext,
+                        horizontalalignment="left",
+                        fontsize=12,
+                        color="green",
+                    )
+                    self.ff_text_dict[img_basename] = text
 
                 ypos = ypos - 0.03
 
             self.open_image()
+
+
 
     def annotate_fig(self, drawdata):
         [
