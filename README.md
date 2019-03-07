@@ -12,8 +12,8 @@ TODO
     TODO features
     
     [ ]  able to process red images without green images. Issue #1
-    [ ]  use separate temperatures for air and gauge block Issue #2
-    
+    [ ]  use separate temperatures for air and gauge block Issue #2 requires more columns in load
+    [ ]  write out wavelengthd, obliquity, refractive index 
     TODO bugs
     [ ] redo is not working?
 
@@ -22,8 +22,9 @@ TODO
     [x]  fringeprocess.py
     [x] gauge_length.py
     [x ] FringeApp03.py
-    [ ] tkinter application window should be in main
-    [ ] 
+    
+    [x] tkinter application window should be in init
+    [ ] the test for red_green should use the filename
     
     TODO testing
     [x] overall continuity of results test for array2frac

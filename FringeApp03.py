@@ -5,6 +5,7 @@ App to process whole files of images
 """
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 import os
 import os.path
 import datetime
@@ -30,6 +31,7 @@ import load_cal_data
 RedWavelength = 632.991417
 GreenWavelength = 546.22705  # mise en pratique
 ObliquityCorrection = 1.00000013
+CalDataFileName = r'I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml'
 
 
 """
@@ -278,7 +280,6 @@ class FringeManager:
         prompts user to open file written by excel program, reads it and creates
         a list of images to process
         """
-
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
         txt_name = filedialog.askopenfilename(
@@ -292,6 +293,7 @@ class FringeManager:
             self.gauge_data_filename = txt_name
             # determine if we're using green as well as red
             # this should be coded more generically and allow for dropping green completly.
+            # code into filename?
             with open(txt_name) as f:
                 line1 = f.readline()
             ncols = line1.count(",")
@@ -378,6 +380,21 @@ class FringeManager:
                     self.ff_text_dict[img_basename] = text
 
                 ypos = ypos - 0.03
+
+            "load wavelengths and display to user"
+            wavelengths = load_cal_data.read_cal_wavelengths(CalDataFileName, self.red_green)
+            print(self.red_green)
+            print(wavelengths)
+            if wavelengths:
+                self.red_wavelength = wavelengths[0][1]
+                message = 'Wavelengths Used\n'
+                message += '{}   vacuum wavelength = {}\n'.format(wavelengths[0][0], wavelengths[0][1])
+                if self.red_green:
+                    self.green_wavelength = wavelengths[1][1]
+                    message += '{}   vacuum wavelength = {}\n'.format(wavelengths[1][0], wavelengths[1][1])
+            else:
+                message = 'Problem loading vacuumn wavelengths'
+            messagebox.showinfo("Vacuum Wavelengths", message)
 
             self.open_image()
 
