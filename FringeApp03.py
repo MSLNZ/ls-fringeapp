@@ -20,8 +20,8 @@ from matplotlib.widgets import Button
 from poly_lasso import PolyLasso
 import fringeprocess
 import gauge_length
+import load_cal_data
 
-matplotlib.use("TkAgg")
 
 # These values should be read from xml file
 # xml files should be under GIT control
@@ -97,6 +97,7 @@ class FringeManager:
     """simple gauge block picking interface and ff calculator"""
 
     def __init__(self, ax, menu):
+        self.app_win = tk.Tk()
         self.axes = ax
         self.figure = ax.figure
         self.canvas = ax.figure.canvas
@@ -277,11 +278,11 @@ class FringeManager:
         prompts user to open file written by excel program, reads it and creates
         a list of images to process
         """
-        application_window = tk.Tk()
+
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
         txt_name = filedialog.askopenfilename(
-            parent=application_window,
+            parent=self.app_win,
             initialdir=os.getcwd(),
             title="Select text file written by excel",
             filetypes=my_filetypes,
@@ -417,7 +418,6 @@ class FringeManager:
 
     def calculate_output(self, output_all_orders=False):
 
-        application_window = tk.Tk()
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
 
@@ -427,7 +427,7 @@ class FringeManager:
         # out_filename = EasyDialogs.AskFileForSave(message='Select text file to save calculated resuts to',
         #                                           savedFileName=out_filename)
         out_filename = filedialog.asksaveasfilename(
-            parent=application_window,
+            parent=self.app_win,
             initialfile=out_filename,
             title="Select text file to save calculated resuts to",
             filetypes=my_filetypes,
