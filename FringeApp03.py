@@ -254,7 +254,6 @@ class FringeManager:
         # check if image has an entry in directory's shelf file
         # if so use it to annotate image
 
-        # if os.path.exists(self.shelf_filename):
         db = shelve.open(self.shelf_filename)
         if img_basename in db:
             print("found ", img_basename, " on shelf")
@@ -289,17 +288,6 @@ class FringeManager:
             self.red_green = not (os.path.splitext(txt_name)[0][-2:] == "_r")
 
             parts = os.path.split(txt_name)
-            # if no paths add path of txt_name
-            # for name in list(self.gauge_data[:]["RedFileName"]):
-            #     if os.path.split(name)[0] == "":
-            #         name = os.path.join(parts[0], os.path.split(name)[1])
-
-            # self.gauge_data[:]["RedFileName"] = [
-            #     os.path.join(parts[0], os.path.split(name)[1])
-            #     if os.path.split(name)[0] == ""
-            #     else name
-            #     for name in list(self.gauge_data[:]["RedFileName"])
-            # ]
 
             if self.red_green:
                 self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=DTRG)
@@ -341,7 +329,7 @@ class FringeManager:
 
             self.shelf_filename = os.path.join(parts[0], "info.shf")
             print(self.shelf_filename)
-            # if os.path.exists(self.shelf_filename):
+
             print("loading info.shf")
             db = shelve.open(self.shelf_filename)
             for key in list(db.keys()):

@@ -1,12 +1,15 @@
 # ls-fringeapp
 for processing gauge block interferograms
 
+## Input and output file formats
+
 This program takes as input a comma separated text file where each 
 line represents the data on one gauge wring.
 
 This should have no headers, with  the following columns
 
 If both red and green images have been taken:
+```
         [
         ("NominalSize", float),
         ("SerialNo", (str, 16)),
@@ -28,8 +31,9 @@ If both red and green images have been taken:
         ("HG", float),
         ("RedFileName", (str, 256)),
         ("GreenFileName", (str, 256)),]
-
+```
 If only red images have been taken
+```
     [
         ("NominalSize", float),
         ("SerialNo", (str, 16)),
@@ -46,11 +50,12 @@ If only red images have been taken
         ("HR", float),
         ("RedFileName", (str, 256)),
     ]
-    
+ ```   
  It produces a comma separated text file of gauge block measurements 
  where each row represent one gauge block measurement
  
  For red and green images
+ ```
     f'{gauge["NominalSize"]:f}',
     f'"{gauge["SerialNo"]:s}"',
     f"{meandev:.1f}",
@@ -81,9 +86,9 @@ If only red images have been taken
     f"{greenindex:.8f}"
     f'"{gauge["RedFileName"]:s}"',
     f'"{gauge["GreenFileName"]:s}"',
-    
+ ```   
  For red only images
- 
+ ```
     f'{gauge["NominalSize"]:f}',
     f'"{gauge["SerialNo"]:s}"',
     f"{rd:.1f}",
@@ -101,6 +106,13 @@ If only red images have been taken
     f"{self.red_wavelength:.7f}",
     f"{redindex:.8f}",
     f'"{gauge["RedFileName"]:s}"',
+  ``` 
+  The red and green wavelength values are red from "I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
     
-  The red and green values are red from "I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
-    
+ ## Operation
+ 
+ Left- click on the top left, bottom left and bottom right corners of the 
+ gauge block. (In that order) Right click to finish and start fringe calculation.
+ 
+ More details to follow.
+ 
