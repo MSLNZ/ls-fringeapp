@@ -1,64 +1,98 @@
 """
 Calculate gauge length from fringe fractions and gauge data
 """
-import numpy
+import numpy as np
 from refractiveindex import RefractiveIndex
 from fringeprocess import shifthalf
 
-#Report No./Length/2009/790,16 June 2011
-RedWavelength  = 632.991470
-GreenWavelength  = 546.07498
-ObliquityCorrection  = 1.00000013
+ObliquityCorrection = 1.00000013
+
 
 def frac(number):
-    return number - numpy.fix(number)
+    return number - np.fix(number)
 
-def CalcGaugeLength(NominalSize_mm,
-                           RTemp_C,
-                           GTemp_C,
-                           Pressure_mb,
-                           Humidity_RH,
-                           ffRed,
-                           ffGreen,
-                           ExpCoeff):
 
-    #%Search the range (Nominal Size ? Nfringes * red  fringe spacing)
-    #for best solution for gauge length
-    Nfringes  = 5
-    MinDiff = 1000
+def calcgaugelength(
+    nominalsize_mm,
+    rtemp_air_c,
+    gtemp_air_c,
+    rtemp_c,
+    gtemp_c,
+    pressure_mb,
+    humidity_rh,
+    ffred,
+    ffgreen,
+    expcoeff,
+    redwavelength,
+    greenwavelength,
+    formula=0,
+):
 
-    redindex = RefractiveIndex(RTemp_C, Pressure_mb, Humidity_RH, RedWavelength)
-    greenindex = RefractiveIndex(GTemp_C, Pressure_mb, Humidity_RH, GreenWavelength)
-    RedFringeSpacing_nm = (RedWavelength * ObliquityCorrection) / (2.0 * redindex)
-    GreenFringeSpacing_nm = GreenWavelength * ObliquityCorrection / (2.0 * greenindex)
-    NominalSizeAtTR_nm = NominalSize_mm * 1000000.0 * (1 + ExpCoeff * (RTemp_C - 20))
-    NominalSizeAtTG_nm = NominalSize_mm * 1000000.0 * (1 + ExpCoeff * (GTemp_C - 20))
-    ffRedNominalSize = frac(NominalSizeAtTR_nm / RedFringeSpacing_nm)
-    ffDiffRed = shifthalf(ffRed / 100 - ffRedNominalSize)
+    # %Search the range (Nominal Size ? Nfringes * red  fringe spacing)
+    # for best solution for gauge length
+    nfringes = 5
+    mindiff = 1000
 
-    RedDeviations_nm = numpy.empty(2*Nfringes+1)
-    GreenDeviations_nm = numpy.empty(2*Nfringes+1)
+    redindex = RefractiveIndex(
+        rtemp_air_c, pressure_mb, humidity_rh, redwavelength, formula
+    )
+    greenindex = RefractiveIndex(
+        gtemp_air_c, pressure_mb, humidity_rh, greenwavelength, formula
+    )
+    redfringespacing_nm = (redwavelength * ObliquityCorrection) / (2.0 * redindex)
+    greenfringespacing_nm = (greenwavelength * ObliquityCorrection) / (2.0 * greenindex)
+    nominalsizeattr_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (rtemp_c - 20))
+    nominalsizeattg_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (gtemp_c - 20))
+    ffrednominalsize = frac(nominalsizeattr_nm / redfringespacing_nm)
+    ffdiffred = shifthalf(ffred / 100 - ffrednominalsize)
 
-    for i in range(-Nfringes,Nfringes+1):
-        RedDeviations_nm[i+5] = (ffDiffRed + i) * RedFringeSpacing_nm
-        EstSizeAtTG_nm = NominalSizeAtTG_nm + RedDeviations_nm[i+5]
+    reddeviations_nm = np.empty(2 * nfringes + 1)
+    greendeviations_nm = np.empty(2 * nfringes + 1)
 
-        ffGreenEstSize = frac(EstSizeAtTG_nm / GreenFringeSpacing_nm)
-        ffDiffGreen = shifthalf(ffGreen / 100 - ffGreenEstSize)
-        GreenDeviations_nm[i+5] = ffDiffGreen * GreenFringeSpacing_nm + RedDeviations_nm[i+5]
+    bestsolutionindex = 0
 
-        DeviationDiff_nm = RedDeviations_nm[i+5] - GreenDeviations_nm[i+5]
-        if (abs(DeviationDiff_nm) < abs(MinDiff)):
-            MinDiff = DeviationDiff_nm
-            BestSolutionIndex = i+5
-        #end %If
-    #end %Next i
+    for i in range(-nfringes, nfringes + 1):
+        reddeviations_nm[i + 5] = (ffdiffred + i) * redfringespacing_nm
+        estsizeattg_nm = nominalsizeattg_nm + reddeviations_nm[i + 5]
 
-    return RedDeviations_nm,GreenDeviations_nm,BestSolutionIndex
+        ffgreenestsize = frac(estsizeattg_nm / greenfringespacing_nm)
+        ffdiffgreen = shifthalf(ffgreen / 100 - ffgreenestsize)
+        greendeviations_nm[i + 5] = (
+            ffdiffgreen * greenfringespacing_nm + reddeviations_nm[i + 5]
+        )
 
-if __name__ == '__main__':
-    RD,GD,BS = CalcGaugeLength(100,20.0,20.0,1000.0,50,0.5,0.0,11.5e-6)
-    print (RD)
-    print (GD)
-    print (RD[BS], GD[BS])
+        deviationdiff_nm = reddeviations_nm[i + 5] - greendeviations_nm[i + 5]
+        if abs(deviationdiff_nm) < abs(mindiff):
+            mindiff = deviationdiff_nm
+            bestsolutionindex = i + 5
+        # end %If
+    # end %Next i
 
+    return reddeviations_nm, greendeviations_nm, bestsolutionindex, redindex, greenindex
+
+
+def calcgaugelength_red_only(
+    nominalsize_mm,
+    rtemp_air_c,
+    rtemp_c,
+    pressure_mb,
+    humidity_rh,
+    ffred,
+    expcoeff,
+    redwavelength,
+    formula=0,
+):
+    # only calculate the deviation closest to nominal
+    redindex = RefractiveIndex(
+        rtemp_air_c, pressure_mb, humidity_rh, redwavelength, formula
+    )
+
+    redfringespacing_nm = (redwavelength * ObliquityCorrection) / (2.0 * redindex)
+    nominalsizeattr_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (rtemp_c - 20))
+
+    ffrednominalsize = frac(nominalsizeattr_nm / redfringespacing_nm)
+    ffdiffred = shifthalf(ffred / 100 - ffrednominalsize)
+
+    reddeviation_nm = ffdiffred * redfringespacing_nm
+
+    return reddeviation_nm, redindex

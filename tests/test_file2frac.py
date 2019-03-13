@@ -12,7 +12,7 @@ TEST_DATA_DIR = Path(__file__).resolve().parent / 'data'
 
 
 def pytest_generate_tests(metafunc):
-    data = np.genfromtxt(TEST_DATA_DIR / 'fflog.txt', delimiter='\t', dtype='str')
+    data = np.genfromtxt(TEST_DATA_DIR / 'fflog_to_test.txt', delimiter='\t', dtype='str')
     metafunc.parametrize("row", list(data))
 
 
@@ -29,5 +29,5 @@ def test_fringe_calc(row):
     ffrac_calc = fp.array2frac(img_array, xygb)
     # would have expected we could get 1e-4 here, but not always
     # algorithim must be slightly different
-    # uncertainty analysis requires ???
-    np.testing.assert_allclose(ffrac_calc, ffrac_exp, 1e-3,)
+    # uncertainty analysis requires 0.4e-3 at 1 sigma,
+    np.testing.assert_allclose(ffrac_calc, ffrac_exp, 0.5e-3,)
