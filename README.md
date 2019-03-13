@@ -1,90 +1,106 @@
 # ls-fringeapp
 for processing gauge block interferograms
 
-TODO
+This program takes as input a comma separated text file where each 
+line represents the data on one gauge wring.
 
-    [ ] investigate warning given by testfile2frac
-    [ ] investigate 0.4e-3 relative difference in fringe fraction between this version and 2016 runs
-         the uncertainty for finrge fraction is 2 * 2.3 nm/633 nm = 0.0073 whics is much larger 
-         than 0.0004
-    [A] use xml file for wavelengths
+This should have no headers, with  the following columns
 
-    TODO features
+If both red and green images have been taken:
+        [
+        ("NominalSize", float),
+        ("SerialNo", (str, 16)),
+        ("RedDateTime", float),
+        ("GreenDateTime", float),
+        ("SetId", (str, 16)),
+        ("PlatenId", int),
+        ("Observer", (str, 16)),
+        ("Side", int),
+        ("ExpCoeff", float),
+        ("Units", (str, 16)),
+        ("TRAir", float),
+        ("TGAir", float),
+        ("TR", float),
+        ("TG", float),
+        ("PR", float),
+        ("PG", float),
+        ("HR", float),
+        ("HG", float),
+        ("RedFileName", (str, 256)),
+        ("GreenFileName", (str, 256)),]
+
+If only red images have been taken
+    [
+        ("NominalSize", float),
+        ("SerialNo", (str, 16)),
+        ("RedDateTime", float),
+        ("SetId", (str, 16)),
+        ("PlatenId", int),
+        ("Observer", (str, 16)),
+        ("Side", int),
+        ("ExpCoeff", float),
+        ("Units", (str, 16)),
+        ("TRAir", float),
+        ("TR", float),
+        ("PR", float),
+        ("HR", float),
+        ("RedFileName", (str, 256)),
+    ]
     
-    [ ]  able to process red images without green images. Issue #1
-    [ ]  use separate temperatures for air and gauge block Issue #2 requires more columns in load
-    [ ]  write out wavelengthd, obliquity, refractive index 
-    TODO bugs
-    [ ] redo is not working?
-
-    TODO refactoring
-    run Black  
-    [x]  fringeprocess.py
-    [x] gauge_length.py
-    [x ] FringeApp03.py
-    
-    [x] tkinter application window should be in init
-    [ ] the test for red_green should use the filename
-    
-    TODO testing
-    [x] overall continuity of results test for array2frac
-    [x] tests for CalcGaugeLength
-    [ ] tests for RefractiveIndex
-    
-    Unit tests
-        gauge_length.py  
-        [ ] CalcGaugeLength  
-        [ ] frac  
-        
-        fringe_process.py  
-        [ ] findpeaks2  
-        [ ] pkfind   
-        [ ] findfringes2  
-        [ ] findfringes4E  
-        [ ] lines2frac  
-        [ ] shifthalf  
-        [ ] roipoly  
-        [ ] gbroif  
-        [ ] array2frac  
-        
-        [ ] refractiveindex
-
-Calling structure
-
-    FringeManager.load_gauge_data
-        open_image
-        process_image 
-
-    FringeManager.process_image
-        array2frac
-            gbroif
-                roipoly
-            pkfind
-                findpeaks2
-            findfringes2            
-            findfringes4E
-            lines2frac
-                shifthalf
-                
-    FringeManager.calculate_output
-        CalcGaugeLength
-            frac
-            refractiveindex
-            
+ It produces a comma separated text file of gauge block measurements 
+ where each row represent one gauge block measurement
  
-        
- Green Image dependent
-   
- [x]    FringeManager.load_gauge_data
- [ ]                 .calculate_output
-                  
- [ ]    gauge_length.calcgaugelength
-                   
+ For red and green images
+    f'{gauge["NominalSize"]:f}',
+    f'"{gauge["SerialNo"]:s}"',
+    f"{meandev:.1f}",
+    f"{diffdev:.1f}",
+    f"{rd[idev]:.1f}",
+    f"{gd[idev]:.1f}",
+    f"{bestindex:d}",
+    f'{gauge["RedDateTime"]:f}',
+    f'{gauge["GreenDateTime"]:f}',
+    f'"{gauge["SetId"]:s}"',
+    f'{gauge["PlatenId"]:d}',
+    f'{gauge["Side"]:d}',
+    f'{gauge["ExpCoeff"]:e}',
+    f'"{gauge["Units"]:s}"',
+    f'{gauge["TRAir"]:f}',
+    f'{gauge["TGAir"]:f}',
+    f'{gauge["TR"]:f}',
+    f'{gauge["TG"]:f}',
+    f'{gauge["PR"]:f}',
+    f'{gauge["PG"]:f}',
+    f'{gauge["HR"]:f}',
+    f'{gauge["HG"]:f}',
+    f"{ffred * 100.0:.2f}",
+    f"{ffgreen * 100.0:.2f}",
+    f"{self.red_wavelength:.7f}",
+    f"{self.green_wavelength:.7f}",
+    f"{redindex:.8f}"
+    f"{greenindex:.8f}"
+    f'"{gauge["RedFileName"]:s}"',
+    f'"{gauge["GreenFileName"]:s}"',
     
- >>> import Tkinter, tkFileDialog
->>> root = Tkinter.Tk()
->>> root.withdraw()
-''
->>> dirname = tkFileDialog.askdirectory(parent=root,initialdir="/",title='Pick a directory')
-
-https://stackoverflow.com/questions/1406145/how-do-i-get-rid-of-python-tkinter-root-window
+ For red only images
+ 
+    f'{gauge["NominalSize"]:f}',
+    f'"{gauge["SerialNo"]:s}"',
+    f"{rd:.1f}",
+    f'{gauge["RedDateTime"]:f}',
+    f'"{gauge["SetId"]:s}"',
+    f'{gauge["PlatenId"]:d}',
+    f'{gauge["Side"]:d}',
+    f'{gauge["ExpCoeff"]:e}',
+    f'"{gauge["Units"]:s}"',
+    f'{gauge["TRAir"]:f}',
+    f'{gauge["TR"]:f}',
+    f'{gauge["PR"]:f}',
+    f'{gauge["HR"]:f}',
+    f"{ffred * 100.0:.2f}",
+    f"{self.red_wavelength:.7f}",
+    f"{redindex:.8f}",
+    f'"{gauge["RedFileName"]:s}"',
+    
+  The red and green values are red from "I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
+    

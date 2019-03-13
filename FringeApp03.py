@@ -2,6 +2,8 @@
 EFH 15/12/2009
 App to process whole files of images
 
+requires python 3.5 for f strings
+
 """
 import tkinter as tk
 from tkinter import filedialog
@@ -23,33 +25,15 @@ import fringeprocess
 import gauge_length
 import load_cal_data
 
-
-# These values should be read from xml file
-# xml files should be under GIT control
-# Report No./Length/2009/790,16 June 2011
-# RedWavelength = 632.991470
-RedWavelength = 632.991417
-GreenWavelength = 546.22705  # mise en pratique
 ObliquityCorrection = 1.00000013
-CalDataFileName = r'I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml'
+CalDataFileName = r"I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
+WorkingDir = r"I:\MSL\Private\LENGTH\Hilger"
 
 
 """
-event based
-open excel file event calls  N key load_gauge_data
-next and previous image events PAGEUP and PAGEDOWN keys next_image, prev_image
-redo image event DELETE key
-lasso current image activated by left clicking on image, right click calls process_image
-
-calculate gauge lengths following a finish event END key calculate
-
-self.ffrac needs to be a list or dictionary -done
-make sure all data is 1st refered to  in __init__ -done
-
-add a text display to show a list of gauges in current file and whether ff have been done
-add buttons for basic functions - done
-
+For processing gauge block interferograms
 """
+
 # data type for reading in comma delimited files specifying measurement data and file names
 DTRG = np.dtype(
     [
@@ -63,13 +47,14 @@ DTRG = np.dtype(
         ("Side", int),
         ("ExpCoeff", float),
         ("Units", (str, 16)),
+        ("TRAir", float),
+        ("TGAir", float),
         ("TR", float),
         ("TG", float),
         ("PR", float),
         ("PG", float),
         ("HR", float),
         ("HG", float),
-        ("PlatenPos", int),
         ("RedFileName", (str, 256)),
         ("GreenFileName", (str, 256)),
     ]
@@ -86,10 +71,10 @@ DTR = np.dtype(
         ("Side", int),
         ("ExpCoeff", float),
         ("Units", (str, 16)),
+        ("TRAir", float),
         ("TR", float),
         ("PR", float),
         ("HR", float),
-        ("PlatenPos", int),
         ("RedFileName", (str, 256)),
     ]
 )
@@ -223,7 +208,12 @@ class FringeManager:
         self.calculate_output(False)
 
     def calcall(self, _):
-        self.calculate_output(True)
+        if self.red_green:
+            self.calculate_output(True)
+        else:
+            messagebox.showinfo(
+                "Info", "Can't calculate mutliple orders without green images"
+            )
 
     def redo_image(self):
         """
@@ -246,8 +236,8 @@ class FringeManager:
         print(img_filename)
         parts = os.path.split(img_filename)
 
-        self.img_filename = os.path.join(parts[0], "cropped", parts[1])
-        # self.img_filename = os.path.normpath(img_filename)
+        # self.img_filename = os.path.join(parts[0], "cropped", parts[1])
+        self.img_filename = os.path.normpath(img_filename)
         img = Image.open(self.img_filename)
         img.convert("L")
         self.img_array = np.asarray(img)
@@ -284,40 +274,71 @@ class FringeManager:
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
         txt_name = filedialog.askopenfilename(
             parent=self.app_win,
-            initialdir=os.getcwd(),
+            initialdir=WorkingDir,
             title="Select text file written by excel",
             filetypes=my_filetypes,
         )
-        # txt_name = EasyDialogs.AskFileForOpen(message='Select text file written by excel')
+
         if txt_name:
             self.gauge_data_filename = txt_name
             # determine if we're using green as well as red
-            # this should be coded more generically and allow for dropping green completly.
-            # code into filename?
+            # use _r as last two characters of file if red only
+            # anything else is assumed to include red
             with open(txt_name) as f:
                 line1 = f.readline()
-            ncols = line1.count(",")
-            self.red_green = ncols == 19
+            self.red_green = not (os.path.splitext(txt_name)[0][-2:] == "_r")
+
+            parts = os.path.split(txt_name)
+            # if no paths add path of txt_name
+            # for name in list(self.gauge_data[:]["RedFileName"]):
+            #     if os.path.split(name)[0] == "":
+            #         name = os.path.join(parts[0], os.path.split(name)[1])
+
+            # self.gauge_data[:]["RedFileName"] = [
+            #     os.path.join(parts[0], os.path.split(name)[1])
+            #     if os.path.split(name)[0] == ""
+            #     else name
+            #     for name in list(self.gauge_data[:]["RedFileName"])
+            # ]
 
             if self.red_green:
                 self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=DTRG)
-                img_list = list(self.gauge_data[:]["RedFileName"])
-                img_list.extend(list(self.gauge_data[:]["GreenFileName"]))
             else:
-                self.gauge_data = np.loadtxt(
-                    txt_name,
-                    dtype=DTR,
-                    delimiter=",",
-                    usecols=(0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 17),
-                )
-                img_list = list(self.gauge_data[:]["RedFileName"])
+                self.gauge_data = np.loadtxt(txt_name, dtype=DTR, delimiter=",")
+            img_list = list(self.gauge_data[:]["RedFileName"])
+            img_list = [
+                os.path.join(parts[0], os.path.split(name)[1])
+                if os.path.split(name)[0] == ""
+                else name
+                for name in img_list
+            ]
+            self.gauge_data[:]["RedFileName"] = img_list
+            if self.red_green:
+                img_list_g = list(self.gauge_data[:]["GreenFileName"])
+                img_list_g = [
+                    os.path.join(parts[0], os.path.split(name)[1])
+                    if os.path.split(name)[0] == ""
+                    else name
+                    for name in img_list_g
+                ]
+                self.gauge_data[:]["GreenFileName"] = img_list_g
+                img_list.extend(img_list_g)
 
             img_list = [name.strip('"') for name in img_list]
+
+            parts = os.path.split(txt_name)
+
+            img_list = [
+                os.path.join(parts[0], os.path.split(name)[1])
+                if os.path.split(name)[0] == ""
+                else name
+                for name in img_list
+            ]
+            print(img_list)
             img_list.sort()
             self.img_list = img_list
             self.img_index = 0
 
-            parts = os.path.split(txt_name)
             self.shelf_filename = os.path.join(parts[0], "info.shf")
             print(self.shelf_filename)
             # if os.path.exists(self.shelf_filename):
@@ -382,18 +403,31 @@ class FringeManager:
                 ypos = ypos - 0.03
 
             "load wavelengths and display to user"
-            wavelengths = load_cal_data.read_cal_wavelengths(CalDataFileName, self.red_green)
+            wavelengths = load_cal_data.read_cal_wavelengths(
+                CalDataFileName, self.red_green
+            )
             print(self.red_green)
             print(wavelengths)
             if wavelengths:
-                self.red_wavelength = wavelengths[0][1]
-                message = 'Wavelengths Used\n'
-                message += '{}   vacuum wavelength = {}\n'.format(wavelengths[0][0], wavelengths[0][1])
+                message = "Wavelengths Used\n"
                 if self.red_green:
+                    self.red_wavelength = wavelengths[0][1]
+
+                    message += "{}   vacuum wavelength = {}\n".format(
+                        wavelengths[0][0], wavelengths[0][1]
+                    )
                     self.green_wavelength = wavelengths[1][1]
-                    message += '{}   vacuum wavelength = {}\n'.format(wavelengths[1][0], wavelengths[1][1])
+                    message += "{}   vacuum wavelength = {}\n".format(
+                        wavelengths[1][0], wavelengths[1][1]
+                    )
+                else:
+                    self.red_wavelength = wavelengths[1]
+                    message += "{}   vacuum wavelength = {}\n".format(
+                        wavelengths[0], wavelengths[1]
+                    )
+
             else:
-                message = 'Problem loading vacuumn wavelengths'
+                message = "Problem loading vacuumn wavelengths"
             messagebox.showinfo("Vacuum Wavelengths", message)
 
             self.open_image()
@@ -441,8 +475,7 @@ class FringeManager:
         out_filename = os.path.join(
             os.path.splitext(self.gauge_data_filename)[0] + "-calcs-py.txt"
         )
-        # out_filename = EasyDialogs.AskFileForSave(message='Select text file to save calculated resuts to',
-        #                                           savedFileName=out_filename)
+
         out_filename = filedialog.asksaveasfilename(
             parent=self.app_win,
             initialfile=out_filename,
@@ -455,34 +488,49 @@ class FringeManager:
             for gauge in self.gauge_data:
                 redkey = os.path.basename(gauge["RedFileName"]).strip('"')
                 ffred = self.ffrac[redkey]
-                greenkey = os.path.basename(gauge["GreenFileName"]).strip('"')
-                ffgreen = self.ffrac[greenkey]
+                if self.red_green:
+                    greenkey = os.path.basename(gauge["GreenFileName"]).strip('"')
+                    ffgreen = self.ffrac[greenkey]
                 # calculation is always done in metric
                 if gauge["Units"].strip('"') != "Metric":
                     nomsize = gauge["NominalSize"] * 25.4
-                    print("Calculating in Inch system")
+
                 else:
                     nomsize = gauge["NominalSize"]
                     # print "Calculating in Metric System"
                 print(nomsize)
-                rd, gd, bestindex = gauge_length.calcgaugelength(
-                    nomsize,
-                    gauge["TR"],
-                    gauge["TG"],
-                    gauge["PR"],
-                    gauge["HR"],
-                    ffred * 100,
-                    ffgreen * 100,
-                    gauge["ExpCoeff"],
-                    RedWavelength,
-                    GreenWavelength,
-                )
+                if self.red_green:
+                    rd, gd, bestindex, redindex, greenindex = gauge_length.calcgaugelength(
+                        nomsize,
+                        gauge["TRAir"],
+                        gauge["TGAir"],
+                        gauge["TR"],
+                        gauge["TG"],
+                        gauge["PR"],
+                        gauge["HR"],
+                        ffred * 100,
+                        ffgreen * 100,
+                        gauge["ExpCoeff"],
+                        self.red_wavelength,
+                        self.green_wavelength,
+                    )
+                else:
+                    rd, redindex = gauge_length.calcgaugelength_red_only(
+                        nomsize,
+                        gauge["TRAir"],
+                        gauge["TR"],
+                        gauge["PR"],
+                        gauge["HR"],
+                        ffred * 100,
+                        gauge["ExpCoeff"],
+                        self.red_wavelength,
+                    )
 
                 # translate metric values for deviations (nanometres) to imperial values (microinches)
                 if gauge["Units"].strip('"') != "Metric":
                     rd = rd / 25.4
-                    gd = gd / 25.4
-                    # print "changing dev to microinch!"
+                    if self.red_green:
+                        gd = gd / 25.4
 
                 # Observer = "MTL"
 
@@ -492,42 +540,64 @@ class FringeManager:
                     orders = [5]
 
                 for idev in orders:
-
-                    diffdev = rd[idev] - gd[idev]
-                    meandev = (rd[idev] + gd[idev]) / 2.0
-                    outtext = (
-                        '%f,"%s",%.1f,%.1f,%.1f,%.1f,%d,%f,%f,"%s",%u,"%s",%u,%e,"%s",%f,%f,%f,%f,%f,%f,%.2f,%.2f,%d,%d,"%s","%s"\n'
-                        % (
-                            gauge["NominalSize"],
-                            gauge["SerialNo"],
-                            meandev,
-                            diffdev,
-                            rd[idev],
-                            gd[idev],
-                            bestindex,
-                            gauge["RedDateTime"],
-                            gauge["GreenDateTime"],
-                            gauge["SetId"],
-                            gauge["PlatenId"],
-                            "PY",
-                            gauge["Side"],
-                            gauge["ExpCoeff"],
-                            gauge["Units"],
-                            gauge["TR"],
-                            gauge["TG"],
-                            gauge["PR"],
-                            gauge["PG"],
-                            gauge["HR"],
-                            gauge["HG"],
-                            ffred * 100.0,
-                            ffgreen * 100.0,
-                            0,
-                            gauge["PlatenPos"],
-                            gauge["RedFileName"],
-                            gauge["GreenFileName"],
+                    if self.red_green:
+                        diffdev = rd[idev] - gd[idev]
+                        meandev = (rd[idev] + gd[idev]) / 2.0
+                        outtext = (
+                            f'{gauge["NominalSize"]:f}',
+                            f'"{gauge["SerialNo"]:s}"',
+                            f"{meandev:.1f}",
+                            f"{diffdev:.1f}",
+                            f"{rd[idev]:.1f}",
+                            f"{gd[idev]:.1f}",
+                            f"{bestindex:d}",
+                            f'{gauge["RedDateTime"]:f}',
+                            f'{gauge["GreenDateTime"]:f}',
+                            f'"{gauge["SetId"]:s}"',
+                            f'{gauge["PlatenId"]:d}',
+                            f'{gauge["Side"]:d}',
+                            f'{gauge["ExpCoeff"]:e}',
+                            f'"{gauge["Units"]:s}"',
+                            f'{gauge["TRAir"]:f}',
+                            f'{gauge["TGAir"]:f}',
+                            f'{gauge["TR"]:f}',
+                            f'{gauge["TG"]:f}',
+                            f'{gauge["PR"]:f}',
+                            f'{gauge["PG"]:f}',
+                            f'{gauge["HR"]:f}',
+                            f'{gauge["HG"]:f}',
+                            f"{ffred * 100.0:.2f}",
+                            f"{ffgreen * 100.0:.2f}",
+                            f"{self.red_wavelength:.7f}",
+                            f"{self.green_wavelength:.7f}",
+                            f"{redindex:.9f}",
+                            f"{greenindex:.9f}",
+                            f'"{gauge["RedFileName"]:s}"',
+                            f'"{gauge["GreenFileName"]:s}"',
                         )
-                    )
-                    fid.write(outtext)
+                    else:
+                        outtext = (
+                            f'{gauge["NominalSize"]:f}',
+                            f'"{gauge["SerialNo"]:s}"',
+                            f"{rd:.1f}",
+                            f'{gauge["RedDateTime"]:f}',
+                            f'"{gauge["SetId"]:s}"',
+                            f'{gauge["PlatenId"]:d}',
+                            f'{gauge["Side"]:d}',
+                            f'{gauge["ExpCoeff"]:e}',
+                            f'"{gauge["Units"]:s}"',
+                            f'{gauge["TRAir"]:f}',
+                            f'{gauge["TR"]:f}',
+                            f'{gauge["PR"]:f}',
+                            f'{gauge["HR"]:f}',
+                            f"{ffred * 100.0:.2f}",
+                            f"{self.red_wavelength:.7f}",
+                            f"{redindex:.9f}",
+                            f'"{gauge["RedFileName"]:s}"',
+                        )
+
+                    fid.write(", ".join(outtext))
+                    fid.write("\n")
             fid.close()
 
 

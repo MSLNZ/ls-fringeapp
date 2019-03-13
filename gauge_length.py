@@ -5,7 +5,7 @@ import numpy as np
 from refractiveindex import RefractiveIndex
 from fringeprocess import shifthalf
 
-ObliquityCorrection  = 1.00000013
+ObliquityCorrection = 1.00000013
 
 
 def frac(number):
@@ -14,6 +14,8 @@ def frac(number):
 
 def calcgaugelength(
     nominalsize_mm,
+    rtemp_air_c,
+    gtemp_air_c,
     rtemp_c,
     gtemp_c,
     pressure_mb,
@@ -32,10 +34,10 @@ def calcgaugelength(
     mindiff = 1000
 
     redindex = RefractiveIndex(
-        rtemp_c, pressure_mb, humidity_rh, redwavelength, formula
+        rtemp_air_c, pressure_mb, humidity_rh, redwavelength, formula
     )
     greenindex = RefractiveIndex(
-        gtemp_c, pressure_mb, humidity_rh, greenwavelength, formula
+        gtemp_air_c, pressure_mb, humidity_rh, greenwavelength, formula
     )
     redfringespacing_nm = (redwavelength * ObliquityCorrection) / (2.0 * redindex)
     greenfringespacing_nm = (greenwavelength * ObliquityCorrection) / (2.0 * greenindex)
@@ -66,5 +68,31 @@ def calcgaugelength(
         # end %If
     # end %Next i
 
-    return reddeviations_nm, greendeviations_nm, bestsolutionindex
+    return reddeviations_nm, greendeviations_nm, bestsolutionindex, redindex, greenindex
 
+
+def calcgaugelength_red_only(
+    nominalsize_mm,
+    rtemp_air_c,
+    rtemp_c,
+    pressure_mb,
+    humidity_rh,
+    ffred,
+    expcoeff,
+    redwavelength,
+    formula=0,
+):
+    # only calculate the deviation closest to nominal
+    redindex = RefractiveIndex(
+        rtemp_air_c, pressure_mb, humidity_rh, redwavelength, formula
+    )
+
+    redfringespacing_nm = (redwavelength * ObliquityCorrection) / (2.0 * redindex)
+    nominalsizeattr_nm = nominalsize_mm * 1000000.0 * (1 + expcoeff * (rtemp_c - 20))
+
+    ffrednominalsize = frac(nominalsizeattr_nm / redfringespacing_nm)
+    ffdiffred = shifthalf(ffred / 100 - ffrednominalsize)
+
+    reddeviation_nm = ffdiffred * redfringespacing_nm
+
+    return reddeviation_nm, redindex

@@ -10,9 +10,8 @@ TEST_DATA_DIR = Path(__file__).resolve().parent / "data"
 # in June 2005 using the version in "I:\MSL\Private\LENGTH\Hilger\Matlab\FileArchive\20050127"
 # this uses Muijlwijk88 for refractive index of air
 
-RedWavelength  = 632.991417
-GreenWavelength  = 546.22705
-# ObliquityCorrection  = 1.00000013;
+RedWavelength = 632.991417
+GreenWavelength = 546.22705
 
 
 def pytest_generate_tests(metafunc):
@@ -33,8 +32,11 @@ def test_gaugelength_metric_red_green(row):
     rd_exp = np.float(row[4])
     gd_exp = np.float(row[5])
 
-    rd_calc, gd_calc, bestindex = gl.calcgaugelength(
+    # use same temperature for air and gauge
+    rd_calc, gd_calc, bestindex, redindex, greenindex = gl.calcgaugelength(
         nominalsize_mm,
+        rtemp_c,
+        gtemp_c,
         rtemp_c,
         gtemp_c,
         pressure_mb,
@@ -49,3 +51,92 @@ def test_gaugelength_metric_red_green(row):
 
     np.testing.assert_allclose(rd_calc[5], rd_exp, atol=0.1)
     np.testing.assert_allclose(gd_calc[5], gd_exp, atol=0.1)
+
+
+def test_gaugelength_metric_red_only(row):
+    nominalsize_mm = np.float(row[0])
+    rtemp_c = np.float(row[15])
+    pressure_mb = np.float(row[17])
+    humidity_rh = np.float(row[19])
+    ffred = np.float(row[21])
+    expcoeff = np.float(row[13])
+    rd_exp = np.float(row[4])
+
+    # use same temperature for air and gauge
+    rd_calc, redindex = gl.calcgaugelength_red_only(
+        nominalsize_mm,
+        rtemp_c,
+        rtemp_c,
+        pressure_mb,
+        humidity_rh,
+        ffred,
+        expcoeff,
+        RedWavelength,
+        formula=3,
+    )
+
+    np.testing.assert_allclose(rd_calc, rd_exp, atol=0.1)
+
+
+def test_different_air_temp_red_only(row):
+    # test different temperatures for air and gauge
+    offset_temp = 0.1
+    nominalsize_mm = np.float(row[0])
+    rtemp_c = np.float(row[15])
+    pressure_mb = np.float(row[17])
+    humidity_rh = np.float(row[19])
+    ffred = np.float(row[21])
+    expcoeff = np.float(row[13])
+    rd_exp = np.float(row[4])
+    rtemp_air_c = rtemp_c + offset_temp
+    rd_calc, redindex = gl.calcgaugelength_red_only(
+        nominalsize_mm,
+        rtemp_air_c,
+        rtemp_c,
+        pressure_mb,
+        humidity_rh,
+        ffred,
+        expcoeff,
+        RedWavelength,
+        formula=3,
+    )
+    # 1 K change in air temperature should result in 1 ppm ~= 1 nm/mm change in length
+    rd_exp = rd_exp + nominalsize_mm * offset_temp
+    # could amend check to be better than 1 nm but OK for now
+    np.testing.assert_allclose(rd_calc, rd_exp, atol=1.0)
+
+def test_different_air_temp(row):
+    offset_temp = 0.1
+    nominalsize_mm = np.float(row[0])
+    rtemp_c = np.float(row[15])
+    gtemp_c = np.float(row[16])
+    pressure_mb = np.float(row[17])
+    humidity_rh = np.float(row[19])
+    ffred = np.float(row[21])
+    ffgreen = np.float(row[22])
+    expcoeff = np.float(row[13])
+
+    rd_exp = np.float(row[4])
+    gd_exp = np.float(row[5])
+    rtemp_air_c = rtemp_c + offset_temp
+
+    rd_calc, gd_calc, bestindex, redindex, greenindex = gl.calcgaugelength(
+        nominalsize_mm,
+        rtemp_air_c,
+        rtemp_air_c,
+        rtemp_c,
+        gtemp_c,
+        pressure_mb,
+        humidity_rh,
+        ffred,
+        ffgreen,
+        expcoeff,
+        RedWavelength,
+        GreenWavelength,
+        formula=3,
+    )
+
+    # 1 K change in air temperature should result in 1 ppm ~= 1 nm/mm change in length
+    rd_exp = rd_exp + nominalsize_mm * offset_temp
+    # could amend check to be better than 1 nm but OK for now
+    np.testing.assert_allclose(rd_calc[5], rd_exp, atol=1.0)

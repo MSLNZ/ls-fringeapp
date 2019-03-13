@@ -12,7 +12,7 @@ TEST_DATA_DIR = Path(__file__).resolve().parent / 'data'
 
 
 def pytest_generate_tests(metafunc):
-    data = np.genfromtxt(TEST_DATA_DIR / 'fflog.txt', delimiter='\t', dtype='str')
+    data = np.genfromtxt(TEST_DATA_DIR / 'fflog_to_test.txt', delimiter='\t', dtype='str')
     metafunc.parametrize("row", list(data))
 
 
