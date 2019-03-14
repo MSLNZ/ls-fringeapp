@@ -16,11 +16,7 @@ Date: 16/12/2009
 from numpy import exp, sqrt, log
 
 
-def RefractiveIndex(Temperature,
-                    Pressure,
-                    Humidity,
-                    Lambda=632.991,
-                    Formula=0):
+def RefractiveIndex(Temperature, Pressure, Humidity, Lambda=632.991, Formula=0):
     """
     'Calculates refractive index of air
     'defaults to Ciddor Formula as given on NIST site
@@ -36,22 +32,23 @@ def RefractiveIndex(Temperature,
     """
 
     if Formula == 0:
-       RefractiveIndex = RefractiveIndexNIST_Ciddor(Temperature, Pressure, Humidity, Lambda)
+        RefractiveIndex = RefractiveIndexNIST_Ciddor(
+            Temperature, Pressure, Humidity, Lambda
+        )
     if Formula == 1:
-       RefractiveIndex = RefractiveIndexNIST_Edlen(Temperature, Pressure, Humidity, Lambda)
+        RefractiveIndex = RefractiveIndexNIST_Edlen(
+            Temperature, Pressure, Humidity, Lambda
+        )
     if Formula == 2:
-       RefractiveIndex = RefractiveIndexBD94(Temperature, Pressure, Humidity, Lambda)
+        RefractiveIndex = RefractiveIndexBD94(Temperature, Pressure, Humidity, Lambda)
     if Formula == 3:
-       RefractiveIndex = RefractiveIndexM88(Temperature, Pressure, Humidity, Lambda)
+        RefractiveIndex = RefractiveIndexM88(Temperature, Pressure, Humidity, Lambda)
     if Formula == 4:
-       RefractiveIndex = RefractiveIndexNIST_ShopFloor(Temperature, Pressure, Humidity)
+        RefractiveIndex = RefractiveIndexNIST_ShopFloor(Temperature, Pressure, Humidity)
     return RefractiveIndex
 
 
-def RefractiveIndexM88(Temperature,
-                       Pressure,
-                       Humidity,
-                       Lambda):
+def RefractiveIndexM88(Temperature, Pressure, Humidity, Lambda):
     """
     'Refractive Index of Air
     'Temperature is in degree Celsius
@@ -79,10 +76,8 @@ def RefractiveIndexM88(Temperature,
     rindex = ntp + Ch + 1
     return rindex
 
-def RefractiveIndexBD94(Temperature,
-                        Pressure,
-                        Humidity,
-                        Lambda):
+
+def RefractiveIndexBD94(Temperature, Pressure, Humidity, Lambda):
     """
     ' K.P. Birch and M.J. Downs,
     ' "Correction to the updated Edl?n equation for the refractive index of air,"
@@ -131,7 +126,7 @@ def RefractiveIndexBD94(Temperature,
     S2 = Sigma * Sigma
     P_Pa = 100 * Pressure
     Ns = (8342.54 + (2406147.0 / (130.0 - S2)) + (15998.0 / (38.9 - S2))) * 1e-8
-    c1 = (P_Pa * 1e-8 * (0.601 - 0.00972 * Temperature))
+    c1 = P_Pa * 1e-8 * (0.601 - 0.00972 * Temperature)
     ntp = (Ns * P_Pa / 96095.43) * ((1 + c1) / (1.0 + 0.003661 * Temperature))
     t0 = Temperature + 273.15
     e0 = exp((ea0 / t0) + ea1 + (ea2 * t0) + ea3 * (t0 ** 2) + ea4 * log(t0))
@@ -145,10 +140,7 @@ def RefractiveIndexBD94(Temperature,
     return rindex
 
 
-
-def EDMRefIndexCorr(Temperature,
-                    Pressure,
-                    Humidity):
+def EDMRefIndexCorr(Temperature, Pressure, Humidity):
 
     """
     '  Calculate the refractive index correction factor for our Distomat
@@ -173,9 +165,7 @@ def EDMRefIndexCorr(Temperature,
     return EDMCorr
 
 
-def RefractiveIndexNIST_ShopFloor(Temperature,
-                                  Pressure,
-                                  Humidity):
+def RefractiveIndexNIST_ShopFloor(Temperature, Pressure, Humidity):
     """
     'This is included as a quick check on other implementations
     'This formula is only valid for the standard, red He-Ne laser wavelength of approximately 633 nm,
@@ -198,9 +188,12 @@ def RefractiveIndexNIST_ShopFloor(Temperature,
     P_kPa = Pressure * 0.1
     H_RH = Humidity
 
-    n = 1 + 7.86*10**(-4) *P_kPa / (273.0 + T_degC) - 1.5*10**(-11) *H_RH* (T_degC**2 + 160.0)
+    n = (
+        1
+        + 7.86 * 10 ** (-4) * P_kPa / (273.0 + T_degC)
+        - 1.5 * 10 ** (-11) * H_RH * (T_degC ** 2 + 160.0)
+    )
     return n
-
 
 
 def SVP(Temperature):
@@ -221,9 +214,7 @@ def SVP(Temperature):
     K9 = -0.238555575678
     K10 = 650.175348448
 
-
-
-    #assumes T > 0
+    # assumes T > 0
     T_degC = Temperature
 
     T_K = T_degC + 273.15
@@ -236,10 +227,7 @@ def SVP(Temperature):
     return svp
 
 
-def RefractiveIndexNIST_Ciddor(Temperature,
-                               Pressure,
-                               Humidity,
-                               Lambda):
+def RefractiveIndexNIST_Ciddor(Temperature, Pressure, Humidity, Lambda):
     """
     'Refractive Index of Air
     'Temperature is in degree Celsius
@@ -259,7 +247,9 @@ def RefractiveIndexNIST_Ciddor(Temperature,
     '  Wavelength in Air = Wavelength in Vacumn / RefractiveIndexNIST_Ciddor(20.0, 1010.2, 50, 632.9)
     """
 
-    xCO2 = 450  #' CO2 concentration in ?mol/mol (could make this an optional parameter)
+    xCO2 = (
+        450
+    )  # ' CO2 concentration in ?mol/mol (could make this an optional parameter)
 
     alpha = 1.00062
     beta = 3.14 * 10 ** (-8)
@@ -295,7 +285,6 @@ def RefractiveIndexNIST_Ciddor(Temperature,
     R = 8.314472
     M_v = 0.018015
 
-
     T_degC = Temperature
     T_K = T_degC + 273.15
     P_Pa = Pressure * 100.0
@@ -311,10 +300,14 @@ def RefractiveIndexNIST_Ciddor(Temperature,
     r_vs = 1.022 * 10 ** (-8) * (w0 + w1 * S + w2 * S ** 2 + w3 * S ** 3)
     M_a = 0.0289635 + 1.2011 * 10 ** (-8) * (xCO2 - 400)
     r_axs = r_as * (1.0 + 5.34 * 10 ** (-7) * (xCO2 - 450))
-    terma = a0 + a1 * T_degC + a2 * T_degC**2
+    terma = a0 + a1 * T_degC + a2 * T_degC ** 2
     termb = (b0 + b1 * T_degC) * xv
-    termc = (c0 + c1 * T_degC) * xv**2
-    Z_m = 1.0 - (P_Pa / T_K) * (terma + termb + termc) + (P_Pa / T_K)**2 * (d + e * xv**2)
+    termc = (c0 + c1 * T_degC) * xv ** 2
+    Z_m = (
+        1.0
+        - (P_Pa / T_K) * (terma + termb + termc)
+        + (P_Pa / T_K) ** 2 * (d + e * xv ** 2)
+    )
     rho_axs = p_R1 * M_a / (Z_a * R * T_R1)
     rho_v = xv * P_Pa * M_v / (Z_m * R * T_K)
     rho_a = (1.0 - xv) * P_Pa * M_a / (Z_m * R * T_K)
@@ -323,11 +316,7 @@ def RefractiveIndexNIST_Ciddor(Temperature,
     return n
 
 
-
-def RefractiveIndexNIST_Edlen(Temperature,
-                              Pressure,
-                              Humidity,
-                              Lambda):
+def RefractiveIndexNIST_Edlen(Temperature, Pressure, Humidity, Lambda):
     """
     'Refractive Index of Air
     'Temperature is in degree Celsius
@@ -355,15 +344,13 @@ def RefractiveIndexNIST_Edlen(Temperature,
     f = 0.00972
     G = 0.003661
 
-
-
     T_degC = Temperature
     P_Pa = Pressure * 100.0
     H_RH = Humidity
     lambda_um = Lambda / 1000.0
 
     psv = SVP(T_degC)
-    #'vapour pressure
+    # 'vapour pressure
     pv = (H_RH / 100) * psv
 
     S = 1.0 / (lambda_um) ** 2
@@ -374,17 +361,13 @@ def RefractiveIndexNIST_Edlen(Temperature,
 
     return n
 
-def Ciddor_U95(Temperature,
-               Pressure,
-               Humidity,
-               Lambda):
+
+def Ciddor_U95(Temperature, Pressure, Humidity, Lambda):
     """
     'calculates (empirical estimate) the expanded (k=2)uncertainty estimates for the Ciddor equation
     'see http://emtoolbox.nist.gov/Wavelength/Documentation.asp
     'does NOT include uncertainties in measurement of T,P,H
     """
-
-
 
     T_degC = Temperature
     P_Pa = Pressure * 100.0
@@ -392,19 +375,17 @@ def Ciddor_U95(Temperature,
     lambda_um = Lambda / 1000.0
 
     psv = SVP(T_degC)
-    #'vapour pressure
+    # 'vapour pressure
     pv = (H_RH / 100) * psv
     c1 = 0.003 * P_Pa / (T_degC + 273)
     c2 = 4.0 + 6.0 * 10 ** (-8) * (P_Pa - 10 ** 5) ** 2 + 0.06 * (T_degC - 20) ** 2
-    c3 = ((8.0 * 10 ** (-4)) ** 2 + (6.0 * 10 ** (-6) / lambda_um ** 4) ** 2)
+    c3 = (8.0 * 10 ** (-4)) ** 2 + (6.0 * 10 ** (-6) / lambda_um ** 4) ** 2
     Ciddor_U95 = 10 ** (-8) * (c1 ** 2 * c2 + pv ** 2 * c3) ** (1 / 2)
 
     return Ciddor_U95
 
-def Edlen_U95(Temperature,
-              Pressure,
-              Humidity,
-              Lambda):
+
+def Edlen_U95(Temperature, Pressure, Humidity, Lambda):
     """
 
     'calculates (empirical estimate) the expanded (k=2)uncertainty estimates for the Edlen equation
@@ -417,39 +398,55 @@ def Edlen_U95(Temperature,
 
     U95Ciddor = Ciddor_U95(Temperature, Pressure, Humidity, Lambda)
     A = U95Ciddor
-    B = 2 * 10** (-8)
+    B = 2 * 10 ** (-8)
     C = (T_degC - 20.0) * P_Pa / (T_degC + 273.0)
 
     Edlen_U95 = sqrt(A ** 2 + B ** 2 + (1.6 * 10 ** (-16)) * C ** 2)
 
     return Edlen_U95
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import numpy
-    #values calculated on NIST website
 
-    data =   numpy.array([[20,0,101.325,633,1.000271800,1.000271799],
-                          [20,0,60,633,1.000160924,1.000160920],
-                          [20,0,120,633,1.000321916,1.000321918],
-                          [50,0,100,633,1.000243285,1.000243270],
-                          [5,0,100,633,1.000282756,1.000282750],
-                          [-40,0,100,633,1.000337580,1.000337471],
-                          [50,100,120,633,1.000287924,1.000287864],
-                          [40,75,120,633,1.000299418,1.000299406],
-                          [20,100,100,633,1.000267394,1.000267394],
-                          [40,100,110,1700,1.000270247,1.000270237],
-                          [20,0,101.325,1700,1.000268479,1.000268483],
-                          [40,100,110,300,1.000289000,1.000288922],
-                          [20,0,101.325,300,1.000286581,1.000286579],
-                          [-40,0,120,300,1.000427233,1.000427072]])
-    nindex = numpy.empty((data.shape[0],5))
+    # values calculated on NIST website
+
+    data = numpy.array(
+        [
+            [20, 0, 101.325, 633, 1.000271800, 1.000271799],
+            [20, 0, 60, 633, 1.000160924, 1.000160920],
+            [20, 0, 120, 633, 1.000321916, 1.000321918],
+            [50, 0, 100, 633, 1.000243285, 1.000243270],
+            [5, 0, 100, 633, 1.000282756, 1.000282750],
+            [-40, 0, 100, 633, 1.000337580, 1.000337471],
+            [50, 100, 120, 633, 1.000287924, 1.000287864],
+            [40, 75, 120, 633, 1.000299418, 1.000299406],
+            [20, 100, 100, 633, 1.000267394, 1.000267394],
+            [40, 100, 110, 1700, 1.000270247, 1.000270237],
+            [20, 0, 101.325, 1700, 1.000268479, 1.000268483],
+            [40, 100, 110, 300, 1.000289000, 1.000288922],
+            [20, 0, 101.325, 300, 1.000286581, 1.000286579],
+            [-40, 0, 120, 300, 1.000427233, 1.000427072],
+        ]
+    )
+    nindex = numpy.empty((data.shape[0], 5))
     for ri, row in enumerate(data):
-        for formula in range(0,5):
-            nindex[ri,formula] = RefractiveIndex(row[0],10*row[2],row[1],row[3],formula)
+        for formula in range(0, 5):
+            nindex[ri, formula] = RefractiveIndex(
+                row[0], 10 * row[2], row[1], row[3], formula
+            )
 
-    delta_ciddor = nindex - data[:,4:5]
-    delta_edlen = nindex - data[:,5:]
-    print ('max , min delta ciddor', numpy.max(delta_ciddor), numpy.min(delta_ciddor))
-    print ('max , min delta edlen', numpy.max(delta_edlen), numpy.min(delta_edlen))
-    print ('max , min ciddor ciddor', numpy.max(delta_ciddor[:,0]), numpy.min(delta_ciddor[:,0]))
-    print ('max , min edlen edlen', numpy.max(delta_edlen[:,1]), numpy.min(delta_edlen[:,1]))
+    delta_ciddor = nindex - data[:, 4:5]
+    delta_edlen = nindex - data[:, 5:]
+    print("max , min delta ciddor", numpy.max(delta_ciddor), numpy.min(delta_ciddor))
+    print("max , min delta edlen", numpy.max(delta_edlen), numpy.min(delta_edlen))
+    print(
+        "max , min ciddor ciddor",
+        numpy.max(delta_ciddor[:, 0]),
+        numpy.min(delta_ciddor[:, 0]),
+    )
+    print(
+        "max , min edlen edlen",
+        numpy.max(delta_edlen[:, 1]),
+        numpy.min(delta_edlen[:, 1]),
+    )

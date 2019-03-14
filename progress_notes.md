@@ -35,7 +35,7 @@ TODO
     [x] tests for CalcGaugeLength
     [x] test for calcgaugelength that include separate air temp
     [x] test for calcgaugelength_red_only
-    [ ] tests for RefractiveIndex
+    [ ] tests for RefractiveIndex - there are some in the main part of the file
     [ ] tests for reading and writing files
     
     Unit tests
