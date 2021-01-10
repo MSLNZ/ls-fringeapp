@@ -165,6 +165,7 @@ class manager(object):
 
 if __name__ == '__main__':
     import numpy
+    import matplotlib
     from matplotlib.nxutils import points_inside_poly
     from matplotlib.pyplot import figure, show
     m = manager()
