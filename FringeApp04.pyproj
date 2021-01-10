@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6a116b5b-15f4-4caa-9a4f-ef557e15e49b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>FringeApp04.py</StartupFile>
+    <StartupFile>FringeApp03.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,12 +22,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FringeApp04.py" />
+    <Compile Include="FringeApp03.py" />
     <Compile Include="fringeprocess.py" />
     <Compile Include="gauge_length.py" />
+    <Compile Include="load_cal_data.py" />
     <Compile Include="poly_lasso.py" />
     <Compile Include="refractiveindex.py" />
-    <Compile Include="setup.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
