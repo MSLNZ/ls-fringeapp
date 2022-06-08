@@ -26,8 +26,8 @@ import gauge_length
 import load_cal_data
 
 ObliquityCorrection = 1.00000013
-CalDataFileName = r"G:\Shared drives\MSL - Length\Length\EQUIPREG\XML Files\cal_data.xml"
-WorkingDir = r"G:\Shared drives\MSL - Length\Length\Hilger"
+CalDataFileName = r"I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
+WorkingDir = r"I:\MSL\Private\LENGTH\Hilger"
 
 
 """
