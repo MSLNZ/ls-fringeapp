@@ -8,7 +8,7 @@ def read_cal_wavelengths(caldata_fn, red_green=True):
     tree = et.parse(caldata_fn)
     caldata = tree.getroot()
     e = caldata.findall(
-        './/*[location="LASERLAB"][equiptype="Primary Laser Standard 633nm"]'
+        './/*[equipregid = "MSLE.L.031"][equiptype = "Primary Laser Standard 633nm"]'
     )
     if len(e) != 1:
         return None  # would be more pythonic to raise error
@@ -18,7 +18,7 @@ def read_cal_wavelengths(caldata_fn, red_green=True):
         return red
     else:
         e = caldata.findall(
-            './/*[location="LASERLAB"][equiptype="Primary Laser Standard 532nm"]'
+            './/*[equipregid = "MSLE.L.110"][equiptype="Primary Laser Standard 532nm"]'
         )
         if len(e) != 1:
             return None  # would be more pythonic to raise error
