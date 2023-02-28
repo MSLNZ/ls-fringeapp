@@ -27,7 +27,7 @@ import load_cal_data
 
 ObliquityCorrection = 1.00000013
 CalDataFileName = r"G:\Shared drives\MSL - Length\Length\EQUIPREG\XML Files\cal_data.xml"
-WorkingDir = r"G:\Shared drives\MSL - Length\LENGTH\Hilger"
+WorkingDir = r"G:\Shared drives\MSL - Length\LENGTH\Jobs"
 
 
 """
@@ -556,8 +556,8 @@ class FringeManager:
                             f'{gauge["HG"]:f}',
                             f"{ffred * 100.0:.2f}",
                             f"{ffgreen * 100.0:.2f}",
-                            f"{self.red_wavelength:.7f}",
-                            f"{self.green_wavelength:.7f}",
+                            f"{self.red_wavelength:.11f}",
+                            f"{self.green_wavelength:.9f}",
                             f"{redindex:.9f}",
                             f"{greenindex:.9f}",
                             f'"{gauge["RedFileName"]:s}"',
