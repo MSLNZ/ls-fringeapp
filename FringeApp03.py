@@ -26,8 +26,8 @@ import gauge_length
 import load_cal_data
 
 ObliquityCorrection = 1.00000013
-CalDataFileName = r"G:\Shared drives\MSL - Length\Length\EQUIPREG\XML Files\cal_data.xml"
-WorkingDir = r"G:\Shared drives\MSL - Length\LENGTH\Jobs"
+CalDataFileName = r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
+WorkingDir = r"C:\Users\c.young\OneDrive - Callaghan Innovation\Jobs"
 
 
 """
@@ -274,7 +274,7 @@ class FringeManager:
         txt_name = filedialog.askopenfilename(
             parent=self.app_win,
             initialdir=WorkingDir,
-            title="Select text file written by excel",
+            title="Select text file written Gauge Block File Writer App",
             filetypes=my_filetypes,
         )
 
