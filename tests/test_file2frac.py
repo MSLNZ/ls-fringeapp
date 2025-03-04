@@ -6,7 +6,7 @@ put all corresponding cropped fringe images in /data
 from pathlib import Path
 import numpy as np
 from PIL import Image
-import fringeprocess as fp
+from fringe import fringe_process as fp
 
 TEST_DATA_DIR = Path(__file__).resolve().parent / 'data'
 

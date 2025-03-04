@@ -20,10 +20,10 @@ import matplotlib
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
 
-from poly_lasso import PolyLasso
-import fringeprocess
-import gauge_length
-import load_cal_data
+from .poly_lasso import PolyLasso
+from .fringe_process import array2frac
+from .load_cal_data import read_cal_wavelengths
+from .gauge_length import calcgaugelength, calcgaugelength_red_only
 
 ObliquityCorrection = 1.00000013
 CalDataFileName = r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
@@ -118,7 +118,7 @@ class FringeManager:
         self.canvas.draw_idle()
         self.canvas.widgetlock.release(self.lasso)
         del self.lasso
-        ffrac, drawdata = fringeprocess.array2frac(self.img_array, xygb, drawinfo=True)
+        ffrac, drawdata = array2frac(self.img_array, xygb, drawinfo=True)
         img_basename = os.path.basename(self.img_filename)
         self.ffrac[img_basename] = ffrac
         self.annotate_fig(drawdata)
@@ -391,7 +391,7 @@ class FringeManager:
                 ypos = ypos - 0.03
 
             "load wavelengths and display to user"
-            wavelengths = load_cal_data.read_cal_wavelengths(
+            wavelengths = read_cal_wavelengths(
                 CalDataFileName, self.red_green
             )
             print(self.red_green)
@@ -488,7 +488,7 @@ class FringeManager:
                     # print "Calculating in Metric System"
                 print(nomsize)
                 if self.red_green:
-                    rd, gd, bestindex, redindex, greenindex = gauge_length.calcgaugelength(
+                    rd, gd, bestindex, redindex, greenindex = calcgaugelength(
                         nomsize,
                         gauge["TRAir"],
                         gauge["TGAir"],
@@ -503,7 +503,7 @@ class FringeManager:
                         self.green_wavelength,
                     )
                 else:
-                    rd, redindex = gauge_length.calcgaugelength_red_only(
+                    rd, redindex = calcgaugelength_red_only(
                         nomsize,
                         gauge["TRAir"],
                         gauge["TR"],
@@ -589,7 +589,7 @@ class FringeManager:
             fid.close()
 
 
-if __name__ == "__main__":
+def show_gui():
 
     fig = figure(figsize=(8, 6), dpi=80)
     axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
