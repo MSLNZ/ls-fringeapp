@@ -20,17 +20,17 @@ def pytest_generate_tests(metafunc):
 
 
 def test_gaugelength_metric_red_green(row):
-    nominalsize_mm = np.float(row[0])
-    rtemp_c = np.float(row[15])
-    gtemp_c = np.float(row[16])
-    pressure_mb = np.float(row[17])
-    humidity_rh = np.float(row[19])
-    ffred = np.float(row[21])
-    ffgreen = np.float(row[22])
-    expcoeff = np.float(row[13])
+    nominalsize_mm = float(row[0])
+    rtemp_c = float(row[15])
+    gtemp_c = float(row[16])
+    pressure_mb = float(row[17])
+    humidity_rh = float(row[19])
+    ffred = float(row[21])
+    ffgreen = float(row[22])
+    expcoeff = float(row[13])
 
-    rd_exp = np.float(row[4])
-    gd_exp = np.float(row[5])
+    rd_exp = float(row[4])
+    gd_exp = float(row[5])
 
     # use same temperature for air and gauge
     rd_calc, gd_calc, bestindex, redindex, greenindex = gl.calcgaugelength(
@@ -54,13 +54,13 @@ def test_gaugelength_metric_red_green(row):
 
 
 def test_gaugelength_metric_red_only(row):
-    nominalsize_mm = np.float(row[0])
-    rtemp_c = np.float(row[15])
-    pressure_mb = np.float(row[17])
-    humidity_rh = np.float(row[19])
-    ffred = np.float(row[21])
-    expcoeff = np.float(row[13])
-    rd_exp = np.float(row[4])
+    nominalsize_mm = float(row[0])
+    rtemp_c = float(row[15])
+    pressure_mb = float(row[17])
+    humidity_rh = float(row[19])
+    ffred = float(row[21])
+    expcoeff = float(row[13])
+    rd_exp = float(row[4])
 
     # use same temperature for air and gauge
     rd_calc, redindex = gl.calcgaugelength_red_only(
@@ -81,13 +81,13 @@ def test_gaugelength_metric_red_only(row):
 def test_different_air_temp_red_only(row):
     # test different temperatures for air and gauge
     offset_temp = 0.1
-    nominalsize_mm = np.float(row[0])
-    rtemp_c = np.float(row[15])
-    pressure_mb = np.float(row[17])
-    humidity_rh = np.float(row[19])
-    ffred = np.float(row[21])
-    expcoeff = np.float(row[13])
-    rd_exp = np.float(row[4])
+    nominalsize_mm = float(row[0])
+    rtemp_c = float(row[15])
+    pressure_mb = float(row[17])
+    humidity_rh = float(row[19])
+    ffred = float(row[21])
+    expcoeff = float(row[13])
+    rd_exp = float(row[4])
     rtemp_air_c = rtemp_c + offset_temp
     rd_calc, redindex = gl.calcgaugelength_red_only(
         nominalsize_mm,
@@ -107,17 +107,17 @@ def test_different_air_temp_red_only(row):
 
 def test_different_air_temp(row):
     offset_temp = 0.1
-    nominalsize_mm = np.float(row[0])
-    rtemp_c = np.float(row[15])
-    gtemp_c = np.float(row[16])
-    pressure_mb = np.float(row[17])
-    humidity_rh = np.float(row[19])
-    ffred = np.float(row[21])
-    ffgreen = np.float(row[22])
-    expcoeff = np.float(row[13])
+    nominalsize_mm = float(row[0])
+    rtemp_c = float(row[15])
+    gtemp_c = float(row[16])
+    pressure_mb = float(row[17])
+    humidity_rh = float(row[19])
+    ffred = float(row[21])
+    ffgreen = float(row[22])
+    expcoeff = float(row[13])
 
-    rd_exp = np.float(row[4])
-    gd_exp = np.float(row[5])
+    rd_exp = float(row[4])
+    gd_exp = float(row[5])
     rtemp_air_c = rtemp_c + offset_temp
 
     rd_calc, gd_calc, bestindex, redindex, greenindex = gl.calcgaugelength(

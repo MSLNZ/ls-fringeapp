@@ -31,7 +31,7 @@ def roipoly(image_array, cs, rs):
     # mask = nx.points_inside_poly(points, verts)
     p = Path(verts)
     mask = p.contains_points(points)
-    mask = mask.reshape(image_array.shape).astype(np.int)
+    mask = mask.reshape(image_array.shape).astype(int)
 
     return mask
 
@@ -185,14 +185,14 @@ def pkfind(s):
         yfft = np.fft.fft(y)
         # Positive frequencies only
         ypos = np.abs(yfft[0: (n // 2) + 1])  #find the magnitudes of each frequency
-        
-        # Find fundamental freq (num fringes per column) - it must be greater than 5 fringes per column 
+
+        # Find fundamental freq (num fringes per column) - it must be greater than 5 fringes per column
         ypos_trunc = ypos[5:]
         iymax = ypos_trunc.argmax()
 
 
         k0 = iymax+5
-        # Use components up to 5*f0  
+        # Use components up to 5*f0
         nharm = 5
         yfft[(nharm * k0 + 2): n - nharm * k0] = 0
         # Reconstruct time series from selected harmonics
@@ -229,7 +229,7 @@ def findpeaks2(y):
     see also notes in PythonNotes on alternative possibly faster ways to do this
     """
     # Invert y to find "peaks", convert to float
-    y = -y.astype(np.float)
+    y = -y.astype(float)
     thresh = y.max()/60   #This sets the intensity level (relative to the highest value in the column) that is used select peaks including on a given fringe
 
     y[y <= thresh] = np.nan
@@ -272,7 +272,7 @@ def findpeaks2(y):
             xstart = -2  # 2nd to last item in list
             xend = -1  # last item in list
 
-        xrang = np.arange(xstart, xend, dtype=np.int)
+        xrang = np.arange(xstart, xend, dtype=int)
         yrang = y[xrang]
         # %Flag "peaks" that are close to zero. or that do not have enough points
         if (sum(np.isnan(yrang)) != 0) or (len(xrang) < 5):
@@ -330,7 +330,7 @@ def findfringes2(y, bw, pklist):
     """
 
     n = len(pklist)
-    ny = len(y) 
+    ny = len(y)
     t = np.arange(ny) #generates an array [0,1,2,3...num of rows in image]
     y = matplotlib.mlab.detrend_linear(y)   #removes intensity gradient in the image (notibly only in the y direction)
 
@@ -340,12 +340,12 @@ def findfringes2(y, bw, pklist):
     # Returns an array of magnitudes (sampled at a frequency greater than the nyquist frequency i.e period must be less than (ny/2+1))
     ypos = np.abs(yfft[0: (ny // 2) + 1])
 
-    # %frequencies greater than at least 5 fringes in picture   
+    # %frequencies greater than at least 5 fringes in picture
     # POTENTIAL PROBLEM 1- If the fft of first column gets the Fundamental frequency wrong (due to a poor image) then the rest of this algorithm breaks
-    # POTENTIAL PROBLEM 2- The actual fringe fundamental frequency is less than 5 (due to user arranging the too few fringes), then the software needs to report this.  Otherwise the algortithm will crash. 
+    # POTENTIAL PROBLEM 2- The actual fringe fundamental frequency is less than 5 (due to user arranging the too few fringes), then the software needs to report this.  Otherwise the algortithm will crash.
     iymax = np.abs(ypos[4:]).argmax()
 
-    iymax = iymax + 4 
+    iymax = iymax + 4
 
     # %Fringe fundamental frequency
     f0 = (iymax - 0.0) / ny  #this is 1 over the number of pixels between fringes
@@ -403,11 +403,11 @@ def findfringes2(y, bw, pklist):
         #BUG if no peaks are found in a column the array operation below fail "peaks - peakpred[k]).min()"
         #need to decide what to do if no peaks are found in a column
 
-        # % Loop through fringes in a column, there will be at most nfringes but some column may have less if the 
+        # % Loop through fringes in a column, there will be at most nfringes but some column may have less if the
         # image quality is poor or the the column coincides with the edge of the gauge block
 
         for k in range(nfringes):
-            
+
             if peaks.size == 0: #CMY edit this column has no peaks detected
                 break
             mindist = np.abs(peaks - peakpred[k]).min() #find the minimum distance this fringe is from the estimated position
@@ -432,7 +432,7 @@ def findfringes2(y, bw, pklist):
 
     # sigma2 = (y2sum - np.dot(params.T, rhs)) / ny
     # A = np.linalg.inv(m)
-  
+
     slope = params[0]
     intercepts = params[1:]
 
@@ -545,8 +545,8 @@ def findfringes4e(s, frper, ci, ccen, bw, pklist):
             peaks = frstart
         else:
             peaks = pklist[col]
-        
-            
+
+
         for k in range(nfringes):
             if peaks.size == 0: #CMY edit this column has no peaks detected
                 break
