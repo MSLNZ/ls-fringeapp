@@ -1,9 +1,12 @@
+from pathlib import Path
 from fringe import load_cal_data
 
 import numpy as np
+import pytest
 
 caldata_fn = r'I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml'
 
+@pytest.mark.skipif(not Path(caldata_fn).exists(), reason="cal_data.xml not found")
 def test_load_cal_data():
     red, green = load_cal_data.read_cal_wavelengths(caldata_fn, red_green=True)
     assert red[0] == 'LENGTH/2018/1111'
