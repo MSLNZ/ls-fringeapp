@@ -9,23 +9,19 @@ requires-python = ">= 3.13"
 license = {file = "LICENSE"}
 readme = "README.md"
 dependencies = [
-    "pillow>=11.1.0",
-    "numpy>=2.2.3",
     "matplotlib>=3.10.1",
+    "numpy>=2.2.3",
+    "pillow>=11.1.0",
 ]
 
-[project.optional-dependencies]
-test = [
+[project.scripts]
+fringe-app = "fringe:app.show_gui"
+
+[dependency-groups]
+dev = [
     "pytest>=8.3.5",
     "pytest-cov>=6.0.0",
 ]
-dev = [
-    "mypy>=1.15.0",
-    "fringe[test]",
-]
-
-[project.gui-scripts]
-fringe-app = "fringe:app.show_gui"
 
 [tool.pytest.ini_options]
 addopts = [
@@ -35,36 +31,14 @@ addopts = [
   "--import-mode=importlib",
 ]
 
-# [tool.mypy]
-# strict = true
-# implicit_reexport = true
-# warn_unused_ignores = true
-
-# [tool.ruff]
-# line-length = 120
-# exclude = [
-#   ".git",
-#   ".mypy_cache",
-#   ".pytest_cache",
-#   ".ruff_cache",
-#   ".venv",
-#   "build",
-#   "dist",
-#   "venv",
-# ]
-
-# [tool.ruff.lint]
-# select = ["ALL"]
-
 [tool.coverage.run]
 branch = true
 data_file = ".coverage_html/.coverage"
 
 [tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
+omit = [
+  "app.py",
+  "poly_lasso.py",
 ]
 
 [tool.coverage.html]

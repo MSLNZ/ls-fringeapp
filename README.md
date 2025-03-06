@@ -3,7 +3,7 @@ for processing gauge block interferograms
 
 ## Input and output file formats
 
-This program takes as input a comma separated text file where each 
+This program takes as input a comma separated text file where each
 line represents the data on one gauge wring.
 
 This should have no headers, with  the following columns
@@ -50,10 +50,10 @@ If only red images have been taken
         ("HR", float),
         ("RedFileName", (str, 256)),
     ]
- ```   
- It produces a comma separated text file of gauge block measurements 
+ ```
+ It produces a comma separated text file of gauge block measurements
  where each row represent one gauge block measurement
- 
+
  For red and green images
  ```
     f'{gauge["NominalSize"]:f}',
@@ -86,7 +86,7 @@ If only red images have been taken
     f"{greenindex:.8f}"
     f'"{gauge["RedFileName"]:s}"',
     f'"{gauge["GreenFileName"]:s}"',
- ```   
+ ```
  For red only images
  ```
     f'{gauge["NominalSize"]:f}',
@@ -106,13 +106,27 @@ If only red images have been taken
     f"{self.red_wavelength:.7f}",
     f"{redindex:.8f}",
     f'"{gauge["RedFileName"]:s}"',
-  ``` 
+  ```
   The red and green wavelength values are red from "I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml"
-    
+
  ## Operation
- 
- Left- click on the top left, bottom left and bottom right corners of the 
+
+ Left- click on the top left, bottom left and bottom right corners of the
  gauge block. (In that order) Right click to finish and start fringe calculation.
- 
- More details to follow.
- 
+
+## Developers Guide
+
+It is recommended to use [uv](https://docs.astral.sh/uv/) to help manage this project. It can be installed by running
+```
+winget install --exact --id astral-sh.uv
+```
+_(You must restart your terminal so that the `uv` command becomes available in your terminal.)_
+
+You can then run the tests
+```
+uv run pytest
+```
+or debug the fringe application (it is automatically installed in editable mode in the virtual environment)
+```
+uv run fringe-app
+```
