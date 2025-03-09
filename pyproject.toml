@@ -24,6 +24,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+cache_dir = ".cache/pytest"
 addopts = [
   "--cov=src",
   "--cov-report=html",
@@ -33,7 +34,7 @@ addopts = [
 
 [tool.coverage.run]
 branch = true
-data_file = ".coverage_html/.coverage"
+data_file = ".cache/coverage/.coverage"
 
 [tool.coverage.report]
 omit = [
@@ -42,5 +43,5 @@ omit = [
 ]
 
 [tool.coverage.html]
-directory = ".coverage_html"
+directory = ".cache/coverage"
 title = "FringeApp coverage report"
