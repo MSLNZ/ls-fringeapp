@@ -4,7 +4,7 @@ from fringe import load_cal_data
 import numpy as np
 import pytest
 
-caldata_fn = r'I:\MSL\Private\LENGTH\EQUIPREG\cal_data.xml'
+caldata_fn = 'L:/EQUIPREG/XML Files/cal_data.xml'
 
 @pytest.mark.skipif(not Path(caldata_fn).exists(), reason="cal_data.xml not found")
 def test_load_cal_data():

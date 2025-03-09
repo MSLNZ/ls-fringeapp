@@ -26,8 +26,8 @@ from .load_cal_data import read_cal_wavelengths
 from .gauge_length import calcgaugelength, calcgaugelength_red_only
 
 ObliquityCorrection = 1.00000013
-CalDataFileName = r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
-WorkingDir = r"C:\Users\c.young\OneDrive - Callaghan Innovation\Jobs"
+CalDataFileName = "L:/EQUIPREG/XML Files/cal_data.xml"
+WorkingDir = "L:/Jobs"
 
 
 """
