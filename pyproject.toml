@@ -1,0 +1,21 @@
+[project]
+name = "ls-fringeapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "lxml>=6.0.2",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.4",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "line-profiler>=4.2.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "pytest-qt>=4.4.0",
+    "ruff>=0.9.1",
+]
