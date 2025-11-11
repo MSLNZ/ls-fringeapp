@@ -18,13 +18,15 @@ from PIL import Image
 import numpy as np
 import matplotlib
 
+matplotlib.use("qtagg")
+
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
 
 from poly_lasso import PolyLasso
 import fringeprocess
 import gauge_length
-import load_cal_data
+
 import load_equipment_data
 
 ObliquityCorrection = 1.00000013
