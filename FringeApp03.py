@@ -5,6 +5,7 @@ App to process whole files of images
 requires python 3.5 for f strings
 
 """
+
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -24,9 +25,12 @@ from poly_lasso import PolyLasso
 import fringeprocess
 import gauge_length
 import load_cal_data
+import load_equipment_data
 
 ObliquityCorrection = 1.00000013
-CalDataFileName = r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
+CalDataFileName = (
+    r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
+)
 WorkingDir = r"C:\Users\c.young\OneDrive - Callaghan Innovation\Jobs"
 
 
@@ -110,7 +114,7 @@ class FringeManager:
         self.fig_menu = menu
 
     def process_image(self, _ax, _lasso_line, verts):
-        """ called after polylasso finished, processes image and prints ff"""
+        """called after polylasso finished, processes image and prints ff"""
         # print verts
         print("process image")
         self.lasso_active = False
@@ -162,8 +166,8 @@ class FringeManager:
 
     def keypress(self, event):
         """maps a key to opening new file
-           careful in choice of keys as event is also passed to toolbar
-           will replace this with/ add interface buttons
+        careful in choice of keys as event is also passed to toolbar
+        will replace this with/ add interface buttons
         """
         print(event.key)
 
@@ -391,29 +395,16 @@ class FringeManager:
                 ypos = ypos - 0.03
 
             "load wavelengths and display to user"
-            wavelengths = load_cal_data.read_cal_wavelengths(
-                CalDataFileName, self.red_green
-            )
+            wavelengths = load_equipment_data.laser_wavelengths
             print(self.red_green)
             print(wavelengths)
-            if wavelengths:
+            if wavelengths["red"]:
                 message = "Wavelengths Used\n"
+                self.red_wavelength = wavelengths["red"]
+                message += f"red vacuum wavelength = {self.red_wavelength} nm\n"
                 if self.red_green:
-                    self.red_wavelength = wavelengths[0][1]
-
-                    message += "{}   vacuum wavelength = {}\n".format(
-                        wavelengths[0][0], wavelengths[0][1]
-                    )
-                    self.green_wavelength = wavelengths[1][1]
-                    message += "{}   vacuum wavelength = {}\n".format(
-                        wavelengths[1][0], wavelengths[1][1]
-                    )
-                else:
-                    self.red_wavelength = wavelengths[1]
-                    message += "{}   vacuum wavelength = {}\n".format(
-                        wavelengths[0], wavelengths[1]
-                    )
-
+                    self.green_wavelength = wavelengths["green"]
+                    message += f"green vacuum wavelength = {self.green_wavelength} nm\n"
             else:
                 message = "Problem loading vacuumn wavelengths"
             messagebox.showinfo("Vacuum Wavelengths", message)
@@ -456,7 +447,6 @@ class FringeManager:
         self.fftext.set_text(fftitle)
 
     def calculate_output(self, output_all_orders=False):
-
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
 
@@ -488,19 +478,21 @@ class FringeManager:
                     # print "Calculating in Metric System"
                 print(nomsize)
                 if self.red_green:
-                    rd, gd, bestindex, redindex, greenindex = gauge_length.calcgaugelength(
-                        nomsize,
-                        gauge["TRAir"],
-                        gauge["TGAir"],
-                        gauge["TR"],
-                        gauge["TG"],
-                        gauge["PR"],
-                        gauge["HR"],
-                        ffred * 100,
-                        ffgreen * 100,
-                        gauge["ExpCoeff"],
-                        self.red_wavelength,
-                        self.green_wavelength,
+                    rd, gd, bestindex, redindex, greenindex = (
+                        gauge_length.calcgaugelength(
+                            nomsize,
+                            gauge["TRAir"],
+                            gauge["TGAir"],
+                            gauge["TR"],
+                            gauge["TG"],
+                            gauge["PR"],
+                            gauge["HR"],
+                            ffred * 100,
+                            ffgreen * 100,
+                            gauge["ExpCoeff"],
+                            self.red_wavelength,
+                            self.green_wavelength,
+                        )
                     )
                 else:
                     rd, redindex = gauge_length.calcgaugelength_red_only(
@@ -532,28 +524,28 @@ class FringeManager:
                         diffdev = rd[idev] - gd[idev]
                         meandev = (rd[idev] + gd[idev]) / 2.0
                         outtext = (
-                            f'{gauge["NominalSize"]:f}',
+                            f"{gauge['NominalSize']:f}",
                             f'"{gauge["SerialNo"]:s}"',
                             f"{meandev:.1f}",
                             f"{diffdev:.1f}",
                             f"{rd[idev]:.1f}",
                             f"{gd[idev]:.1f}",
                             f"{bestindex:d}",
-                            f'{gauge["RedDateTime"]:f}',
-                            f'{gauge["GreenDateTime"]:f}',
+                            f"{gauge['RedDateTime']:f}",
+                            f"{gauge['GreenDateTime']:f}",
                             f'"{gauge["SetId"]:s}"',
-                            f'{gauge["PlatenId"]:d}',
-                            f'{gauge["Side"]:d}',
-                            f'{gauge["ExpCoeff"]:e}',
+                            f"{gauge['PlatenId']:d}",
+                            f"{gauge['Side']:d}",
+                            f"{gauge['ExpCoeff']:e}",
                             f'"{gauge["Units"]:s}"',
-                            f'{gauge["TRAir"]:f}',
-                            f'{gauge["TGAir"]:f}',
-                            f'{gauge["TR"]:f}',
-                            f'{gauge["TG"]:f}',
-                            f'{gauge["PR"]:f}',
-                            f'{gauge["PG"]:f}',
-                            f'{gauge["HR"]:f}',
-                            f'{gauge["HG"]:f}',
+                            f"{gauge['TRAir']:f}",
+                            f"{gauge['TGAir']:f}",
+                            f"{gauge['TR']:f}",
+                            f"{gauge['TG']:f}",
+                            f"{gauge['PR']:f}",
+                            f"{gauge['PG']:f}",
+                            f"{gauge['HR']:f}",
+                            f"{gauge['HG']:f}",
                             f"{ffred * 100.0:.2f}",
                             f"{ffgreen * 100.0:.2f}",
                             f"{self.red_wavelength:.11f}",
@@ -565,19 +557,19 @@ class FringeManager:
                         )
                     else:
                         outtext = (
-                            f'{gauge["NominalSize"]:f}',
+                            f"{gauge['NominalSize']:f}",
                             f'"{gauge["SerialNo"]:s}"',
                             f"{rd:.1f}",
-                            f'{gauge["RedDateTime"]:f}',
+                            f"{gauge['RedDateTime']:f}",
                             f'"{gauge["SetId"]:s}"',
-                            f'{gauge["PlatenId"]:d}',
-                            f'{gauge["Side"]:d}',
-                            f'{gauge["ExpCoeff"]:e}',
+                            f"{gauge['PlatenId']:d}",
+                            f"{gauge['Side']:d}",
+                            f"{gauge['ExpCoeff']:e}",
                             f'"{gauge["Units"]:s}"',
-                            f'{gauge["TRAir"]:f}',
-                            f'{gauge["TR"]:f}',
-                            f'{gauge["PR"]:f}',
-                            f'{gauge["HR"]:f}',
+                            f"{gauge['TRAir']:f}",
+                            f"{gauge['TR']:f}",
+                            f"{gauge['PR']:f}",
+                            f"{gauge['HR']:f}",
                             f"{ffred * 100.0:.2f}",
                             f"{self.red_wavelength:.7f}",
                             f"{redindex:.9f}",
@@ -590,7 +582,6 @@ class FringeManager:
 
 
 if __name__ == "__main__":
-
     fig = figure(figsize=(8, 6), dpi=80)
     axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
     fig_menu = figure(figsize=(8, 6), dpi=80)
