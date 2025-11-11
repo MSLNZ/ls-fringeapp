@@ -18,7 +18,6 @@ from PIL import Image
 import numpy as np
 import matplotlib
 
-matplotlib.use("qtagg")
 
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
