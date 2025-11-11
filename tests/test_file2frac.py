@@ -35,8 +35,7 @@ def test_fringe_calc(row):
     xygb = row[2:8].astype(np.float)
     xygb = xygb.reshape((3, 2))
     ffrac_calc = fp.array2frac(img_array, xygb)
-    # would have expected we could get 1e-4 here, but not always
-    # algorithim must be slightly different
+
     # uncertainty analysis requires 0.4e-3 at 1 sigma,
     np.testing.assert_allclose(
         ffrac_calc,
