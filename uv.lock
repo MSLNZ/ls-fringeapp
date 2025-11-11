@@ -2,7 +2,8 @@ version = 1
 revision = 3
 requires-python = ">=3.9"
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
     "python_full_version < '3.10'",
 ]
@@ -139,56 +140,101 @@ wheels = [
 
 [[package]]
 name = "contourpy"
-version = "1.2.1"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
+resolution-markers = [
+    "python_full_version >= '3.12'",
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8d/9e/e4786569b319847ffd98a8326802d5cf8a5500860dbfc2df1f0f4883ed99/contourpy-1.2.1.tar.gz", hash = "sha256:4d8908b3bee1c889e547867ca4cdc54e5ab6be6d3e078556814a22457f49423c", size = 13457196, upload-time = "2024-04-02T20:41:48.458Z" }
+dependencies = [
+    { name = "numpy", marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/3b/632c003e1dfbc82d32c0466762f2d2cf139d26032626dc65944e38d0e5b9/contourpy-1.1.0.tar.gz", hash = "sha256:e53046c3863828d21d531cc3b53786e6580eb1ba02477e8681009b6aa0870b21", size = 13418968, upload-time = "2023-06-13T19:09:07.332Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/64/2a/e389ad2e209db9f9db59598fabd5f4b515eccabef4df71d07c0b77c1b2d7/contourpy-1.2.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:bd7c23df857d488f418439686d3b10ae2fbf9bc256cd045b37a8c16575ea1040", size = 260792, upload-time = "2024-04-02T20:34:58.885Z" },
-    { url = "https://files.pythonhosted.org/packages/d8/d5/f23beca650c8aab67e72f610d65817c68c306e6f6a124ca337fcec7d5d57/contourpy-1.2.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:5b9eb0ca724a241683c9685a484da9d35c872fd42756574a7cfbf58af26677fd", size = 244848, upload-time = "2024-04-02T20:35:04.591Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/72/66e920088a9bebbc2e356626a1763cabbd4e7199ce29e7f89818dc2757bf/contourpy-1.2.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4c75507d0a55378240f781599c30e7776674dbaf883a46d1c90f37e563453480", size = 300760, upload-time = "2024-04-02T20:35:09.893Z" },
-    { url = "https://files.pythonhosted.org/packages/73/a0/a6533b607e5ffce2e1780e94056da8ec034849136747f42e7232fa1a11e2/contourpy-1.2.1-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:11959f0ce4a6f7b76ec578576a0b61a28bdc0696194b6347ba3f1c53827178b9", size = 336330, upload-time = "2024-04-02T20:35:16.363Z" },
-    { url = "https://files.pythonhosted.org/packages/87/75/a57c116798f34b16154d61bf1d2c00968f2eed8ae9aebe0760f2e2776da2/contourpy-1.2.1-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:eb3315a8a236ee19b6df481fc5f997436e8ade24a9f03dfdc6bd490fea20c6da", size = 310178, upload-time = "2024-04-02T20:35:21.784Z" },
-    { url = "https://files.pythonhosted.org/packages/67/0f/6e5b4879594cd1cbb6a2754d9230937be444f404cf07c360c07a10b36aac/contourpy-1.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:39f3ecaf76cd98e802f094e0d4fbc6dc9c45a8d0c4d185f0f6c2234e14e5f75b", size = 305232, upload-time = "2024-04-02T20:35:26.982Z" },
-    { url = "https://files.pythonhosted.org/packages/d3/c3/05e085167bc4fe8f919d6812700fc7738cd6b07f5ac9e904d5ec5bf2cd7a/contourpy-1.2.1-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:94b34f32646ca0414237168d68a9157cb3889f06b096612afdd296003fdd32fd", size = 807382, upload-time = "2024-04-02T20:35:38.274Z" },
-    { url = "https://files.pythonhosted.org/packages/21/7f/a5ecf64f0bbb17d9a2b12bf934a2ccbcb35b53a289d41e450927c1eb2690/contourpy-1.2.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:457499c79fa84593f22454bbd27670227874cd2ff5d6c84e60575c8b50a69619", size = 831069, upload-time = "2024-04-02T20:35:49.445Z" },
-    { url = "https://files.pythonhosted.org/packages/8c/5e/f6ee233fa88b73156e7812f823ea7372a8161beb209a0812801383ffe737/contourpy-1.2.1-cp310-cp310-win32.whl", hash = "sha256:ac58bdee53cbeba2ecad824fa8159493f0bf3b8ea4e93feb06c9a465d6c87da8", size = 166724, upload-time = "2024-04-02T20:35:53.419Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/b2/27c7a0d46c7dceb9083272eb314bef1ed43e5280a4197719656f866b496d/contourpy-1.2.1-cp310-cp310-win_amd64.whl", hash = "sha256:9cffe0f850e89d7c0012a1fb8730f75edd4320a0a731ed0c183904fe6ecfc3a9", size = 187455, upload-time = "2024-04-02T20:35:57.495Z" },
-    { url = "https://files.pythonhosted.org/packages/33/0e/51ff72fac17e2500baf30b6b2a24be423a8d27e1625e5de99f585b852d74/contourpy-1.2.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:6022cecf8f44e36af10bd9118ca71f371078b4c168b6e0fab43d4a889985dbb5", size = 262121, upload-time = "2024-04-02T20:36:04.247Z" },
-    { url = "https://files.pythonhosted.org/packages/9f/6b/8a1ca4b81d426c104fe42b3cfad9488eaaef0a03fcf98eaecc22b628a013/contourpy-1.2.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:ef5adb9a3b1d0c645ff694f9bca7702ec2c70f4d734f9922ea34de02294fdf72", size = 245940, upload-time = "2024-04-02T20:36:09.253Z" },
-    { url = "https://files.pythonhosted.org/packages/98/72/ae1e8518a2fe75980598a2716e392c7642b70b6a5605fc925426007b0f49/contourpy-1.2.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6150ffa5c767bc6332df27157d95442c379b7dce3a38dff89c0f39b63275696f", size = 302068, upload-time = "2024-04-02T20:36:14.618Z" },
-    { url = "https://files.pythonhosted.org/packages/64/a0/59c5d9c5c2c687d255dfa0c2826008a544c0ba53b718ba253e7cd46cf2ad/contourpy-1.2.1-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4c863140fafc615c14a4bf4efd0f4425c02230eb8ef02784c9a156461e62c965", size = 336482, upload-time = "2024-04-02T20:36:25.383Z" },
-    { url = "https://files.pythonhosted.org/packages/38/78/912e4457d6dbb182780ad1ed26c875a3bc3f9aa678e42f766f7cc6683919/contourpy-1.2.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:00e5388f71c1a0610e6fe56b5c44ab7ba14165cdd6d695429c5cd94021e390b2", size = 311520, upload-time = "2024-04-02T20:36:30.225Z" },
-    { url = "https://files.pythonhosted.org/packages/ee/c0/9bd123d676eb61750e116a2cd915b06483fc406143cfc36c7f263f0f5368/contourpy-1.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d4492d82b3bc7fbb7e3610747b159869468079fe149ec5c4d771fa1f614a14df", size = 306008, upload-time = "2024-04-02T20:36:35.2Z" },
-    { url = "https://files.pythonhosted.org/packages/a6/fc/ba17428cda0d5226015c7c844fb0909cb38945dc9d6770634acfc3b96d6b/contourpy-1.2.1-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:49e70d111fee47284d9dd867c9bb9a7058a3c617274900780c43e38d90fe1205", size = 808551, upload-time = "2024-04-02T20:36:45.516Z" },
-    { url = "https://files.pythonhosted.org/packages/d1/0a/dc0c74a760665bd0548fc515cf2a83eb9235d72cfe88fd84f3a6fefc6052/contourpy-1.2.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:b59c0ffceff8d4d3996a45f2bb6f4c207f94684a96bf3d9728dbb77428dd8cb8", size = 831450, upload-time = "2024-04-02T20:36:57.06Z" },
-    { url = "https://files.pythonhosted.org/packages/f2/b0/88c7e96f5ecc6ae564c5043b25f789ebbd8d173ecb47d1080edbdb2f335e/contourpy-1.2.1-cp311-cp311-win32.whl", hash = "sha256:7b4182299f251060996af5249c286bae9361fa8c6a9cda5efc29fe8bfd6062ec", size = 167278, upload-time = "2024-04-02T20:37:00.655Z" },
-    { url = "https://files.pythonhosted.org/packages/d6/4f/76d0dd0bca417691918484c26c74dd9dd44fbf528bbfeb30d754886e2c54/contourpy-1.2.1-cp311-cp311-win_amd64.whl", hash = "sha256:2855c8b0b55958265e8b5888d6a615ba02883b225f2227461aa9127c578a4922", size = 188181, upload-time = "2024-04-02T20:37:05.146Z" },
-    { url = "https://files.pythonhosted.org/packages/6b/4c/62e2595cd71cfd802dd0436b6c29f6d9ced1ad9fb32899e770ff7aa9c81e/contourpy-1.2.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:62828cada4a2b850dbef89c81f5a33741898b305db244904de418cc957ff05dc", size = 263283, upload-time = "2024-04-02T20:37:09.389Z" },
-    { url = "https://files.pythonhosted.org/packages/51/03/36ecc6fd1d018336625ad91b91fd34cd9ba8da5d36f5e1167dfe3275070a/contourpy-1.2.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:309be79c0a354afff9ff7da4aaed7c3257e77edf6c1b448a779329431ee79d7e", size = 245311, upload-time = "2024-04-02T20:37:13.37Z" },
-    { url = "https://files.pythonhosted.org/packages/64/d8/6c6446db0a4f9e026656869a46b6d3740dddd4965e1933666b65f6efba3b/contourpy-1.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e785e0f2ef0d567099b9ff92cbfb958d71c2d5b9259981cd9bee81bd194c9a4", size = 285670, upload-time = "2024-04-02T20:37:17.891Z" },
-    { url = "https://files.pythonhosted.org/packages/ab/f7/dbef23f63777ca50517c5aa130c38abcb8b3f353e0adb41942ac9dd34995/contourpy-1.2.1-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1cac0a8f71a041aa587410424ad46dfa6a11f6149ceb219ce7dd48f6b02b87a7", size = 333947, upload-time = "2024-04-02T20:37:23.411Z" },
-    { url = "https://files.pythonhosted.org/packages/23/d3/a34f938dec3461af5bb42e76e330ae4547951036204b2cba948fe30b4bf7/contourpy-1.2.1-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:af3f4485884750dddd9c25cb7e3915d83c2db92488b38ccb77dd594eac84c4a0", size = 308709, upload-time = "2024-04-02T20:37:28.768Z" },
-    { url = "https://files.pythonhosted.org/packages/01/29/65d81d2546a2487d57e16b2b789bbc0279b081766a75587e60002f16a6b8/contourpy-1.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9ce6889abac9a42afd07a562c2d6d4b2b7134f83f18571d859b25624a331c90b", size = 309182, upload-time = "2024-04-02T20:37:33.551Z" },
-    { url = "https://files.pythonhosted.org/packages/85/f6/1aba852441f5961b8944413b1b9e6797bd32f173f4cee35873a8e2145c73/contourpy-1.2.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:a1eea9aecf761c661d096d39ed9026574de8adb2ae1c5bd7b33558af884fb2ce", size = 806353, upload-time = "2024-04-02T20:37:43.634Z" },
-    { url = "https://files.pythonhosted.org/packages/0a/b2/e51c4d13e79c5150d99e62ca1fc0a08bc550096663f077e04d7e832b42b7/contourpy-1.2.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:187fa1d4c6acc06adb0fae5544c59898ad781409e61a926ac7e84b8f276dcef4", size = 829368, upload-time = "2024-04-02T20:37:54.284Z" },
-    { url = "https://files.pythonhosted.org/packages/01/f8/65fafbc5374920cf6c842f415bb60de4c36c1c194eb45ca6b488ae012cef/contourpy-1.2.1-cp312-cp312-win32.whl", hash = "sha256:c2528d60e398c7c4c799d56f907664673a807635b857df18f7ae64d3e6ce2d9f", size = 167497, upload-time = "2024-04-02T20:37:57.986Z" },
-    { url = "https://files.pythonhosted.org/packages/78/38/a046bb0ebce6f530175d434e7364149e338ffe1069ee286ed8ba7f6481ee/contourpy-1.2.1-cp312-cp312-win_amd64.whl", hash = "sha256:1a07fc092a4088ee952ddae19a2b2a85757b923217b7eed584fdf25f53a6e7ce", size = 189901, upload-time = "2024-04-02T20:38:01.983Z" },
-    { url = "https://files.pythonhosted.org/packages/e9/1e/09f0fdf21d3a71e298cfbc1944eb1f74c1f025ca6193f6c75caa35e27b10/contourpy-1.2.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:bb6834cbd983b19f06908b45bfc2dad6ac9479ae04abe923a275b5f48f1a186b", size = 260993, upload-time = "2024-04-02T20:38:06.247Z" },
-    { url = "https://files.pythonhosted.org/packages/1e/f5/8a0e688c3a6098a358fa359da6a09a7b9afd8f3f6c9b83e9898c29e87b95/contourpy-1.2.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:1d59e739ab0e3520e62a26c60707cc3ab0365d2f8fecea74bfe4de72dc56388f", size = 244970, upload-time = "2024-04-02T20:38:10.204Z" },
-    { url = "https://files.pythonhosted.org/packages/61/0e/b0284ac009d9349ffa1f1e5a064ade6122b07c0a500f9a95cb16a9f970d3/contourpy-1.2.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bd3db01f59fdcbce5b22afad19e390260d6d0222f35a1023d9adc5690a889364", size = 300785, upload-time = "2024-04-02T20:38:15.649Z" },
-    { url = "https://files.pythonhosted.org/packages/64/a9/181ec22a3fdc9d14b590b738ed35715f35a2c25d1f2c0c7fbb282046ef24/contourpy-1.2.1-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:a12a813949e5066148712a0626895c26b2578874e4cc63160bb007e6df3436fe", size = 336922, upload-time = "2024-04-02T20:38:21.137Z" },
-    { url = "https://files.pythonhosted.org/packages/be/fd/62fa44a4db484acffaa21e2e0e931b0c6e5643aabfaeb8435bf65e0788eb/contourpy-1.2.1-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:fe0ccca550bb8e5abc22f530ec0466136379c01321fd94f30a22231e8a48d985", size = 310199, upload-time = "2024-04-02T20:38:26.255Z" },
-    { url = "https://files.pythonhosted.org/packages/31/a2/2f12e3a6e45935ff694654b710961b03310b0e1ec997ee9f416d3c873f87/contourpy-1.2.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e1d59258c3c67c865435d8fbeb35f8c59b8bef3d6f46c1f29f6123556af28445", size = 304993, upload-time = "2024-04-02T20:38:31.506Z" },
-    { url = "https://files.pythonhosted.org/packages/9b/f5/d6f4251760bffb3519e5304a0eda3f812738f7d6a62ee0e5df2155269228/contourpy-1.2.1-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:f32c38afb74bd98ce26de7cc74a67b40afb7b05aae7b42924ea990d51e4dac02", size = 806968, upload-time = "2024-04-02T20:38:41.623Z" },
-    { url = "https://files.pythonhosted.org/packages/60/1b/3d65f9bc0a7e4882429aba9bd96831b6fbac090e45c85f2e8b38df915945/contourpy-1.2.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:d31a63bc6e6d87f77d71e1abbd7387ab817a66733734883d1fc0021ed9bfa083", size = 831384, upload-time = "2024-04-02T20:38:52.28Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/89/b551535d7dd73136339e0ace8ce25111d3a2801bcf36b0bb038a72c328d3/contourpy-1.2.1-cp39-cp39-win32.whl", hash = "sha256:ddcb8581510311e13421b1f544403c16e901c4e8f09083c881fab2be80ee31ba", size = 166886, upload-time = "2024-04-02T20:38:56.935Z" },
-    { url = "https://files.pythonhosted.org/packages/62/5c/08e3a7a35762c8decb6be01c7ec1f4b5f85ef2e2fbb44af87e9caf25a879/contourpy-1.2.1-cp39-cp39-win_amd64.whl", hash = "sha256:10a37ae557aabf2509c79715cd20b62e4c7c28b8cd62dd7d99e5ed3ce28c3fd9", size = 182810, upload-time = "2024-04-02T20:39:00.228Z" },
-    { url = "https://files.pythonhosted.org/packages/8b/ca/2423074f8b1f9ef8d662c5ec36b630e8600bde882b7f41dd19937c51c570/contourpy-1.2.1-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:a31f94983fecbac95e58388210427d68cd30fe8a36927980fab9c20062645609", size = 259588, upload-time = "2024-04-02T20:39:04.565Z" },
-    { url = "https://files.pythonhosted.org/packages/a1/f4/d1d4d0d933b243669cfa9c0b7d043ae1c6ce35e6d3a40d38c32aabfc7406/contourpy-1.2.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef2b055471c0eb466033760a521efb9d8a32b99ab907fc8358481a1dd29e3bd3", size = 303337, upload-time = "2024-04-02T20:39:10.546Z" },
-    { url = "https://files.pythonhosted.org/packages/67/73/0e5bfa8e54d65e5e988ba91f40ff71aaf793e09d36a3f1e918006e98b356/contourpy-1.2.1-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:b33d2bc4f69caedcd0a275329eb2198f560b325605810895627be5d4b876bf7f", size = 186603, upload-time = "2024-04-02T20:39:14.525Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/41/674384fc46e8a45f4e170cadd1796cf9b7266a45c57df80db4a2dda12301/contourpy-1.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:89f06eff3ce2f4b3eb24c1055a26981bffe4e7264acd86f15b97e40530b794bc", size = 243586, upload-time = "2023-06-13T19:04:47.733Z" },
+    { url = "https://files.pythonhosted.org/packages/15/c4/aae3954fce0e22362cc55430d1a395bf0be5a22b40fce63edda9eb6ea339/contourpy-1.1.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:dffcc2ddec1782dd2f2ce1ef16f070861af4fb78c69862ce0aab801495dda6a3", size = 229374, upload-time = "2023-06-13T19:04:51.732Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/1f/b0942d6f124da8c3e944f755b1ba536621eb38d858d1a164c3192ee2c208/contourpy-1.1.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:25ae46595e22f93592d39a7eac3d638cda552c3e1160255258b695f7b58e5655", size = 283881, upload-time = "2023-06-13T19:04:55.411Z" },
+    { url = "https://files.pythonhosted.org/packages/24/4a/28c39911ae83f3fce3aab4134d29e5460209b36f36aaac9753dd994f468f/contourpy-1.1.0-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:17cfaf5ec9862bc93af1ec1f302457371c34e688fbd381f4035a06cd47324f48", size = 319643, upload-time = "2023-06-13T19:05:00.447Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/d8/c88ede6ab07b5d4a3f40a2ba663fcf619d19da7d1c5ce188f37bd4e592b6/contourpy-1.1.0-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:18a64814ae7bce73925131381603fff0116e2df25230dfc80d6d690aa6e20b37", size = 294001, upload-time = "2023-06-13T19:05:04.177Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/55/02c6d24804592b862b38a85c9b3283edc245081390a520ccd11697b6b24f/contourpy-1.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:90c81f22b4f572f8a2110b0b741bb64e5a6427e0a198b2cdc1fbaf85f352a3aa", size = 300711, upload-time = "2023-06-13T19:05:07.599Z" },
+    { url = "https://files.pythonhosted.org/packages/42/99/144a55b0de26710116438716e908e553eb932f927743927181d8d03441f6/contourpy-1.1.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:53cc3a40635abedbec7f1bde60f8c189c49e84ac180c665f2cd7c162cc454baa", size = 817512, upload-time = "2023-06-13T19:05:14.974Z" },
+    { url = "https://files.pythonhosted.org/packages/bb/94/dbfa5c1aaf816f213698c4abdd67f3c94114f7c1deac828c0735f2041fef/contourpy-1.1.0-cp310-cp310-win32.whl", hash = "sha256:9b2dd2ca3ac561aceef4c7c13ba654aaa404cf885b187427760d7f7d4c57cff8", size = 398598, upload-time = "2023-09-15T09:46:04.844Z" },
+    { url = "https://files.pythonhosted.org/packages/94/0a/5eb57dd395fade977786b2d2c98c2bee8234358794be44422fe58a719d42/contourpy-1.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:1f795597073b09d631782e7245016a4323cf1cf0b4e06eef7ea6627e06a37ff2", size = 470386, upload-time = "2023-06-13T19:05:20.248Z" },
+    { url = "https://files.pythonhosted.org/packages/92/4d/fe7a7098d98a8889252105193f5e869532f9dc37e39d917a82d2b0b874a1/contourpy-1.1.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:0b7b04ed0961647691cfe5d82115dd072af7ce8846d31a5fac6c142dcce8b882", size = 243543, upload-time = "2023-06-13T19:05:24.002Z" },
+    { url = "https://files.pythonhosted.org/packages/88/e3/696e96ee197b1f60242d12b215332af9fc1961c81990c8b5630b89b34ce6/contourpy-1.1.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:27bc79200c742f9746d7dd51a734ee326a292d77e7d94c8af6e08d1e6c15d545", size = 229322, upload-time = "2023-06-13T19:05:27.293Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/dc/c1344ecb08ceb2724e058f8f5c1546fb4e4734fdc5866e2daa8dc495193b/contourpy-1.1.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:052cc634bf903c604ef1a00a5aa093c54f81a2612faedaa43295809ffdde885e", size = 283961, upload-time = "2023-06-13T19:05:30.516Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/d2/9a50ca9e71aa8f6d4d2115a1c3da205bf688dad43229e8ff3043767c7ce4/contourpy-1.1.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9382a1c0bc46230fb881c36229bfa23d8c303b889b788b939365578d762b5c18", size = 319739, upload-time = "2023-06-13T19:05:34.67Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/50/2caa9aeffff75acf9f9115ce154b9d103fc0fad5f5585c7cb8fc707059fc/contourpy-1.1.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e5cec36c5090e75a9ac9dbd0ff4a8cf7cecd60f1b6dc23a374c7d980a1cd710e", size = 294115, upload-time = "2023-06-13T19:05:38.645Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/23/8d968922459b1c8a2c6ffca28fac00324b06b3a0633be2a39b0b1c3f84ab/contourpy-1.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1f0cbd657e9bde94cd0e33aa7df94fb73c1ab7799378d3b3f902eb8eb2e04a3a", size = 300408, upload-time = "2023-06-13T19:05:43.232Z" },
+    { url = "https://files.pythonhosted.org/packages/80/4a/884f93efc62c8709354f6553063e87d9a29b080944d994af2098ad6fafb3/contourpy-1.1.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:181cbace49874f4358e2929aaf7ba84006acb76694102e88dd15af861996c16e", size = 817444, upload-time = "2023-06-13T19:05:50.657Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/d7/f3eb5143a928a56c4e7ffb89c4e8b1432473813f13df3b407210f346bd9f/contourpy-1.1.0-cp311-cp311-win32.whl", hash = "sha256:edb989d31065b1acef3828a3688f88b2abb799a7db891c9e282df5ec7e46221b", size = 400646, upload-time = "2023-09-15T09:46:09.742Z" },
+    { url = "https://files.pythonhosted.org/packages/16/09/989b982322439faa4bafffcd669e6f942b38fee897c2664c987bcd091dec/contourpy-1.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:fb3b7d9e6243bfa1efb93ccfe64ec610d85cfe5aec2c25f97fbbd2e58b531256", size = 470898, upload-time = "2023-06-13T19:05:55.805Z" },
+    { url = "https://files.pythonhosted.org/packages/44/b4/2bcb2f8afcb7a4652af0fbfa47d5f01ae599c4b35af6f89c1f33c9c56fa3/contourpy-1.1.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:bc00bb4225d57bff7ebb634646c0ee2a1298402ec10a5fe7af79df9a51c1bfd9", size = 243697, upload-time = "2023-06-13T19:06:33.725Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/26/192990fa4d10747d59c34d9eac2da0e045ae80aff9ae8a3e8d198146f11f/contourpy-1.1.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:189ceb1525eb0655ab8487a9a9c41f42a73ba52d6789754788d1883fb06b2d8a", size = 229617, upload-time = "2023-06-13T19:06:36.781Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/bd/4608b7b304353a47dbf2726c06d3e61ad1dbc452d934c15d8d6d6f4ba045/contourpy-1.1.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9f2931ed4741f98f74b410b16e5213f71dcccee67518970c42f64153ea9313b9", size = 284642, upload-time = "2023-06-13T19:06:40.838Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/83/9e5b42071761f5eb68da6f9d5250d59d81fc52ef80d0acd07b0a3098f23c/contourpy-1.1.0-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:30f511c05fab7f12e0b1b7730ebdc2ec8deedcfb505bc27eb570ff47c51a8f15", size = 320444, upload-time = "2023-06-13T19:06:44.403Z" },
+    { url = "https://files.pythonhosted.org/packages/30/af/afd3a9cf806d6364c11b13324d1e9609b1496d7a81d2f38e20089575acf4/contourpy-1.1.0-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:143dde50520a9f90e4a2703f367cf8ec96a73042b72e68fcd184e1279962eb6f", size = 294923, upload-time = "2023-06-13T19:06:48.911Z" },
+    { url = "https://files.pythonhosted.org/packages/38/6f/5382bdff9dda60cb17cef6dfa2bad3e6edacffd5c2243e282e851c63f721/contourpy-1.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e94bef2580e25b5fdb183bf98a2faa2adc5b638736b2c0a4da98691da641316a", size = 300358, upload-time = "2023-06-13T19:06:52.468Z" },
+    { url = "https://files.pythonhosted.org/packages/38/0a/a17e1db0648eab998cfcd8bdc9d1cd4ca3f8d9bfbd6868ac7ca869e5f290/contourpy-1.1.0-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:ed614aea8462735e7d70141374bd7650afd1c3f3cb0c2dbbcbe44e14331bf002", size = 817043, upload-time = "2023-06-13T19:06:59.488Z" },
+    { url = "https://files.pythonhosted.org/packages/67/f6/29c36cc656dc41fb3911762c1cd6244a95e63904b3d85bd596ba441250bd/contourpy-1.1.0-cp39-cp39-win32.whl", hash = "sha256:71551f9520f008b2950bef5f16b0e3587506ef4f23c734b71ffb7b89f8721999", size = 399087, upload-time = "2023-09-15T09:46:18.695Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/d6/80258c2759bd34abe267b5d3bc6300f7105aa70181b99d531283f7e7c79e/contourpy-1.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:438ba416d02f82b692e371858143970ed2eb6337d9cdbbede0d8ad9f3d7dd17d", size = 429401, upload-time = "2023-06-13T19:07:04.508Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/65/ea7fb46a70b76a6f8767e3ff9a68630b64f2813f99d488583b90d96eb19d/contourpy-1.1.0-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:2b836d22bd2c7bb2700348e4521b25e077255ebb6ab68e351ab5aa91ca27e027", size = 242952, upload-time = "2023-06-13T19:07:19.788Z" },
+    { url = "https://files.pythonhosted.org/packages/03/31/b03e9ea7c9ecb019e445484ca898372cebad399b07aa077c3145d0d061c1/contourpy-1.1.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:084eaa568400cfaf7179b847ac871582199b1b44d5699198e9602ecbbb5f6104", size = 286216, upload-time = "2023-06-13T19:07:23.062Z" },
+    { url = "https://files.pythonhosted.org/packages/91/2f/53150a2900f48e900088a1ce6ee40bfcff2141ff3832816d25b905738cb5/contourpy-1.1.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:911ff4fd53e26b019f898f32db0d4956c9d227d51338fb3b03ec72ff0084ee5f", size = 468967, upload-time = "2023-06-13T19:07:28.11Z" },
+]
+
+[[package]]
+name = "contourpy"
+version = "1.1.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version == '3.11.*'",
+    "python_full_version == '3.10.*'",
+    "python_full_version < '3.10'",
+]
+dependencies = [
+    { name = "numpy", marker = "python_full_version < '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b1/7d/087ee4295e7580d3f7eb8a8a4e0ec8c7847e60f34135248ccf831cf5bbfc/contourpy-1.1.1.tar.gz", hash = "sha256:96ba37c2e24b7212a77da85004c38e7c4d155d3e72a45eeaf22c1f03f607e8ab", size = 13433167, upload-time = "2023-09-16T10:25:49.501Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fb/7f/c44a51a83a093bf5c84e07dd1e3cfe9f68c47b6499bd05a9de0c6dbdc2bc/contourpy-1.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:46e24f5412c948d81736509377e255f6040e94216bf1a9b5ea1eaa9d29f6ec1b", size = 247207, upload-time = "2023-09-16T10:20:32.848Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/65/544d66da0716b20084874297ff7596704e435cf011512f8e576638e83db2/contourpy-1.1.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:0e48694d6a9c5a26ee85b10130c77a011a4fedf50a7279fa0bdaf44bafb4299d", size = 232428, upload-time = "2023-09-16T10:20:36.337Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/e6/697085cc34a294bd399548fd99562537a75408f113e3a815807e206246f0/contourpy-1.1.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a66045af6cf00e19d02191ab578a50cb93b2028c3eefed999793698e9ea768ae", size = 285304, upload-time = "2023-09-16T10:20:40.182Z" },
+    { url = "https://files.pythonhosted.org/packages/69/4b/52d0d2e85c59f00f6ddbd6fea819f267008c58ee7708da96d112a293e91c/contourpy-1.1.1-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4ebf42695f75ee1a952f98ce9775c873e4971732a87334b099dde90b6af6a916", size = 322655, upload-time = "2023-09-16T10:20:44.175Z" },
+    { url = "https://files.pythonhosted.org/packages/82/fc/3decc656a547a6d5d5b4249f81c72668a1f3259a62b2def2504120d38746/contourpy-1.1.1-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:f6aec19457617ef468ff091669cca01fa7ea557b12b59a7908b9474bb9674cf0", size = 296430, upload-time = "2023-09-16T10:20:47.767Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/6b/e4b0f8708f22dd7c321f87eadbb98708975e115ac6582eb46d1f32197ce6/contourpy-1.1.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:462c59914dc6d81e0b11f37e560b8a7c2dbab6aca4f38be31519d442d6cde1a1", size = 301672, upload-time = "2023-09-16T10:20:51.395Z" },
+    { url = "https://files.pythonhosted.org/packages/c3/87/201410522a756e605069078833d806147cad8532fdc164a96689d05c5afc/contourpy-1.1.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:6d0a8efc258659edc5299f9ef32d8d81de8b53b45d67bf4bfa3067f31366764d", size = 820145, upload-time = "2023-09-16T10:20:58.426Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/d9/42680a17d43edda04ab2b3f11125cf97b61bce5d3b52721a42960bf748bd/contourpy-1.1.1-cp310-cp310-win32.whl", hash = "sha256:d6ab42f223e58b7dac1bb0af32194a7b9311065583cc75ff59dcf301afd8a431", size = 399542, upload-time = "2023-09-16T10:21:02.719Z" },
+    { url = "https://files.pythonhosted.org/packages/55/14/0dc1884e3c04f9b073a47283f5d424926644250891db392a07c56f05e5c5/contourpy-1.1.1-cp310-cp310-win_amd64.whl", hash = "sha256:549174b0713d49871c6dee90a4b499d3f12f5e5f69641cd23c50a4542e2ca1eb", size = 477974, upload-time = "2023-09-16T10:21:07.565Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/4f/be28a39cd5e988b8d3c2cc642c2c7ffeeb28fe80a86df71b6d1e473c5038/contourpy-1.1.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:407d864db716a067cc696d61fa1ef6637fedf03606e8417fe2aeed20a061e6b2", size = 248613, upload-time = "2023-09-16T10:21:10.695Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/8e/656f8e7cd316aa68d9824744773e90dbd71f847429d10c82001e927480a2/contourpy-1.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:dfe80c017973e6a4c367e037cb31601044dd55e6bfacd57370674867d15a899b", size = 233603, upload-time = "2023-09-16T10:21:13.771Z" },
+    { url = "https://files.pythonhosted.org/packages/60/2a/4d4bd4541212ab98f3411f21bf58b0b246f333ae996e9f57e1acf12bcc45/contourpy-1.1.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e30aaf2b8a2bac57eb7e1650df1b3a4130e8d0c66fc2f861039d507a11760e1b", size = 287037, upload-time = "2023-09-16T10:21:17.622Z" },
+    { url = "https://files.pythonhosted.org/packages/24/67/8abf919443381585a4eee74069e311c736350549dae02d3d014fef93d50a/contourpy-1.1.1-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:3de23ca4f381c3770dee6d10ead6fff524d540c0f662e763ad1530bde5112532", size = 323274, upload-time = "2023-09-16T10:21:21.404Z" },
+    { url = "https://files.pythonhosted.org/packages/2a/e5/6da11329dd35a2f2e404a95e5374b5702de6ac52e776e8b87dd6ea4b29d0/contourpy-1.1.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:566f0e41df06dfef2431defcfaa155f0acfa1ca4acbf8fd80895b1e7e2ada40e", size = 297801, upload-time = "2023-09-16T10:21:25.155Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/f6/78f60fa0b6ae64971178e2542e8b3ad3ba5f4f379b918ab7b18038a3f897/contourpy-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b04c2f0adaf255bf756cf08ebef1be132d3c7a06fe6f9877d55640c5e60c72c5", size = 302821, upload-time = "2023-09-16T10:21:28.663Z" },
+    { url = "https://files.pythonhosted.org/packages/da/25/6062395a1c6a06f46a577da821318886b8b939453a098b9cd61671bb497b/contourpy-1.1.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d0c188ae66b772d9d61d43c6030500344c13e3f73a00d1dc241da896f379bb62", size = 820121, upload-time = "2023-09-16T10:21:36.251Z" },
+    { url = "https://files.pythonhosted.org/packages/41/5e/64e78b1e8682cbab10c13fc1a2c070d30acedb805ab2f42afbd3d88f7225/contourpy-1.1.1-cp311-cp311-win32.whl", hash = "sha256:0683e1ae20dc038075d92e0e0148f09ffcefab120e57f6b4c9c0f477ec171f33", size = 401590, upload-time = "2023-09-16T10:21:40.42Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/76/94bc17eb868f8c7397f8fdfdeae7661c1b9a35f3a7219da308596e8c252a/contourpy-1.1.1-cp311-cp311-win_amd64.whl", hash = "sha256:8636cd2fc5da0fb102a2504fa2c4bea3cbc149533b345d72cdf0e7a924decc45", size = 480534, upload-time = "2023-09-16T10:21:45.724Z" },
+    { url = "https://files.pythonhosted.org/packages/94/0f/07a5e26fec7176658f6aecffc615900ff1d303baa2b67bc37fd98ce67c87/contourpy-1.1.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:560f1d68a33e89c62da5da4077ba98137a5e4d3a271b29f2f195d0fba2adcb6a", size = 249799, upload-time = "2023-09-16T10:21:48.797Z" },
+    { url = "https://files.pythonhosted.org/packages/32/0b/d7baca3f60d3b3a77c9ba1307c7792befd3c1c775a26c649dca1bfa9b6ba/contourpy-1.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:24216552104ae8f3b34120ef84825400b16eb6133af2e27a190fdc13529f023e", size = 232739, upload-time = "2023-09-16T10:21:51.854Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/62/a385b4d4b5718e3a933de5791528f45f1f5b364d3c79172ad0309c832041/contourpy-1.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:56de98a2fb23025882a18b60c7f0ea2d2d70bbbcfcf878f9067234b1c4818442", size = 282171, upload-time = "2023-09-16T10:21:55.794Z" },
+    { url = "https://files.pythonhosted.org/packages/91/21/8c6819747fea53557f3963ca936035b3e8bed87d591f5278ad62516a059d/contourpy-1.1.1-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:07d6f11dfaf80a84c97f1a5ba50d129d9303c5b4206f776e94037332e298dda8", size = 321182, upload-time = "2023-09-16T10:21:59.576Z" },
+    { url = "https://files.pythonhosted.org/packages/22/29/d75da9002f9df09c755b12cf0357eb91b081c858e604f4e92b4b8bfc3c15/contourpy-1.1.1-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:f1eaac5257a8f8a047248d60e8f9315c6cff58f7803971170d952555ef6344a7", size = 295869, upload-time = "2023-09-16T10:22:03.248Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/47/4e7e66159f881c131e3b97d1cc5c0ea72be62bdd292c7f63fd13937d07f4/contourpy-1.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:19557fa407e70f20bfaba7d55b4d97b14f9480856c4fb65812e8a05fe1c6f9bf", size = 298756, upload-time = "2023-09-16T10:22:06.663Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/bb/bffc99bc3172942b5eda8027ca0cb80ddd336fcdd634d68adce957d37231/contourpy-1.1.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:081f3c0880712e40effc5f4c3b08feca6d064cb8cfbb372ca548105b86fd6c3d", size = 818441, upload-time = "2023-09-16T10:22:13.805Z" },
+    { url = "https://files.pythonhosted.org/packages/da/1b/904baf0aaaf6c6e2247801dcd1ff0d7bf84352839927d356b28ae804cbb0/contourpy-1.1.1-cp312-cp312-win32.whl", hash = "sha256:059c3d2a94b930f4dafe8105bcdc1b21de99b30b51b5bce74c753686de858cb6", size = 410294, upload-time = "2023-09-16T10:22:18.055Z" },
+    { url = "https://files.pythonhosted.org/packages/75/d4/c3b7a9a0d1f99b528e5a46266b0b9f13aad5a0dd1156d071418df314c427/contourpy-1.1.1-cp312-cp312-win_amd64.whl", hash = "sha256:f44d78b61740e4e8c71db1cf1fd56d9050a4747681c59ec1094750a658ceb970", size = 486678, upload-time = "2023-09-16T10:22:23.249Z" },
+    { url = "https://files.pythonhosted.org/packages/16/d9/8a15ff67fc27c65939e454512955e1b240ec75cd201d82e115b3b63ef76d/contourpy-1.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:ba42e3810999a0ddd0439e6e5dbf6d034055cdc72b7c5c839f37a7c274cb4eba", size = 247396, upload-time = "2023-09-16T10:23:06.429Z" },
+    { url = "https://files.pythonhosted.org/packages/09/fe/086e6847ee53da10ddf0b6c5e5f877ab43e68e355d2f4c85f67561ee8a57/contourpy-1.1.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:6c06e4c6e234fcc65435223c7b2a90f286b7f1b2733058bdf1345d218cc59e34", size = 232598, upload-time = "2023-09-16T10:23:11.009Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/9c/662925239e1185c6cf1da8c334e4c61bddcfa8e528f4b51083b613003170/contourpy-1.1.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ca6fab080484e419528e98624fb5c4282148b847e3602dc8dbe0cb0669469887", size = 286436, upload-time = "2023-09-16T10:23:14.624Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/7e/417cdf65da7140981079eda6a81ecd593ae0239bf8c738f2e2b3f6df8920/contourpy-1.1.1-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:93df44ab351119d14cd1e6b52a5063d3336f0754b72736cc63db59307dabb718", size = 322629, upload-time = "2023-09-16T10:23:18.203Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/22/ffd88aef74cc045698c5e5c400e8b7cd62311199c109245ac7827290df2c/contourpy-1.1.1-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:eafbef886566dc1047d7b3d4b14db0d5b7deb99638d8e1be4e23a7c7ac59ff0f", size = 297117, upload-time = "2023-09-16T10:23:21.586Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/c0/24c34c41a180f875419b536125799c61e2330b997d77a5a818a3bc3e08cd/contourpy-1.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:efe0fab26d598e1ec07d72cf03eaeeba8e42b4ecf6b9ccb5a356fde60ff08b85", size = 301855, upload-time = "2023-09-16T10:23:25.584Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/ec/f9877f6378a580cd683bd76c8a781dcd972e82965e0da951a739d3364677/contourpy-1.1.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:f08e469821a5e4751c97fcd34bcb586bc243c39c2e39321822060ba902eac49e", size = 820597, upload-time = "2023-09-16T10:23:33.133Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/3a/c41f4bc7122d3a06388acae1bed6f50a665c1031863ca42bd701094dcb1f/contourpy-1.1.1-cp39-cp39-win32.whl", hash = "sha256:bfc8a5e9238232a45ebc5cb3bfee71f1167064c8d382cadd6076f0d51cff1da0", size = 400031, upload-time = "2023-09-16T10:23:37.546Z" },
+    { url = "https://files.pythonhosted.org/packages/87/2b/9b49451f7412cc1a79198e94a771a4e52d65c479aae610b1161c0290ef2c/contourpy-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:c84fdf3da00c2827d634de4fcf17e3e067490c4aea82833625c4c8e6cdea0887", size = 435965, upload-time = "2023-09-16T10:23:42.512Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/12/643242c3d9b031ca19f9a440f63e568dd883a04711056ca5d607f9bda888/contourpy-1.1.1-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:a75cc163a5f4531a256f2c523bd80db509a49fc23721b36dd1ef2f60ff41c3cb", size = 246247, upload-time = "2023-09-16T10:23:58.204Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/37/95716fe235bf441422059e4afcd4b9b7c5821851c2aee992a06d1e9f831a/contourpy-1.1.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3b53d5769aa1f2d4ea407c65f2d1d08002952fac1d9e9d307aa2e1023554a163", size = 289029, upload-time = "2023-09-16T10:24:02.085Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/fd/14852c4a688031e0d8a20d9a1b60078d45507186ef17042093835be2f01a/contourpy-1.1.1-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:11b836b7dbfb74e049c302bbf74b4b8f6cb9d0b6ca1bf86cfa8ba144aedadd9c", size = 476043, upload-time = "2023-09-16T10:24:07.292Z" },
 ]
 
 [[package]]
@@ -315,7 +361,8 @@ name = "coverage"
 version = "7.11.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/32/e6/7c4006cf689ed7a4aa75dcf1f14acbc04e585714c220b5cc6d231096685a/coverage-7.11.2.tar.gz", hash = "sha256:ae43149b7732df15c3ca9879b310c48b71d08cd8a7ba77fda7f9108f78499e93", size = 814849, upload-time = "2025-11-08T20:26:33.011Z" }
@@ -474,7 +521,7 @@ name = "exceptiongroup"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0b/9f/a65090624ecf468cdca03533906e7c69ed7588582240cfe7cc9e770b50eb/exceptiongroup-1.3.0.tar.gz", hash = "sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88", size = 29749, upload-time = "2025-05-10T17:42:51.123Z" }
 wheels = [
@@ -596,7 +643,8 @@ name = "iniconfig"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz", hash = "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730", size = 20503, upload-time = "2025-10-18T21:55:43.219Z" }
@@ -636,7 +684,8 @@ name = "ipykernel"
 version = "7.1.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 dependencies = [
@@ -715,7 +764,8 @@ name = "ipython"
 version = "9.7.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
 ]
 dependencies = [
     { name = "colorama", marker = "python_full_version >= '3.11' and sys_platform == 'win32'" },
@@ -799,7 +849,8 @@ name = "jupyter-core"
 version = "5.9.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 dependencies = [
@@ -919,7 +970,8 @@ name = "kiwisolver"
 version = "1.4.9"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5c/3c/85844f1b0feb11ee581ac23fe5fce65cd049a200c1446708cc1b7f922875/kiwisolver-1.4.9.tar.gz", hash = "sha256:c3b22c26c6fd6811b0ae8363b95ca8ce4ea3c202d3d0975b2914310ceb1bcc4d", size = 97564, upload-time = "2025-08-10T21:27:49.279Z" }
@@ -1094,7 +1146,6 @@ dev = [
     { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "pytest", version = "9.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "pytest-cov" },
-    { name = "pytest-qt" },
     { name = "ruff" },
 ]
 
@@ -1102,7 +1153,7 @@ dev = [
 requires-dist = [
     { name = "lxml", specifier = ">=6.0.2" },
     { name = "matplotlib", specifier = ">=3.7.0" },
-    { name = "numpy", specifier = "<=1.20.3" },
+    { name = "numpy", specifier = "<=1.20" },
 ]
 
 [package.metadata.requires-dev]
@@ -1111,7 +1162,6 @@ dev = [
     { name = "line-profiler", specifier = ">=4.2.0" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
-    { name = "pytest-qt", specifier = ">=4.4.0" },
     { name = "ruff", specifier = ">=0.9.1" },
 ]
 
@@ -1260,7 +1310,8 @@ name = "matplotlib"
 version = "3.7.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "contourpy" },
+    { name = "contourpy", version = "1.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "contourpy", version = "1.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "cycler" },
     { name = "fonttools" },
     { name = "importlib-resources", marker = "python_full_version < '3.10'" },
@@ -1334,16 +1385,16 @@ wheels = [
 
 [[package]]
 name = "numpy"
-version = "1.20.3"
+version = "1.20.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f3/1f/fe9459e39335e7d0e372b5e5dcd60f4381d3d1b42f0b9c8222102ff29ded/numpy-1.20.3.zip", hash = "sha256:e55185e51b18d788e49fe8305fd73ef4470596b33fc2c1ceb304566b99c71a69", size = 7761912, upload-time = "2021-05-10T15:32:57.006Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/97/fd507e48f8c7cab73a9f002e52e15983b5636b4ac6cf69b83ae240324b44/numpy-1.20.0.zip", hash = "sha256:3d8233c03f116d068d5365fed4477f2947c7229582dad81e5953088989294cec", size = 7950047, upload-time = "2021-01-30T20:04:28.162Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/b7/918baf7c42621e479921f8bc6b274157f295edce79d467e5fdb8f53d1d5a/numpy-1.20.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:830b044f4e64a76ba71448fce6e604c0fc47a0e54d8f6467be23749ac2cbd2fb", size = 16079985, upload-time = "2021-05-10T15:26:53.224Z" },
-    { url = "https://files.pythonhosted.org/packages/ce/37/403bddc60f0d9bbfdd437c816c32f65abd044660dc34b8b8f365b4a52298/numpy-1.20.3-cp39-cp39-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:55b745fca0a5ab738647d0e4db099bd0a23279c32b31a783ad2ccea729e632df", size = 13316029, upload-time = "2021-05-10T15:28:13.782Z" },
-    { url = "https://files.pythonhosted.org/packages/cc/7f/0d414a6826b626c6fea98d98336e1f62cf9dd387c776da8dc83ce2a082b6/numpy-1.20.3-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:5d050e1e4bc9ddb8656d7b4f414557720ddcca23a5b88dd7cff65e847864c400", size = 15358906, upload-time = "2021-05-10T15:28:50.632Z" },
-    { url = "https://files.pythonhosted.org/packages/39/39/eddd9945f336041bb6e21c6aa867101a51ef6b285401fa67aa4e4d87dcdc/numpy-1.20.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a9c65473ebc342715cb2d7926ff1e202c26376c0dcaaee85a1fd4b8d8c1d3b2f", size = 12676013, upload-time = "2021-05-10T15:29:21.166Z" },
-    { url = "https://files.pythonhosted.org/packages/c5/90/d0159d9aed98fa9ac2536de354d7d3b0f0e80d57d606ee294efa70f1e015/numpy-1.20.3-cp39-cp39-win32.whl", hash = "sha256:16f221035e8bd19b9dc9a57159e38d2dd060b48e93e1d843c49cb370b0f415fd", size = 11364404, upload-time = "2021-05-10T15:29:48.934Z" },
-    { url = "https://files.pythonhosted.org/packages/9a/13/68830a20f816c62c6123dc2b11d8f39df6be33e01fc974b8694ece7ceb04/numpy-1.20.3-cp39-cp39-win_amd64.whl", hash = "sha256:6690080810f77485667bfbff4f69d717c3be25e5b11bb2073e76bb3f578d99b4", size = 13662737, upload-time = "2021-05-10T15:30:21.746Z" },
+    { url = "https://files.pythonhosted.org/packages/18/65/b7bc93a0096349f827ecb56f7b98370e704c8a1883c552505d8cf478f741/numpy-1.20.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:cb257bb0c0a3176c32782a63cfab2eace7eabfa2a3b2dfd85a13700617ccaf28", size = 16072823, upload-time = "2021-01-30T19:48:13.865Z" },
+    { url = "https://files.pythonhosted.org/packages/ef/48/de374754b58c6ac4b167537f3aabf3c1ba366d51ebce9c6f0d9e7cb3a58b/numpy-1.20.0-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:cf5d9dcbdbe523fa665c5309cce5f144648d94a7fddbf5a40f8e0d5c9f5b596d", size = 13308005, upload-time = "2021-01-30T19:49:00.85Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/7c/e27404f1650923650c418a961d9ccb22134926c88d61a09c3fdfe576bf82/numpy-1.20.0-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:93c2abea7bb69f47029b84ceac30ab46dfcfdb99b671ad850a333ff794a765e4", size = 15350790, upload-time = "2021-01-30T19:49:56.388Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/ce/3f26bb881ed3b6540923cb162e4ea2ba66ffd4cadc994c660ecb219ee520/numpy-1.20.0-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:0d28a54afcf46f1f9ebd163e49ad6b49087f22986fefd01a23ca0c1cdda25ca6", size = 12668925, upload-time = "2021-01-30T19:50:41.336Z" },
+    { url = "https://files.pythonhosted.org/packages/fc/9d/3845dab2da70d54f29973bc071117bd5b05b818621b5ebc384c4c3f2a1aa/numpy-1.20.0-cp39-cp39-win32.whl", hash = "sha256:d1bc331e1706fd1809a1bc8a31205329e5b30cf5ba50461c624da267e99f6ae6", size = 11356563, upload-time = "2021-01-30T19:51:21.479Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/bd/5779abe299afb562cdd434e8229a69a71802cc131ea6d811a8bf05937745/numpy-1.20.0-cp39-cp39-win_amd64.whl", hash = "sha256:e3db646af9f6a145f0c57202f4b55d4a33f975e395e78fb7b394644c17c1a3a6", size = 13654483, upload-time = "2021-01-30T19:52:09.282Z" },
 ]
 
 [[package]]
@@ -1497,7 +1548,8 @@ name = "pillow"
 version = "12.0.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5a/b0/cace85a1b0c9775a9f8f5d5423c8261c858760e2466c79b2dd184638b056/pillow-12.0.0.tar.gz", hash = "sha256:87d4f8125c9988bfbed67af47dd7a953e2fc7b0cc1e7800ec6d2080d490bb353", size = 47008828, upload-time = "2025-10-15T18:24:14.008Z" }
@@ -1611,7 +1663,8 @@ name = "platformdirs"
 version = "4.5.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/61/33/9611380c2bdb1225fdef633e2a9610622310fed35ab11dac9620972ee088/platformdirs-4.5.0.tar.gz", hash = "sha256:70ddccdd7c99fc5942e9fc25636a8b34d04c24b335100223152c2803e4063312", size = 21632, upload-time = "2025-10-08T17:44:48.791Z" }
@@ -1737,7 +1790,8 @@ name = "pytest"
 version = "9.0.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version == '3.10.*'",
 ]
 dependencies = [
@@ -1768,21 +1822,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/f7/c933acc76f5208b3b00089573cf6a2bc26dc80a8aece8f52bb7d6b1855ca/pytest_cov-7.0.0.tar.gz", hash = "sha256:33c97eda2e049a0c5298e91f519302a1334c26ac65c1a483d6206fd458361af1", size = 54328, upload-time = "2025-09-09T10:57:02.113Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ee/49/1377b49de7d0c1ce41292161ea0f721913fa8722c19fb9c1e3aa0367eecb/pytest_cov-7.0.0-py3-none-any.whl", hash = "sha256:3b8e9558b16cc1479da72058bdecf8073661c7f57f7d3c5f22a1c23507f2d861", size = 22424, upload-time = "2025-09-09T10:57:00.695Z" },
-]
-
-[[package]]
-name = "pytest-qt"
-version = "4.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pluggy" },
-    { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
-    { name = "pytest", version = "9.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d3/61/8bdec02663c18bf5016709b909411dce04a868710477dc9b9844ffcf8dd2/pytest_qt-4.5.0.tar.gz", hash = "sha256:51620e01c488f065d2036425cbc1cbcf8a6972295105fd285321eb47e66a319f", size = 128702, upload-time = "2025-07-01T17:24:39.889Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/cc/d0/8339b888ad64a3d4e508fed8245a402b503846e1972c10ad60955883dcbb/pytest_qt-4.5.0-py3-none-any.whl", hash = "sha256:ed21ea9b861247f7d18090a26bfbda8fb51d7a8a7b6f776157426ff2ccf26eff", size = 37214, upload-time = "2025-07-01T17:24:38.226Z" },
 ]
 
 [[package]]

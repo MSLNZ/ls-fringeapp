@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 dependencies = [
     "lxml>=6.0.2",
     "matplotlib>=3.7.0",
-    "numpy<=1.20.3",
+    "numpy<=1.20",
 ]
 
 [dependency-groups]
@@ -16,6 +16,5 @@ dev = [
     "line-profiler>=4.2.0",
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
-    "pytest-qt>=4.4.0",
     "ruff>=0.9.1",
 ]
