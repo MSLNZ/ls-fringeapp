@@ -6,17 +6,19 @@ requires python 3.5 for f strings
 
 """
 
+from pathlib import Path, PureWindowsPath
+
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
-import os
-import os.path
 import datetime
 import shelve
 
 from PIL import Image
 import numpy as np
 import matplotlib
+
+matplotlib.use("tkagg")
 
 
 from matplotlib.pyplot import figure, show
@@ -28,6 +30,7 @@ import gauge_length
 
 import load_equipment_data
 
+USE_GREEN = True
 ObliquityCorrection = 1.00000013
 CalDataFileName = (
     r"C:\Users\c.young\OneDrive - Callaghan Innovation\EQUIPREG\XML Files\cal_data.xml"
@@ -90,6 +93,7 @@ class FringeManager:
 
     def __init__(self, ax, menu):
         self.app_win = tk.Tk()
+        self.app_win.withdraw()
         self.axes = ax
         self.figure = ax.figure
         self.canvas = ax.figure.canvas
@@ -110,8 +114,8 @@ class FringeManager:
         self.ff_text_dict = {}
         self.gn_text_dict = {}
         self.shelf_filename = ""
-        self.red_green = True
-
+        self.red_green = USE_GREEN
+        self.check_wavelengths()
         self.fig_menu = menu
 
     def process_image(self, _ax, _lasso_line, verts):
@@ -124,7 +128,7 @@ class FringeManager:
         self.canvas.widgetlock.release(self.lasso)
         del self.lasso
         ffrac, drawdata = fringeprocess.array2frac(self.img_array, xygb, drawinfo=True)
-        img_basename = os.path.basename(self.img_filename)
+        img_basename = self.img_filename.name
         self.ffrac[img_basename] = ffrac
         self.annotate_fig(drawdata)
         self.ff_text_dict[img_basename].set_text("%6.3f" % ffrac)
@@ -142,14 +146,12 @@ class FringeManager:
         timestr = datetime.datetime.now().isoformat(" ")
 
         text = text + "\t" + timestr + "\t" + notes
-        logfile = open(
-            os.path.join(os.path.dirname(self.img_filename), "fflog.txt"), "a"
-        )
+        logfile = open(self.img_filename.with_name("fflog.txt"), "a")
         logfile.write(text + "\n")
         logfile.close()
         # also shelve ffrac, drawdata, timestr, notes with img_filename as key
 
-        db = shelve.open(self.shelf_filename)
+        db = shelve.open(self.shelf_filename.as_posix())
         db[img_basename] = [ffrac, drawdata, timestr, notes]
         db.close()
 
@@ -225,9 +227,8 @@ class FringeManager:
         reload image without annotation
         delete from shelf file and reload
         """
-        shelfnm = os.path.join(os.path.dirname(self.img_filename), "info.shf")
-        db = shelve.open(shelfnm)
-        img_basename = os.path.basename(self.img_filename)
+        db = shelve.open(self.shelf_filename.as_posix())
+        img_basename = self.img_filename.name
 
         if img_basename in db:
             del db[img_basename]
@@ -237,12 +238,9 @@ class FringeManager:
 
     def open_image(self):
         """opens image in imagelist at position image_index"""
-        img_filename = self.img_list[self.img_index]
-        print(img_filename)
-        parts = os.path.split(img_filename)
+        self.img_filename = self.img_list[self.img_index]
+        print(self.img_filename)
 
-        # self.img_filename = os.path.join(parts[0], "cropped", parts[1])
-        self.img_filename = os.path.normpath(img_filename)
         img = Image.open(self.img_filename)
         img.convert("L")
         self.img_array = np.asarray(img)
@@ -252,14 +250,14 @@ class FringeManager:
         self.axes.imshow(self.img_array, cmap=matplotlib.cm.gray)
         self.axes.axis("image")
         self.axes.axis("off")
-        img_basename = os.path.basename(self.img_filename)
+        img_basename = self.img_filename.name
         self.filetext.set_text(img_basename)
         self.fftext.set_text(" ")
         self.lasso_active = True
         # check if image has an entry in directory's shelf file
         # if so use it to annotate image
 
-        db = shelve.open(self.shelf_filename)
+        db = shelve.open(self.shelf_filename.as_posix())
         if img_basename in db:
             print("found ", img_basename, " on shelf")
             [ffrac, drawdata, timestr, notes] = db[img_basename]
@@ -269,9 +267,133 @@ class FringeManager:
         db.close()
         self.canvas.draw()
 
+    def load_gauge_data_from_file(self, txt_name):
+        """
+        given an input file name and a root folder create a list of images to process
+        """
+        self.gauge_data_filename = Path(txt_name)
+
+        # load gauge data
+        if self.red_green:
+            self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=DTRG)
+        else:
+            self.gauge_data = np.loadtxt(txt_name, dtype=DTR, delimiter=",")
+
+    def make_image_list(self, image_folder):
+        self.image_folder = Path(image_folder)
+
+        # make list of red images
+        img_list = list(self.gauge_data[:]["RedFileName"])
+        # add green images
+        if self.red_green:
+            img_list.extend(list(self.gauge_data[:]["GreenFileName"]))
+
+        # convert to Path objects - assume writen from windows system
+        img_list = [PureWindowsPath(name) for name in img_list]
+
+        # split off folder name and replace with image_folder
+        img_list = [self.image_folder / name.name for name in img_list]
+
+        img_list.sort()
+        self.img_list = img_list
+        self.img_index = 0
+
+    def load_shelf_file(self):
+        """
+        data to display the lines drawn on an image is stored in a "shelf" file
+        if this file does not exist its created in self.image_folder
+        """
+        self.shelf_filename = self.image_folder / "info.shf"
+
+        print(f"loading {self.shelf_filename}")
+        db = shelve.open(self.shelf_filename.as_posix())
+        for key in list(db.keys()):
+            [ffrac, drawdata, timestr, notes] = db[key]
+            self.ffrac[key] = ffrac
+        db.close()
+
+    def check_wavelengths(self):
+        "load wavelengths and display to user"
+        wavelengths = load_equipment_data.laser_wavelengths
+        print(self.red_green)
+        print(wavelengths)
+        if wavelengths["red"]:
+            message = "Wavelengths Used\n"
+            self.red_wavelength = wavelengths["red"]
+            message += f"red vacuum wavelength = {self.red_wavelength} nm\n"
+            if self.red_green:
+                self.green_wavelength = wavelengths["green"]
+                message += f"green vacuum wavelength = {self.green_wavelength} nm\n"
+        else:
+            message = "Problem loading vacuumn wavelengths"
+        messagebox.showinfo("Vacuum Wavelengths", message)
+
+    def make_text_for_control_window(self):
+        # make list of images on left of figure
+        # remove any previous text
+        for text in iter(self.gn_text_dict.values()):
+            text.text = ""
+        for text in iter(self.ff_text_dict.values()):
+            text.text = ""
+
+        text = self.fig_menu.text(
+            0.35,
+            0.95,
+            self.image_folder.as_posix(),
+            horizontalalignment="left",
+            fontsize=12,
+            color="black",
+        )
+
+        ypos = 0.9
+        for gauge in self.gauge_data:
+            img_basename = PureWindowsPath(gauge["RedFileName"]).name
+            redtext = img_basename
+            text = self.fig_menu.text(
+                0.65, ypos, redtext, horizontalalignment="left", fontsize=12
+            )
+            self.gn_text_dict[img_basename] = text
+            try:
+                fftext = "%6.3f" % (self.ffrac[img_basename])
+            except KeyError:
+                fftext = "NA"
+
+            text = self.fig_menu.text(
+                0.85,
+                ypos,
+                fftext,
+                horizontalalignment="left",
+                fontsize=12,
+                color="red",
+            )
+            self.ff_text_dict[img_basename] = text
+            if self.red_green:
+                img_basename = PureWindowsPath(gauge["GreenFileName"]).name
+                greentext = img_basename
+                text = self.fig_menu.text(
+                    0.35, ypos, greentext, horizontalalignment="left", fontsize=12
+                )
+                self.gn_text_dict[img_basename] = text
+                try:
+                    fftext = "%6.3f" % (self.ffrac[img_basename])
+                except KeyError:
+                    fftext = "NA"
+
+                text = self.fig_menu.text(
+                    0.55,
+                    ypos,
+                    fftext,
+                    horizontalalignment="left",
+                    fontsize=12,
+                    color="green",
+                )
+                self.ff_text_dict[img_basename] = text
+
+            ypos = ypos - 0.03
+
     def load_gauge_data(self):
         """
-        prompts user to open file written by excel program, reads it and creates
+        prompts user to open file written by Gauge Block Writer App, reads it and creates
         a list of images to process
         """
         # Build a list of tuples for each file type the file dialog should display
@@ -283,134 +405,45 @@ class FringeManager:
             filetypes=my_filetypes,
         )
 
-        if txt_name:
-            self.gauge_data_filename = txt_name
-            # determine if we're using green as well as red
-            # use _r as last two characters of file if red only
-            # anything else is assumed to include red
-            with open(txt_name) as f:
-                line1 = f.readline()
-            self.red_green = not (os.path.splitext(txt_name)[0][-2:] == "_r")
+        if txt_name is None:
+            return
 
-            parts = os.path.split(txt_name)
+        self.load_gauge_data_from_file(txt_name)
 
-            if self.red_green:
-                self.gauge_data = np.loadtxt(txt_name, delimiter=",", dtype=DTRG)
-            else:
-                self.gauge_data = np.loadtxt(txt_name, dtype=DTR, delimiter=",")
-            img_list = list(self.gauge_data[:]["RedFileName"])
-            img_list = [
-                os.path.join(parts[0], os.path.split(name)[1])
-                if os.path.split(name)[0] == ""
-                else name
-                for name in img_list
-            ]
-            self.gauge_data[:]["RedFileName"] = img_list
-            if self.red_green:
-                img_list_g = list(self.gauge_data[:]["GreenFileName"])
-                img_list_g = [
-                    os.path.join(parts[0], os.path.split(name)[1])
-                    if os.path.split(name)[0] == ""
-                    else name
-                    for name in img_list_g
-                ]
-                self.gauge_data[:]["GreenFileName"] = img_list_g
-                img_list.extend(img_list_g)
+        file0 = Path(PureWindowsPath(list(self.gauge_data[:]["RedFileName"])[0]))
+        print(f"{file0=}")
+        image_folder = file0.parent
+        print(f"{image_folder=}")
+        if image_folder.as_posix() == ".":
+            # if no folder names use images in same folder as input txt file
+            image_folder = Path(txt_name).parent
+            file0 = image_folder / file0
+        # check if can access image files
+        if not file0.exists():
+            message = f"Can not access files at {file0}\n"
+            message += "Do you want to use files in same folder as text file?"
+            # buttons yes, no, cancel
+            answer = messagebox.askyesnocancel("Missing Image Files", message)
+            if answer is None:
+                # "Cancel"
+                return
+            if answer is True:
+                # "YES"
+                # use images in same folder as input txt file
+                image_folder = Path(txt_name).parent
+            if answer is False:
+                # "No"
+                # open dialog to select root folder
+                image_folder = filedialog.askdirectory(mustexist=True)
+                if image_folder is None:
+                    return
 
-            img_list = [name.strip('"') for name in img_list]
+        print(f"image folder (after dialog): {image_folder}")
+        self.make_image_list(image_folder)
+        self.load_shelf_file()
+        self.make_text_for_control_window()
 
-            parts = os.path.split(txt_name)
-
-            img_list = [
-                os.path.join(parts[0], os.path.split(name)[1])
-                if os.path.split(name)[0] == ""
-                else name
-                for name in img_list
-            ]
-            print(img_list)
-            img_list.sort()
-            self.img_list = img_list
-            self.img_index = 0
-
-            self.shelf_filename = os.path.join(parts[0], "info.shf")
-            print(self.shelf_filename)
-
-            print("loading info.shf")
-            db = shelve.open(self.shelf_filename)
-            for key in list(db.keys()):
-                [ffrac, drawdata, timestr, notes] = db[key]
-                self.ffrac[key] = ffrac
-            db.close()
-            print(self.ffrac)
-            # make list of images on left of figure
-            # remove any previous text
-            for text in iter(self.gn_text_dict.values()):
-                text.text = ""
-            for text in iter(self.ff_text_dict.values()):
-                text.text = ""
-
-            ypos = 0.9
-            for gauge in self.gauge_data:
-                img_basename = os.path.basename(gauge["RedFileName"]).strip('"')
-                redtext = img_basename[:-17]
-                text = self.fig_menu.text(
-                    0.65, ypos, redtext, horizontalalignment="left", fontsize=12
-                )
-                self.gn_text_dict[img_basename] = text
-                try:
-                    fftext = "%6.3f" % (self.ffrac[img_basename])
-                except:
-                    fftext = "NA"
-
-                text = self.fig_menu.text(
-                    0.85,
-                    ypos,
-                    fftext,
-                    horizontalalignment="left",
-                    fontsize=12,
-                    color="red",
-                )
-                self.ff_text_dict[img_basename] = text
-                if self.red_green:
-                    img_basename = os.path.basename(gauge["GreenFileName"]).strip('"')
-                    greentext = img_basename[:-17]
-                    text = self.fig_menu.text(
-                        0.35, ypos, greentext, horizontalalignment="left", fontsize=12
-                    )
-                    self.gn_text_dict[img_basename] = text
-                    try:
-                        fftext = "%6.3f" % (self.ffrac[img_basename])
-                    except:
-                        fftext = "NA"
-
-                    text = self.fig_menu.text(
-                        0.55,
-                        ypos,
-                        fftext,
-                        horizontalalignment="left",
-                        fontsize=12,
-                        color="green",
-                    )
-                    self.ff_text_dict[img_basename] = text
-
-                ypos = ypos - 0.03
-
-            "load wavelengths and display to user"
-            wavelengths = load_equipment_data.laser_wavelengths
-            print(self.red_green)
-            print(wavelengths)
-            if wavelengths["red"]:
-                message = "Wavelengths Used\n"
-                self.red_wavelength = wavelengths["red"]
-                message += f"red vacuum wavelength = {self.red_wavelength} nm\n"
-                if self.red_green:
-                    self.green_wavelength = wavelengths["green"]
-                    message += f"green vacuum wavelength = {self.green_wavelength} nm\n"
-            else:
-                message = "Problem loading vacuumn wavelengths"
-            messagebox.showinfo("Vacuum Wavelengths", message)
-
-            self.open_image()
+        self.open_image()
 
     def annotate_fig(self, drawdata):
         [
@@ -442,7 +475,7 @@ class FringeManager:
             self.axes.plot([0, maxx], [cepts, slopep * maxx + cepts], "-m")
         for cepts in interceptsg:
             self.axes.plot([0, maxx], [cepts, slopeg * maxx + cepts], "g-")
-        key = os.path.basename(self.img_filename)
+        key = self.img_filename.name
         print(key, type(key))
         fftitle = "%6.3f" % (self.ffrac[key])
         self.fftext.set_text(fftitle)
@@ -451,9 +484,7 @@ class FringeManager:
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
 
-        out_filename = os.path.join(
-            os.path.splitext(self.gauge_data_filename)[0] + "-calcs-py.txt"
-        )
+        out_filename = self.gauge_data_filename.with_name("output-calcs-py.txt")
 
         out_filename = filedialog.asksaveasfilename(
             parent=self.app_win,
@@ -465,10 +496,10 @@ class FringeManager:
         if out_filename:
             fid = open(out_filename, "w")
             for gauge in self.gauge_data:
-                redkey = os.path.basename(gauge["RedFileName"]).strip('"')
+                redkey = PureWindowsPath(gauge["RedFileName"]).name
                 ffred = self.ffrac[redkey]
                 if self.red_green:
-                    greenkey = os.path.basename(gauge["GreenFileName"]).strip('"')
+                    greenkey = PureWindowsPath(gauge["GreenFileName"]).name
                     ffgreen = self.ffrac[greenkey]
                 # calculation is always done in metric
                 if gauge["Units"].strip('"') != "Metric":
@@ -583,18 +614,18 @@ class FringeManager:
 
 
 if __name__ == "__main__":
-    fig = figure(figsize=(8, 6), dpi=80)
+    fig = figure(figsize=(6, 6), dpi=80)
     axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-    fig_menu = figure(figsize=(8, 6), dpi=80)
+    fig_menu = figure(figsize=(10, 6), dpi=80)
 
     lman = FringeManager(axes, fig_menu)
 
-    axload = fig_menu.add_axes([0.1, 0.825, 0.3, 0.075])
-    axprev = fig_menu.add_axes([0.1, 0.725, 0.3, 0.075])
-    axnext = fig_menu.add_axes([0.1, 0.625, 0.3, 0.075])
-    axredo = fig_menu.add_axes([0.1, 0.525, 0.3, 0.075])
-    axcalc0 = fig_menu.add_axes([0.1, 0.425, 0.3, 0.075])
-    axcalcAll = fig_menu.add_axes([0.1, 0.325, 0.3, 0.075])
+    axload = fig_menu.add_axes([0.1, 0.825, 0.2, 0.075])
+    axprev = fig_menu.add_axes([0.1, 0.725, 0.2, 0.075])
+    axnext = fig_menu.add_axes([0.1, 0.625, 0.2, 0.075])
+    axredo = fig_menu.add_axes([0.1, 0.525, 0.2, 0.075])
+    axcalc0 = fig_menu.add_axes([0.1, 0.425, 0.2, 0.075])
+    axcalcAll = fig_menu.add_axes([0.1, 0.325, 0.2, 0.075])
 
     bload = Button(axload, "Load")
     bload.on_clicked(lman.load)
