@@ -9,7 +9,6 @@ from matplotlib.path import Path
 
 
 def roipoly(image_array, cs, rs):
-
     """
     Returns a polygon mask whose vertices are given by cs,rs
     Inputs
@@ -31,7 +30,7 @@ def roipoly(image_array, cs, rs):
     # mask = nx.points_inside_poly(points, verts)
     p = Path(verts)
     mask = p.contains_points(points)
-    mask = mask.reshape(image_array.shape).astype(np.int)
+    mask = mask.reshape(image_array.shape).astype(int)
 
     return mask
 
@@ -83,7 +82,7 @@ def gbroif(s, xy):
     % Use three corners only: TL, BL, BR.
 
 
-"""
+    """
 
     # TODO the readability of this could be improved by using more
     # numpy type arrays
@@ -181,24 +180,25 @@ def pkfind(s):
 
     for k in range(0, ncol):
         # Get column of sub-image and remove best st line.
-        y = matplotlib.mlab.detrend_linear(s[:, k])  #remove intensity gradient down the column
+        y = matplotlib.mlab.detrend_linear(
+            s[:, k]
+        )  # remove intensity gradient down the column
         yfft = np.fft.fft(y)
         # Positive frequencies only
-        ypos = np.abs(yfft[0: (n // 2) + 1])  #find the magnitudes of each frequency
-        
-        # Find fundamental freq (num fringes per column) - it must be greater than 5 fringes per column 
+        ypos = np.abs(yfft[0 : (n // 2) + 1])  # find the magnitudes of each frequency
+
+        # Find fundamental freq (num fringes per column) - it must be greater than 5 fringes per column
         ypos_trunc = ypos[5:]
         iymax = ypos_trunc.argmax()
 
-
-        k0 = iymax+5
-        # Use components up to 5*f0  
+        k0 = iymax + 5
+        # Use components up to 5*f0
         nharm = 5
-        yfft[(nharm * k0 + 2): n - nharm * k0] = 0
+        yfft[(nharm * k0 + 2) : n - nharm * k0] = 0
         # Reconstruct time series from selected harmonics
         z = np.real(np.fft.ifft(yfft))
         # this is a list of arrays one array for each column
-        if(k==430):
+        if k == 430:
             print(k)
         pkloc = findpeaks2(z)
         pklist.append(pkloc)
@@ -207,7 +207,6 @@ def pkfind(s):
 
 
 def findpeaks2(y):
-
     """
     INPUTS:
     y :         an array (n,) consisting of 1 column of image
@@ -229,8 +228,10 @@ def findpeaks2(y):
     see also notes in PythonNotes on alternative possibly faster ways to do this
     """
     # Invert y to find "peaks", convert to float
-    y = -y.astype(np.float)
-    thresh = y.max()/60   #This sets the intensity level (relative to the highest value in the column) that is used select peaks including on a given fringe
+    y = -y.astype(float)
+    thresh = (
+        y.max() / 60
+    )  # This sets the intensity level (relative to the highest value in the column) that is used select peaks including on a given fringe
 
     y[y <= thresh] = np.nan
 
@@ -272,7 +273,7 @@ def findpeaks2(y):
             xstart = -2  # 2nd to last item in list
             xend = -1  # last item in list
 
-        xrang = np.arange(xstart, xend, dtype=np.int)
+        xrang = np.arange(xstart, xend, dtype=int)
         yrang = y[xrang]
         # %Flag "peaks" that are close to zero. or that do not have enough points
         if (sum(np.isnan(yrang)) != 0) or (len(xrang) < 5):
@@ -330,28 +331,30 @@ def findfringes2(y, bw, pklist):
     """
 
     n = len(pklist)
-    ny = len(y) 
-    t = np.arange(ny) #generates an array [0,1,2,3...num of rows in image]
-    y = matplotlib.mlab.detrend_linear(y)   #removes intensity gradient in the image (notibly only in the y direction)
+    ny = len(y)
+    t = np.arange(ny)  # generates an array [0,1,2,3...num of rows in image]
+    y = matplotlib.mlab.detrend_linear(
+        y
+    )  # removes intensity gradient in the image (notibly only in the y direction)
 
     yfft = np.fft.fft(y)
     # Positive frequencies only
     # CMY added an extra forward slash for int float compatability between python 2 and python 3
     # Returns an array of magnitudes (sampled at a frequency greater than the nyquist frequency i.e period must be less than (ny/2+1))
-    ypos = np.abs(yfft[0: (ny // 2) + 1])
+    ypos = np.abs(yfft[0 : (ny // 2) + 1])
 
-    # %frequencies greater than at least 5 fringes in picture   
+    # %frequencies greater than at least 5 fringes in picture
     # POTENTIAL PROBLEM 1- If the fft of first column gets the Fundamental frequency wrong (due to a poor image) then the rest of this algorithm breaks
-    # POTENTIAL PROBLEM 2- The actual fringe fundamental frequency is less than 5 (due to user arranging the too few fringes), then the software needs to report this.  Otherwise the algortithm will crash. 
+    # POTENTIAL PROBLEM 2- The actual fringe fundamental frequency is less than 5 (due to user arranging the too few fringes), then the software needs to report this.  Otherwise the algortithm will crash.
     iymax = np.abs(ypos[4:]).argmax()
 
-    iymax = iymax + 4 
+    iymax = iymax + 4
 
     # %Fringe fundamental frequency
-    f0 = (iymax - 0.0) / ny  #this is 1 over the number of pixels between fringes
+    f0 = (iymax - 0.0) / ny  # this is 1 over the number of pixels between fringes
 
     # % Make "mock" fringe with f0 and find the fringe positions.
-    phi = np.arctan2(np.imag(yfft[iymax]), np.real(yfft[iymax]))  #find the phase
+    phi = np.arctan2(np.imag(yfft[iymax]), np.real(yfft[iymax]))  # find the phase
 
     yfit = 2 * np.abs(yfft[iymax]) * (np.cos(2 * np.pi * f0 * t + phi)) / ny
     yt = -yfit
@@ -372,13 +375,15 @@ def findfringes2(y, bw, pklist):
     pkloc = loc[(yt[1:-2] >= yt[0:-3]) & (yt[1:-2] >= yt[2:-1])] + 1.0
 
     # % Find real fringe positions closest to the "mock" ones.
-    pks = pklist[0]  #the peaks in the first column
+    pks = pklist[0]  # the peaks in the first column
     nfringes = len(pkloc)
-    frper = 1 / f0 #num pixels between fringes
+    frper = 1 / f0  # num pixels between fringes
 
     frstart = np.zeros(nfringes)
     for k in range(nfringes):
-        mindist = np.abs(pks - pkloc[k]).min()  #find the distance the actual fringe is from the mock one
+        mindist = np.abs(
+            pks - pkloc[k]
+        ).min()  # find the distance the actual fringe is from the mock one
         frnum = np.abs(pks - pkloc[k]).argmin()
         if mindist <= frper / 4:
             frstart[k] = pks[frnum]
@@ -391,7 +396,9 @@ def findfringes2(y, bw, pklist):
     peakpred = frstart
     y2sum = 0
     ny = 0
-    thresh = frper / 4 #only choose fringes if they are close (1/4 of the spacing between fringes) to the expected position. Ignore peaks (for fitting) if they are greater than this
+    thresh = (
+        frper / 4
+    )  # only choose fringes if they are close (1/4 of the spacing between fringes) to the expected position. Ignore peaks (for fitting) if they are greater than this
 
     # % Loop through columns, finding fringes.  i.e solve nfringes two variable linear regression equations of the form
     # % y = a + bx + e - where y is the peak position, x is the column number, b the slope, a the intercept and e the residual
@@ -400,27 +407,32 @@ def findfringes2(y, bw, pklist):
             peaks = frstart
         else:
             peaks = pklist[col]
-        #BUG if no peaks are found in a column the array operation below fail "peaks - peakpred[k]).min()"
-        #need to decide what to do if no peaks are found in a column
+        # BUG if no peaks are found in a column the array operation below fail "peaks - peakpred[k]).min()"
+        # need to decide what to do if no peaks are found in a column
 
-        # % Loop through fringes in a column, there will be at most nfringes but some column may have less if the 
+        # % Loop through fringes in a column, there will be at most nfringes but some column may have less if the
         # image quality is poor or the the column coincides with the edge of the gauge block
 
         for k in range(nfringes):
-            
-            if peaks.size == 0: #CMY edit this column has no peaks detected
+            if peaks.size == 0:  # CMY edit this column has no peaks detected
                 break
-            mindist = np.abs(peaks - peakpred[k]).min() #find the minimum distance this fringe is from the estimated position
-            frnum = np.abs(peaks - peakpred[k]).argmin() #find the fringe number
+            mindist = (
+                np.abs(peaks - peakpred[k]).min()
+            )  # find the minimum distance this fringe is from the estimated position
+            frnum = np.abs(peaks - peakpred[k]).argmin()  # find the fringe number
 
             if (mindist < thresh) and (bw[int(round(peaks[frnum])), col] == 1):
-                m[0, 0] = m[0, 0] + col ** 2  #store the sum of the total number of fringes found squared in the first array first position
-                m[0, k + 1] = m[0, k + 1] + col #sum of x values for this fringe
-                m[k + 1, 0] = m[k + 1, 0] + col #sum of x values for this fringe
-                m[k + 1, k + 1] = m[k + 1, k + 1] + 1 # increment the number of peak occurences for this fringe
-                rhs[0] = rhs[0] + col * peaks[frnum] #sum x*y for each fringe
-                rhs[k + 1] = rhs[k + 1] + peaks[frnum] #sum y for each fringe
-                y2sum = y2sum + peaks[frnum] ** 2   #sum y^2 for each fringe
+                m[0, 0] = (
+                    m[0, 0] + col**2
+                )  # store the sum of the total number of fringes found squared in the first array first position
+                m[0, k + 1] = m[0, k + 1] + col  # sum of x values for this fringe
+                m[k + 1, 0] = m[k + 1, 0] + col  # sum of x values for this fringe
+                m[k + 1, k + 1] = (
+                    m[k + 1, k + 1] + 1
+                )  # increment the number of peak occurences for this fringe
+                rhs[0] = rhs[0] + col * peaks[frnum]  # sum x*y for each fringe
+                rhs[k + 1] = rhs[k + 1] + peaks[frnum]  # sum y for each fringe
+                y2sum = y2sum + peaks[frnum] ** 2  # sum y^2 for each fringe
                 ny = ny + 1
 
         nextcol = col + 1
@@ -432,14 +444,14 @@ def findfringes2(y, bw, pklist):
 
     # sigma2 = (y2sum - np.dot(params.T, rhs)) / ny
     # A = np.linalg.inv(m)
-  
+
     slope = params[0]
     intercepts = params[1:]
 
     return slope, intercepts
 
-def findfringes4e(s, frper, ci, ccen, bw, pklist):
 
+def findfringes4e(s, frper, ci, ccen, bw, pklist):
     """
     Used to trace fringes through already found peak positions, used on gauge
 
@@ -472,8 +484,12 @@ def findfringes4e(s, frper, ci, ccen, bw, pklist):
     ccen = int(round(ccen))
     # %Grab central column.
     y = matplotlib.mlab.detrend_linear(s[:, ccen])
-    good = np.where(bw[:, ccen] == 1)  #use the array mask to select the column values that are on the gauge
-    ytrunc = y[good]  #only use the column values within that are on the gauge block (i.e not the values above and below the gauge)
+    good = np.where(
+        bw[:, ccen] == 1
+    )  # use the array mask to select the column values that are on the gauge
+    ytrunc = y[
+        good
+    ]  # only use the column values within that are on the gauge block (i.e not the values above and below the gauge)
     offset = good[0][0]
 
     n = len(ytrunc)
@@ -545,15 +561,14 @@ def findfringes4e(s, frper, ci, ccen, bw, pklist):
             peaks = frstart
         else:
             peaks = pklist[col]
-        
-            
+
         for k in range(nfringes):
-            if peaks.size == 0: #CMY edit this column has no peaks detected
+            if peaks.size == 0:  # CMY edit this column has no peaks detected
                 break
             mindist = np.abs(peaks - peakpred[k]).min()
             frnum = np.abs(peaks - peakpred[k]).argmin()
             if (mindist < thresh) and (bw[int(round(peaks[frnum])), col] == 1):
-                m[0, 0] = m[0, 0] + col ** 2
+                m[0, 0] = m[0, 0] + col**2
                 m[0, k + 1] = m[0, k + 1] + col
                 m[k + 1, 0] = m[k + 1, 0] + col
                 m[k + 1, k + 1] = m[k + 1, k + 1] + 1
@@ -577,12 +592,12 @@ def findfringes4e(s, frper, ci, ccen, bw, pklist):
         peaks = pklist[col]
 
         for k in range(nfringes):
-            if peaks.size == 0: #CMY edit this column has no peaks detected
+            if peaks.size == 0:  # CMY edit this column has no peaks detected
                 break
             mindist = np.abs(peaks - peakpred[k]).min()
             frnum = np.abs(peaks - peakpred[k]).argmin()
             if (mindist < thresh) and (bw[int(round(peaks[frnum])), col] == 1):
-                m[0, 0] = m[0, 0] + col ** 2
+                m[0, 0] = m[0, 0] + col**2
                 m[0, k + 1] = m[0, k + 1] + col
                 m[k + 1, 0] = m[k + 1, 0] + col
                 m[k + 1, k + 1] = m[k + 1, k + 1] + 1

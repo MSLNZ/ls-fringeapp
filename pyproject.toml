@@ -3,11 +3,11 @@ name = "ls-fringeapp"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "lxml>=6.0.2",
-    "matplotlib>=3.7.0",
-    "numpy<=1.20",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.4",
 ]
 
 [dependency-groups]

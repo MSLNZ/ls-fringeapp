@@ -25,14 +25,14 @@ def pytest_generate_tests(metafunc):
 
 
 def test_fringe_calc(row):
-    ffrac_exp = np.float(row[0])
+    ffrac_exp = float(row[0])
     img_filename = TEST_DATA_DIR / row[1]
     img = Image.open(img_filename)
     img.convert("L")
     img_array = np.asarray(img)
     if img_array.ndim > 2:
         img_array = img_array.mean(axis=2)
-    xygb = row[2:8].astype(np.float)
+    xygb = row[2:8].astype(float)
     xygb = xygb.reshape((3, 2))
     ffrac_calc = fp.array2frac(img_array, xygb)
 
