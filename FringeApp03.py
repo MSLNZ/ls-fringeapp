@@ -104,16 +104,17 @@ class FringeManager:
 
         self.ffrac = {}
         self.gauge_data = []
-        self.gauge_data_filename = ""
+        self.gauge_data_filename: Path
         self.img_array = []
-        self.img_filename = ""
+        self.img_filename: Path  # current image being processed
         self.img_index = 0
-        self.img_list = []
+        self.img_list = list[str]  # file names only
+        self.image_folder: Path
         self.lasso = None
         self.lasso_active = True
         self.ff_text_dict = {}
         self.gn_text_dict = {}
-        self.shelf_filename = ""
+        self.shelf_filename: Path
         self.red_green = USE_GREEN
         self.check_wavelengths()
         self.fig_menu = menu
@@ -238,7 +239,8 @@ class FringeManager:
 
     def open_image(self):
         """opens image in imagelist at position image_index"""
-        self.img_filename = self.img_list[self.img_index]
+        img_basename = self.img_list[self.img_index]
+        self.img_filename = self.image_folder / img_basename
         print(self.img_filename)
 
         img = Image.open(self.img_filename)
@@ -250,7 +252,7 @@ class FringeManager:
         self.axes.imshow(self.img_array, cmap=matplotlib.cm.gray)
         self.axes.axis("image")
         self.axes.axis("off")
-        img_basename = self.img_filename.name
+
         self.filetext.set_text(img_basename)
         self.fftext.set_text(" ")
         self.lasso_active = True
@@ -269,7 +271,7 @@ class FringeManager:
 
     def load_gauge_data_from_file(self, txt_name):
         """
-        given an input file name and a root folder create a list of images to process
+        load self.gauge_data from file
         """
         self.gauge_data_filename = Path(txt_name)
 
@@ -291,8 +293,8 @@ class FringeManager:
         # convert to Path objects - assume writen from windows system
         img_list = [PureWindowsPath(name) for name in img_list]
 
-        # split off folder name and replace with image_folder
-        img_list = [self.image_folder / name.name for name in img_list]
+        # split off folder name
+        img_list = [name.name for name in img_list]
 
         img_list.sort()
         self.img_list = img_list
