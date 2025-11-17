@@ -1,4 +1,4 @@
-import load_equipment_data
+from ls_fringeapp import load_equipment_data
 
 import numpy as np
 

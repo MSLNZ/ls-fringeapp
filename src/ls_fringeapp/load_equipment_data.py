@@ -3,12 +3,13 @@ loads the equipment register stored in
 https://github.com/MSLNZ/Length_Stds_Equipment_Register
 
 
-currently assumes that a local copy has been cloned into the parent folder of this
+currently assumes that a local copy has been cloned into the parent folder of this repo
 that is folder structure is
 
 ls-fringeapp
-├── FringeApp03.py
-├── load_register.py
+├── src
+│   └── ls_fringeapp
+│       ├── FringeApp03.py
 ...
 Length_Stds_Equipment_Register
 ├── register.xml
@@ -24,7 +25,8 @@ green_id = "MSLE.L.110"
 
 fn_register = "register.xml"
 code_folder = Path(__file__).parent.resolve()  # folder of this file
-path_register = code_folder.parent / "Length_Stds_Equipment_Register" / fn_register
+repo_folder = code_folder.parent.parent
+path_register = repo_folder.parent / "Length_Stds_Equipment_Register" / fn_register
 
 
 def get_laser_wavelengths_from_register(fn):

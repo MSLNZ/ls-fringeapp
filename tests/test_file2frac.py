@@ -12,7 +12,7 @@ This software has been validated by key comparison .....
 from pathlib import Path
 import numpy as np
 from PIL import Image
-import fringeprocess as fp
+from ls_fringeapp import fringeprocess as fp
 
 TEST_DATA_DIR = Path(__file__).resolve().parent / "data"
 

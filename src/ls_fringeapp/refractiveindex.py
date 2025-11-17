@@ -13,6 +13,7 @@ Author: EFH
 Date: 16/12/2009
 
 """
+
 from numpy import exp, sqrt, log
 
 
@@ -129,9 +130,9 @@ def RefractiveIndexBD94(Temperature, Pressure, Humidity, Lambda):
     c1 = P_Pa * 1e-8 * (0.601 - 0.00972 * Temperature)
     ntp = (Ns * P_Pa / 96095.43) * ((1 + c1) / (1.0 + 0.003661 * Temperature))
     t0 = Temperature + 273.15
-    e0 = exp((ea0 / t0) + ea1 + (ea2 * t0) + ea3 * (t0 ** 2) + ea4 * log(t0))
-    c2 = a1 + a2 * Temperature + A3 * Temperature ** 2 + A4 * Temperature ** 3
-    c3 = b1 + B2 * Temperature + B3 * Temperature ** 2 + B4 * Temperature ** 3
+    e0 = exp((ea0 / t0) + ea1 + (ea2 * t0) + ea3 * (t0**2) + ea4 * log(t0))
+    c2 = a1 + a2 * Temperature + A3 * Temperature**2 + A4 * Temperature**3
+    c3 = b1 + B2 * Temperature + B3 * Temperature**2 + B4 * Temperature**3
     f0 = exp(c2 * (1 - e0 / P_Pa) + (exp(c3)) * (P_Pa / e0 - 1))
     f = (Humidity / 100.0) * e0 * f0
     Ch = -(292.75 / (Temperature + 273.15)) * f * (3.7345 - 0.0401 * S2) * 1e-10
@@ -141,7 +142,6 @@ def RefractiveIndexBD94(Temperature, Pressure, Humidity, Lambda):
 
 
 def EDMRefIndexCorr(Temperature, Pressure, Humidity):
-
     """
     '  Calculate the refractive index correction factor for our Distomat
     '  DI2002 EDM at Temperature (degree C), Pressure (barometric - mb)
@@ -159,7 +159,7 @@ def EDMRefIndexCorr(Temperature, Pressure, Humidity):
 
     Ctp = 0.29065 * Pressure
     Exp = ((7.5 * Temperature) / (237.3 + Temperature)) + 0.7857
-    Ch = (4.126 * 0.0001 * Humidity) * (10.0 ** Exp)
+    Ch = (4.126 * 0.0001 * Humidity) * (10.0**Exp)
     Ppm = 281.772087 - ((Ctp - Ch) / ((Temperature / 273.16) + 1.0))
     EDMCorr = (Ppm / 1e6) + 1.0
     return EDMCorr
@@ -191,7 +191,7 @@ def RefractiveIndexNIST_ShopFloor(Temperature, Pressure, Humidity):
     n = (
         1
         + 7.86 * 10 ** (-4) * P_kPa / (273.0 + T_degC)
-        - 1.5 * 10 ** (-11) * H_RH * (T_degC ** 2 + 160.0)
+        - 1.5 * 10 ** (-11) * H_RH * (T_degC**2 + 160.0)
     )
     return n
 
@@ -219,10 +219,10 @@ def SVP(Temperature):
 
     T_K = T_degC + 273.15
     Omega = T_K + K9 / (T_K - K10)
-    A = Omega ** 2 + k1 * Omega + k2
-    B = k3 * Omega ** 2 + K4 * Omega + K5
-    C = K6 * Omega ** 2 + K7 * Omega + K8
-    X = -B + sqrt(B ** 2 - 4 * A * C)
+    A = Omega**2 + k1 * Omega + k2
+    B = k3 * Omega**2 + K4 * Omega + K5
+    C = K6 * Omega**2 + K7 * Omega + K8
+    X = -B + sqrt(B**2 - 4 * A * C)
     svp = 1000000.0 * ((2 * C) / X) ** 4
     return svp
 
@@ -248,8 +248,8 @@ def RefractiveIndexNIST_Ciddor(Temperature, Pressure, Humidity, Lambda):
     """
 
     xCO2 = (
-        450
-    )  # ' CO2 concentration in ?mol/mol (could make this an optional parameter)
+        450  # ' CO2 concentration in ?mol/mol (could make this an optional parameter)
+    )
 
     alpha = 1.00062
     beta = 3.14 * 10 ** (-8)
@@ -297,16 +297,16 @@ def RefractiveIndexNIST_Ciddor(Temperature, Pressure, Humidity, Lambda):
 
     S = 1.0 / (lambda_um) ** 2
     r_as = 10 ** (-8) * ((k1 / (k0 - S)) + (k3 / (k2 - S)))
-    r_vs = 1.022 * 10 ** (-8) * (w0 + w1 * S + w2 * S ** 2 + w3 * S ** 3)
+    r_vs = 1.022 * 10 ** (-8) * (w0 + w1 * S + w2 * S**2 + w3 * S**3)
     M_a = 0.0289635 + 1.2011 * 10 ** (-8) * (xCO2 - 400)
     r_axs = r_as * (1.0 + 5.34 * 10 ** (-7) * (xCO2 - 450))
-    terma = a0 + a1 * T_degC + a2 * T_degC ** 2
+    terma = a0 + a1 * T_degC + a2 * T_degC**2
     termb = (b0 + b1 * T_degC) * xv
-    termc = (c0 + c1 * T_degC) * xv ** 2
+    termc = (c0 + c1 * T_degC) * xv**2
     Z_m = (
         1.0
         - (P_Pa / T_K) * (terma + termb + termc)
-        + (P_Pa / T_K) ** 2 * (d + e * xv ** 2)
+        + (P_Pa / T_K) ** 2 * (d + e * xv**2)
     )
     rho_axs = p_R1 * M_a / (Z_a * R * T_R1)
     rho_v = xv * P_Pa * M_v / (Z_m * R * T_K)
@@ -354,10 +354,10 @@ def RefractiveIndexNIST_Edlen(Temperature, Pressure, Humidity, Lambda):
     pv = (H_RH / 100) * psv
 
     S = 1.0 / (lambda_um) ** 2
-    n5 = 1.0 + (10 ** -8) * (A + B / (130 - S) + C / (38.9 - S))
-    X = (1.0 + (10 ** -8) * (e - f * T_degC) * P_Pa) / (1.0 + G * T_degC)
+    n5 = 1.0 + (10**-8) * (A + B / (130 - S) + C / (38.9 - S))
+    X = (1.0 + (10**-8) * (e - f * T_degC) * P_Pa) / (1.0 + G * T_degC)
     ntp = 1.0 + P_Pa * (n5 - 1) * X / d
-    n = ntp - (10 ** -10) * ((292.75) / (T_degC + 273.15)) * (3.7345 - 0.0401 * S) * pv
+    n = ntp - (10**-10) * ((292.75) / (T_degC + 273.15)) * (3.7345 - 0.0401 * S) * pv
 
     return n
 
@@ -378,9 +378,9 @@ def Ciddor_U95(Temperature, Pressure, Humidity, Lambda):
     # 'vapour pressure
     pv = (H_RH / 100) * psv
     c1 = 0.003 * P_Pa / (T_degC + 273)
-    c2 = 4.0 + 6.0 * 10 ** (-8) * (P_Pa - 10 ** 5) ** 2 + 0.06 * (T_degC - 20) ** 2
-    c3 = (8.0 * 10 ** (-4)) ** 2 + (6.0 * 10 ** (-6) / lambda_um ** 4) ** 2
-    Ciddor_U95 = 10 ** (-8) * (c1 ** 2 * c2 + pv ** 2 * c3) ** (1 / 2)
+    c2 = 4.0 + 6.0 * 10 ** (-8) * (P_Pa - 10**5) ** 2 + 0.06 * (T_degC - 20) ** 2
+    c3 = (8.0 * 10 ** (-4)) ** 2 + (6.0 * 10 ** (-6) / lambda_um**4) ** 2
+    Ciddor_U95 = 10 ** (-8) * (c1**2 * c2 + pv**2 * c3) ** (1 / 2)
 
     return Ciddor_U95
 
@@ -401,7 +401,7 @@ def Edlen_U95(Temperature, Pressure, Humidity, Lambda):
     B = 2 * 10 ** (-8)
     C = (T_degC - 20.0) * P_Pa / (T_degC + 273.0)
 
-    Edlen_U95 = sqrt(A ** 2 + B ** 2 + (1.6 * 10 ** (-16)) * C ** 2)
+    Edlen_U95 = sqrt(A**2 + B**2 + (1.6 * 10 ** (-16)) * C**2)
 
     return Edlen_U95
 

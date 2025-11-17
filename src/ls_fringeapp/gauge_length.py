@@ -1,9 +1,10 @@
 """
 Calculate gauge length from fringe fractions and gauge data
 """
+
 import numpy as np
-from refractiveindex import RefractiveIndex
-from fringeprocess import shifthalf
+from ls_fringeapp.refractiveindex import RefractiveIndex
+from ls_fringeapp.fringeprocess import shifthalf
 
 ObliquityCorrection = 1.00000013
 
@@ -27,7 +28,6 @@ def calcgaugelength(
     greenwavelength,
     formula=0,
 ):
-
     # %Search the range (Nominal Size ? Nfringes * red  fringe spacing)
     # for best solution for gauge length
     nfringes = 5

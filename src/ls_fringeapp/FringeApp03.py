@@ -25,10 +25,10 @@ from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
 
 from poly_lasso import PolyLasso
-import fringeprocess
-import gauge_length
+from ls_fringeapp import fringeprocess
+from ls_fringeapp import gauge_length
 
-import load_equipment_data
+from ls_fringeapp import load_equipment_data
 
 USE_GREEN = True
 ObliquityCorrection = 1.00000013

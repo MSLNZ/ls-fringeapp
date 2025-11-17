@@ -127,9 +127,9 @@ def gbroif(s, xy):
     co0[4] = co0[0]
     ro0[4] = ro0[0]
 
-    swid = wid / 5
+    swid = wid / 20
     # EFH 15/10/02 changing this from slen = len/20 to slen = len/10
-    slen = leng / 10
+    slen = leng / 20
     ci0[0] = -wid / 2 + swid
     ri0[0] = leng / 2 - slen
     ci0[1] = -wid / 2 + swid
@@ -158,6 +158,17 @@ def gbroif(s, xy):
     # 0 is false, 1 is true  in matlab so the rest of the code isn't executed
 
     return bwo, co, ro, bwi, ci, ri, ccen, rcen
+
+    def add_circle_to_gauge_mask(bwi):
+        """
+        inputs
+        bwi:         array same shape as image where points on gauge are 1 others 0
+        circle:      (x, y, r) centre and radius of circle
+
+        output:
+        bwic: array same shape as images where a circle of 0 has been added to the mask
+        """
+        pass
 
 
 def pkfind(s):

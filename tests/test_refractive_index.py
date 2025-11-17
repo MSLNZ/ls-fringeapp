@@ -1,5 +1,5 @@
 import numpy as np
-import refractiveindex as ri
+from ls_fringeapp import refractiveindex as ri
 
 # values calculated on NIST website
 data = (
@@ -32,4 +32,3 @@ def test_refractive_index(row):
     np.testing.assert_allclose(nindex[0], row[4], rtol=6e-9)
     np.testing.assert_allclose(nindex[1], row[5], rtol=4e-10)
     # write asserts for other formulas
-
