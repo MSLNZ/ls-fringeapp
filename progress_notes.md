@@ -99,3 +99,4 @@ https://stackoverflow.com/questions/1406145/how-do-i-get-rid-of-python-tkinter-r
 File structure now includes air temperature for red and green
 
 The read only file structure only has data pertaining to red
+
