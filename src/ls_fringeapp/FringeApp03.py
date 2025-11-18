@@ -24,7 +24,7 @@ matplotlib.use("tkagg")
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
 
-from poly_lasso import PolyLasso
+from ls_fringeapp.poly_lasso import PolyLasso
 from ls_fringeapp import fringeprocess
 from ls_fringeapp import gauge_length
 
@@ -447,36 +447,23 @@ class FringeManager:
 
         self.open_image()
 
-    def annotate_fig(self, drawdata):
-        [
-            xy,
-            co,
-            ro,
-            ci,
-            ri,
-            ccen,
-            rcen,
-            pklist,
-            slopep,
-            interceptsp,
-            slopeg,
-            interceptsg,
-        ] = drawdata
+    def annotate_fig(self, drawdata: [dict | list]):
+        if isinstance(drawdata, list):
+            # reading older shelf file
+            drawdata = fringeprocess.convert_drawdata_list_to_dict(drawdata)
 
-        # imgplot = ax.imshow(SF2,aspect='equal')
-        # imgplot.set_cmap('gray')
-        self.axes.plot(xy[:, 1], xy[:, 0], "or")
-        self.axes.plot(ccen, rcen, "+c", ms=20)
-        self.axes.plot(co, ro, "w-")
-        self.axes.plot(ci, ri, "c-")
-        for col, peaks in enumerate(pklist):
+        self.axes.plot(drawdata["xy"][:, 1], drawdata["xy"][:, 0], "or")
+        self.axes.plot(drawdata["ccen"], drawdata["rcen"], "+c", ms=20)
+        self.axes.plot(drawdata["co"], drawdata["ro"], "w-")
+        self.axes.plot(drawdata["ci"], drawdata["ri"], "c-")
+        for col, peaks in enumerate(drawdata["pklist"]):
             x = col * np.ones_like(peaks)
             self.axes.plot(x, peaks, "+y")
         maxx = self.img_array.shape[1]
-        for cepts in interceptsp:
-            self.axes.plot([0, maxx], [cepts, slopep * maxx + cepts], "-m")
-        for cepts in interceptsg:
-            self.axes.plot([0, maxx], [cepts, slopeg * maxx + cepts], "g-")
+        for cepts in drawdata["interceptsp"]:
+            self.axes.plot([0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m")
+        for cepts in drawdata["interceptsg"]:
+            self.axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-")
         key = self.img_filename.name
         print(key, type(key))
         fftitle = "%6.3f" % (self.ffrac[key])

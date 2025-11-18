@@ -1,8 +1,7 @@
-from ipaddress import collapse_addresses
 import numpy as np
 
 # import math
-
+from PIL import Image, ImageDraw
 import matplotlib.image
 import matplotlib.mlab
 from matplotlib.path import Path
@@ -35,7 +34,7 @@ def roipoly(image_array, cs, rs):
     return mask
 
 
-def gbroif(s, xy):
+def gbroif(s, xy, border=(0.05, 0.05)):
     """
     inputs
     s:          an array of image values shape = (m, n) values between 0 and 255
@@ -44,15 +43,17 @@ def gbroif(s, xy):
                 xy = array([[TLx, TLy],
                             [BLx, BLy],
                             [BRx, BRy]])
+    border:     area to exclude from fringe detection inside selection defined by xy
+                expressd as fraction of gauge width and height
     outputs
 
-    BWo:         array same shape as s where points on platten are 1 others 0
-    xo,yo:       column and row indices of each vertex of polygon defining
+    bwo:         array same shape as s where points on platten are 1 others 0
+    co,ro:       column and row indices of each vertex of polygon defining
                  platten area, shape = (5,)
-    BWi:         array same shape as s where points on gauge are 1 others 0
-    xi,yi:       column and row indices of each vertex of polygon defining
+    bwi:         array same shape as s where points on gauge are 1 others 0
+    ci,ri:       column and row indices of each vertex of polygon defining
                  gauge area,, shape = (5,)
-    xcen,ycen:   coordinates of centre of gauge, doubles
+    ccen,rcen:   coordinates of centre of gauge, doubles
 
     EFH 13/08/2008 translating into python
     Inputs
@@ -127,9 +128,9 @@ def gbroif(s, xy):
     co0[4] = co0[0]
     ro0[4] = ro0[0]
 
-    swid = wid / 20
-    # EFH 15/10/02 changing this from slen = len/20 to slen = len/10
-    slen = leng / 20
+    swid = border[0] * wid
+    slen = border[1] * leng
+
     ci0[0] = -wid / 2 + swid
     ri0[0] = leng / 2 - slen
     ci0[1] = -wid / 2 + swid
@@ -159,16 +160,34 @@ def gbroif(s, xy):
 
     return bwo, co, ro, bwi, ci, ri, ccen, rcen
 
-    def add_circle_to_gauge_mask(bwi):
-        """
-        inputs
-        bwi:         array same shape as image where points on gauge are 1 others 0
-        circle:      (x, y, r) centre and radius of circle
 
-        output:
-        bwic: array same shape as images where a circle of 0 has been added to the mask
-        """
-        pass
+def circle_mask_pklist(pklist, circle, img_size):
+    """
+    peaks at positions within circle are deleted from pklist
+
+    input
+    pklist: output  of pkfind,  a list of numpy arrays with float values for peak maximum
+    circle:     (top_left_col, top_left_row, bottom_right_col, bottom_right_row) pixel coordinates of circle mask
+
+    output
+    pklist_masked: a list of numpy arrays with float values for peak maximum
+    """
+    # create mask
+    mask = Image.new(mode="1", size=img_size)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse(circle, fill="white", outline="white")
+    mask_array = np.asarray(mask)
+
+    pklist_masked = []
+    for col_num, col in enumerate(pklist):
+        col_list = list(col)
+        to_delete = []
+        for peak in col_list:
+            if mask_array[round(peak), col_num] == 1:
+                to_delete.append(peak)
+        col_array = np.array([item for item in col_list if item not in to_delete])
+        pklist_masked.append(col_array)
+    return pklist_masked
 
 
 def pkfind(s):
@@ -209,8 +228,7 @@ def pkfind(s):
         # Reconstruct time series from selected harmonics
         z = np.real(np.fft.ifft(yfft))
         # this is a list of arrays one array for each column
-        if k == 430:
-            print(k)
+
         pkloc = findpeaks2(z)
         pklist.append(pkloc)
 
@@ -462,6 +480,15 @@ def findfringes2(y, bw, pklist):
     return slope, intercepts
 
 
+def gauge_initial_column(circle, ci):
+    """
+    find the starting column for gauges with a circular mask
+    """
+    return (circle[0] + ci[3]) / 2.0
+
+    pass
+
+
 def findfringes4e(s, frper, ci, ccen, bw, pklist):
     """
     Used to trace fringes through already found peak positions, used on gauge
@@ -663,7 +690,7 @@ def lines2frac(ccen, rcen, pslope, pintercepts, gslope, gintercepts):
             botfringe = yout[below.max()]
             frac[k] = (topfringe - yin[k]) / (topfringe - botfringe)
         else:
-            frac[k] = np.NaN
+            frac[k] = np.nan
 
     ffindx1 = np.max(np.where(yin <= rcen))
     ffindx2 = np.min(np.where(yin >= rcen))
@@ -689,7 +716,43 @@ def shifthalf(number):
     return sh
 
 
-def array2frac(s, xy, drawinfo=False):
+def convert_drawdata_list_to_dict(drawdata):
+    """
+    used for loading older (pre 2025-11-18) shelf files where drawdata was stored as list
+    converted to dict so extra items can be added to plot circular mask etc.
+    """
+    [
+        xy,
+        co,
+        ro,
+        ci,
+        ri,
+        ccen,
+        rcen,
+        pklist,
+        slopep,
+        interceptsp,
+        slopeg,
+        interceptsg,
+    ] = drawdata
+    info = {
+        "xy": xy,
+        "co": co,
+        "ro": ro,
+        "ci": ci,
+        "ri": ri,
+        "ccen": ccen,
+        "rcen": rcen,
+        "pklist": pklist,
+        "slopep": slopep,
+        "interceptsp": interceptsp,
+        "slopeg": slopeg,
+        "interceptsg": interceptsg,
+    }
+    return info
+
+
+def array2frac(s, xy, drawinfo=False, circle=None):
     """
     INPUTS
     s:          an array of image values shape = (m, n) values between 0 and 255
@@ -699,35 +762,44 @@ def array2frac(s, xy, drawinfo=False):
                 xy = array([[TLx, TLy],
                             [BLx, BLy],
                             [BRx, BRy]])
+    drawinfo:   output co-ordinates for plotting in FringeManager.annotate_fig
+    circle:     (top_left_col, top_left_row, bottom_right_col, bottom_right_row) pixel coordinates of circle mask
     OUTPUTS
     ffrac : gauge fringe fraction between -1 and 1
+    drawinfo: (optional) lots of info used by FringeManager.annotate_fig
     """
     # s needs to have an even number of rows for fft.
     if np.mod(s.shape[0], 2) == 1:
         s = s[:-1, :]
     bwo, co, ro, bwi, ci, ri, ccen, rcen = gbroif(s, xy)
     pklist = pkfind(s)
+    col_start = ccen
+    if circle is not None:
+        pklist = circle_mask_pklist(pklist, circle, s.shape)
+        col_start = gauge_initial_column(circle, ci)
     y = s[:, 0]
     bwp = np.ones_like(bwo) - bwo
     slopep, interceptsp = findfringes2(y, bwp, pklist)
     frper = np.mean(np.diff((slopep * ccen + interceptsp)))
-    slopeg, interceptsg = findfringes4e(s, frper, ci, ccen, bwi, pklist)
+    slopeg, interceptsg = findfringes4e(s, frper, ci, col_start, bwi, pklist)
     ffrac = lines2frac(ccen, rcen, slopep, interceptsp, slopeg, interceptsg)
     if drawinfo:
-        info = [
-            xy,
-            co,
-            ro,
-            ci,
-            ri,
-            ccen,
-            rcen,
-            pklist,
-            slopep,
-            interceptsp,
-            slopeg,
-            interceptsg,
-        ]
+        info = {
+            "xy": xy,
+            "co": co,
+            "ro": ro,
+            "ci": ci,
+            "ri": ri,
+            "ccen": ccen,
+            "rcen": rcen,
+            "pklist": pklist,
+            "slopep": slopep,
+            "interceptsp": interceptsp,
+            "slopeg": slopeg,
+            "interceptsg": interceptsg,
+            "circle": circle,
+            "col_start": col_start,
+        }
         return ffrac, info
     else:
         return ffrac

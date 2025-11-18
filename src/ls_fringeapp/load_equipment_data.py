@@ -45,7 +45,7 @@ def get_laser_wavelengths_from_register(fn):
     )[0]
 
     # do some sanity checks ...
-    # add some try except robustness
+    # add some try except robustness ...
 
     return {"red": float(red_wavelength), "green": float(green_wavelength)}
 
