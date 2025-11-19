@@ -1,7 +1,7 @@
 from pathlib import Path
 import matplotlib
 from matplotlib.pyplot import figure, show
-from matplotlib.patches import Ellipse
+from matplotlib.patches import Circle
 import numpy as np
 
 from PIL import Image
@@ -32,11 +32,9 @@ def draw_gauge(axes, img_array, drawdata: dict):
         axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-")
 
     if drawdata["circle"] is not None:
-        x = 0.5 * (drawdata["circle"][0] + drawdata["circle"][2])
-        y = 0.5 * (drawdata["circle"][1] + drawdata["circle"][3])
-        w = drawdata["circle"][2] - drawdata["circle"][0]
-        h = drawdata["circle"][3] - drawdata["circle"][1]
-        circle_patch = Ellipse((x, y), w, h, ec="c", lw=2)
+        xy = (drawdata["ccen"], drawdata["rcen"])
+        r = drawdata["circle"]
+        circle_patch = Circle(xy, r, ec="c", lw=2)
         circle_patch.set_facecolor((0, 0, 0, 0))
         axes.add_artist(circle_patch)
 

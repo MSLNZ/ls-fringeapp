@@ -34,7 +34,7 @@ def roipoly(image_array, cs, rs):
     return mask
 
 
-def gbroif(s, xy, border=(0.05, 0.05)):
+def gbroif(s, xy, border=(0.2, 0.1)):
     """
     inputs
     s:          an array of image values shape = (m, n) values between 0 and 255
@@ -183,7 +183,12 @@ def circle_mask_pklist(pklist, circle, img_size):
         col_list = list(col)
         to_delete = []
         for peak in col_list:
-            if mask_array[round(peak), col_num] == 1:
+            try:
+                in_mask = mask_array[round(peak), col_num] == 1
+            except IndexError:
+                # as the peaks are interpolated they can be just outside image
+                continue
+            if in_mask:
                 to_delete.append(peak)
         col_array = np.array([item for item in col_list if item not in to_delete])
         pklist_masked.append(col_array)
@@ -752,7 +757,7 @@ def convert_drawdata_list_to_dict(drawdata):
     return info
 
 
-def array2frac(s, xy, drawinfo=False, circle=None):
+def array2frac(s, xy, drawinfo=False, circle_radius=None, border=(0.2, 0.1)):
     """
     INPUTS
     s:          an array of image values shape = (m, n) values between 0 and 255
@@ -763,7 +768,7 @@ def array2frac(s, xy, drawinfo=False, circle=None):
                             [BLx, BLy],
                             [BRx, BRy]])
     drawinfo:   output co-ordinates for plotting in FringeManager.annotate_fig
-    circle:     (top_left_col, top_left_row, bottom_right_col, bottom_right_row) pixel coordinates of circle mask
+    circle_frac:  circle is centered on gauge with radius in pixels = gauge_width  * circle_radius
     OUTPUTS
     ffrac : gauge fringe fraction between -1 and 1
     drawinfo: (optional) lots of info used by FringeManager.annotate_fig
@@ -771,10 +776,14 @@ def array2frac(s, xy, drawinfo=False, circle=None):
     # s needs to have an even number of rows for fft.
     if np.mod(s.shape[0], 2) == 1:
         s = s[:-1, :]
-    bwo, co, ro, bwi, ci, ri, ccen, rcen = gbroif(s, xy)
+    bwo, co, ro, bwi, ci, ri, ccen, rcen = gbroif(s, xy, border=border)
     pklist = pkfind(s)
     col_start = ccen
-    if circle is not None:
+    radius = None
+    if circle_radius is not None:
+        width = np.sqrt((xy[1, 1] - xy[2, 1]) ** 2 + (xy[1, 0] - xy[2, 0]) ** 2)
+        radius = circle_radius * width
+        circle = (ccen - radius, rcen - radius, ccen + radius, rcen + radius)
         pklist = circle_mask_pklist(pklist, circle, s.shape)
         col_start = gauge_initial_column(circle, ci)
     y = s[:, 0]
@@ -797,7 +806,7 @@ def array2frac(s, xy, drawinfo=False, circle=None):
             "interceptsp": interceptsp,
             "slopeg": slopeg,
             "interceptsg": interceptsg,
-            "circle": circle,
+            "circle": radius,  # in pixels
             "col_start": col_start,
         }
         return ffrac, info

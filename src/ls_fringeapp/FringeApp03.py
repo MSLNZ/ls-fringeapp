@@ -23,6 +23,7 @@ matplotlib.use("tkagg")
 
 from matplotlib.pyplot import figure, show
 from matplotlib.widgets import Button
+from matplotlib.patches import Circle
 
 from ls_fringeapp.poly_lasso import PolyLasso
 from ls_fringeapp import fringeprocess
@@ -464,6 +465,16 @@ class FringeManager:
             self.axes.plot([0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m")
         for cepts in drawdata["interceptsg"]:
             self.axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-")
+
+        if drawdata["circle"] is not None:
+            xy = (drawdata["ccen"], drawdata["rcen"])
+            r = drawdata["circle"]
+            circle_patch = Circle(xy, r, ec="c", lw=2)
+            circle_patch.set_facecolor((0, 0, 0, 0))
+            self.axes.add_artist(circle_patch)
+
+        self.axes.axvline(x=drawdata["col_start"], ls="-.", c="c", lw=1)
+
         key = self.img_filename.name
         print(key, type(key))
         fftitle = "%6.3f" % (self.ffrac[key])
