@@ -8,6 +8,7 @@ dependencies = [
     "lxml>=6.0.2",
     "matplotlib>=3.10.7",
     "numpy>=2.3.4",
+    "pillow-affine>=0.1",
 ]
 
 [dependency-groups]

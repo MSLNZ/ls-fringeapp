@@ -161,18 +161,26 @@ def gbroif(s, xy, border=(0.2, 0.1)):
     return bwo, co, ro, bwi, ci, ri, ccen, rcen
 
 
-def circle_mask_pklist(pklist, circle, img_size):
+def circle_mask_pklist(
+    pklist,
+    circle: tuple[float, float, float, float],
+    img_array_shape: tuple[float, float],
+):
     """
     peaks at positions within circle are deleted from pklist
 
     input
     pklist: output  of pkfind,  a list of numpy arrays with float values for peak maximum
     circle:     (top_left_col, top_left_row, bottom_right_col, bottom_right_row) pixel coordinates of circle mask
+    img_array_shape: shape of numpy array storing image (rows, columns)
 
     output
     pklist_masked: a list of numpy arrays with float values for peak maximum
     """
     # create mask
+    # np arrays shape and PIl.Image.Image list shape and size in oppposite order
+    img_size = list(img_array_shape)
+    img_size.reverse()
     mask = Image.new(mode="1", size=img_size)
     draw = ImageDraw.Draw(mask)
     draw.ellipse(circle, fill="white", outline="white")
@@ -489,6 +497,7 @@ def gauge_initial_column(circle, ci):
     """
     find the starting column for gauges with a circular mask
     """
+    print(f"{circle[0]=}, {ci[3]=}")
     return (circle[0] + ci[3]) / 2.0
 
     pass
@@ -757,7 +766,9 @@ def convert_drawdata_list_to_dict(drawdata):
     return info
 
 
-def array2frac(s, xy, drawinfo=False, circle_radius=None, border=(0.2, 0.1)):
+def array2frac(
+    s, xy, drawinfo=False, circle_radius=None, border=(0.2, 0.1), col_start_frac=0.2
+):
     """
     INPUTS
     s:          an array of image values shape = (m, n) values between 0 and 255
@@ -769,6 +780,8 @@ def array2frac(s, xy, drawinfo=False, circle_radius=None, border=(0.2, 0.1)):
                             [BRx, BRy]])
     drawinfo:   output co-ordinates for plotting in FringeManager.annotate_fig
     circle_frac:  circle is centered on gauge with radius in pixels = gauge_width  * circle_radius
+    border: (col, row) fraction of gauge height and width to exclude from inside gauge
+    col_start_frac: position of the colunm used to start looking for gauge fringes, as fraction of circle radius
     OUTPUTS
     ffrac : gauge fringe fraction between -1 and 1
     drawinfo: (optional) lots of info used by FringeManager.annotate_fig
@@ -785,7 +798,7 @@ def array2frac(s, xy, drawinfo=False, circle_radius=None, border=(0.2, 0.1)):
         radius = circle_radius * width
         circle = (ccen - radius, rcen - radius, ccen + radius, rcen + radius)
         pklist = circle_mask_pklist(pklist, circle, s.shape)
-        col_start = gauge_initial_column(circle, ci)
+        col_start = circle[0] - col_start_frac * radius
     y = s[:, 0]
     bwp = np.ones_like(bwo) - bwo
     slopep, interceptsp = findfringes2(y, bwp, pklist)

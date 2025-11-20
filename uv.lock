@@ -569,6 +569,7 @@ dependencies = [
     { name = "lxml" },
     { name = "matplotlib" },
     { name = "numpy" },
+    { name = "pillow-affine" },
 ]
 
 [package.dev-dependencies]
@@ -585,6 +586,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.0.2" },
     { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "numpy", specifier = ">=2.3.4" },
+    { name = "pillow-affine", specifier = ">=0.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -979,6 +981,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/20/2e/3434380e8110b76cd9eb00a363c484b050f949b4bbe84ba770bb8508a02c/pillow-12.0.0-pp311-pypy311_pp73-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:09f2d0abef9e4e2f349305a4f8cc784a8a6c2f58a8c4892eea13b10a943bd26e", size = 5313505, upload-time = "2025-10-15T18:24:07.137Z" },
     { url = "https://files.pythonhosted.org/packages/57/ca/5a9d38900d9d74785141d6580950fe705de68af735ff6e727cb911b64740/pillow-12.0.0-pp311-pypy311_pp73-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:bdee52571a343d721fb2eb3b090a82d959ff37fc631e3f70422e0c2e029f3e76", size = 5963654, upload-time = "2025-10-15T18:24:09.579Z" },
     { url = "https://files.pythonhosted.org/packages/95/7e/f896623c3c635a90537ac093c6a618ebe1a90d87206e42309cb5d98a1b9e/pillow-12.0.0-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:b290fd8aa38422444d4b50d579de197557f182ef1068b75f5aa8558638b8d0a5", size = 6997850, upload-time = "2025-10-15T18:24:11.495Z" },
+]
+
+[[package]]
+name = "pillow-affine"
+version = "0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3a/11/35b7d418a80b36a73c1d4dbfaed9b940d187eec34aed26de9ee81dcb2391/pillow_affine-0.1.tar.gz", hash = "sha256:b385ac321309f0c1464dcb24276fd271d1a816a199df52ed96891d23882bf99a", size = 8026, upload-time = "2020-03-24T15:55:16.47Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/bd/c97193b0397c59e94ae381346c2630a6b242ac228411fda22fd42c1fdf33/pillow_affine-0.1-py3-none-any.whl", hash = "sha256:c37224ce1ff48e9138e698c7a2e3888c1539731bd98bb61200e9d07988a932af", size = 8283, upload-time = "2020-03-24T15:55:14.324Z" },
 ]
 
 [[package]]
