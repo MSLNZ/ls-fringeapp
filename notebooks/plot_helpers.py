@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 import matplotlib
 from matplotlib.pyplot import figure, show
@@ -39,6 +40,146 @@ def draw_gauge(axes, img_array, drawdata: dict):
         axes.add_artist(circle_patch)
 
     axes.axvline(x=drawdata["col_start"], ls="-.", c="c", lw=1)
+
+
+# def affine_coeffs(pa, pb):
+#     """
+#     find the affine coeffs needed by PIL transform, to map pa to pb
+
+#     pa : 3 or more points on original plane
+#     pb : points on transformed plane
+#     finds the coefficients needed in
+#     PIL.Image.transform(size, PIL.Image.AFFINE, a_coeffs, PIL.Image.BICUBIC)
+#     to transform the pixels in an image from pa to pb,
+#     these are the coordinates of a transform matrix A
+
+#     A = [a, b, c]
+#         [d, e, f]
+#         [0, 0, 1]
+
+#     where a_coeffs = (a, b, c, d, e, f)
+#     and X1 * inv(A) = X2  - check multiplication order
+#     could probably simplify and remove the 2nd inverse calculation
+#     """
+#     pa = pa.reshape(-1, 2)
+#     X1 = np.hstack((pa, np.ones((pa.shape[0], 1))))
+#     pb = pb.reshape(-1, 2)
+#     X2 = np.hstack((pb, np.ones((pb.shape[0], 1))))
+#     X1_inv = np.linalg.pinv(X1)
+#     A = np.dot(X1_inv, X2)
+#     inv_A = np.linalg.inv(A)
+#     a_coeffs = inv_A[:, :2].T.flatten()
+#     return a_coeffs
+
+
+def rotate(
+    img,
+    angle: float,
+    resample=Image.BICUBIC,
+    expand: int | bool = False,
+    center: tuple[float, float] | None = None,
+    translate: tuple[int, int] | None = None,
+    fillcolor: float | tuple[float, ...] | str | None = None,
+    points: np.ndarray = None,  # n rows,  2 columns or n columns 2 rows
+) -> Image:
+    """
+    local version based on this code
+    https://github.com/python-pillow/Pillow/blob/ec40c546d7d38efebcb228745291bd3ba6233196/src/PIL/Image.py#L2340
+
+    edited to return points transformed by the same rotation
+
+
+
+    Returns a rotated copy of this image.  This method returns a
+    copy of this image, rotated the given number of degrees counter
+    clockwise around its centre.
+
+    :param angle: In degrees counter clockwise.
+    :param resample: An optional resampling filter.  This can be
+       one of :py:data:`Resampling.NEAREST` (use nearest neighbour),
+       :py:data:`Resampling.BILINEAR` (linear interpolation in a 2x2
+       environment), or :py:data:`Resampling.BICUBIC` (cubic spline
+       interpolation in a 4x4 environment). If omitted, or if the image has
+       mode "1" or "P", it is set to :py:data:`Resampling.NEAREST`.
+       See :ref:`concept-filters`.
+    :param expand: Optional expansion flag.  If true, expands the output
+       image to make it large enough to hold the entire rotated image.
+       If false or omitted, make the output image the same size as the
+       input image.  Note that the expand flag assumes rotation around
+       the center and no translation.
+    :param center: Optional center of rotation (a 2-tuple).  Origin is
+       the upper left corner.  Default is the center of the image.
+    :param translate: An optional post-rotate translation (a 2-tuple).
+    :param fillcolor: An optional color for area outside the rotated image.
+    :returns: An :py:class:`~PIL.Image.Image` object.
+    """
+
+    angle = angle % 360.0
+
+    w, h = img.size
+
+    if translate is None:
+        post_trans = (0, 0)
+    else:
+        post_trans = translate
+    if center is None:
+        center = (w / 2, h / 2)
+
+    angle = -math.radians(angle)
+    matrix = [
+        round(math.cos(angle), 15),
+        round(math.sin(angle), 15),
+        0.0,
+        round(-math.sin(angle), 15),
+        round(math.cos(angle), 15),
+        0.0,
+    ]
+
+    def transform(x: float, y: float, matrix: list[float]) -> tuple[float, float]:
+        (a, b, c, d, e, f) = matrix
+        return a * x + b * y + c, d * x + e * y + f
+
+    matrix[2], matrix[5] = transform(
+        -center[0] - post_trans[0], -center[1] - post_trans[1], matrix
+    )
+    matrix[2] += center[0]
+    matrix[5] += center[1]
+
+    if expand:
+        # calculate output size
+        xx = []
+        yy = []
+        for x, y in ((0, 0), (w, 0), (w, h), (0, h)):
+            transformed_x, transformed_y = transform(x, y, matrix)
+            xx.append(transformed_x)
+            yy.append(transformed_y)
+        nw = math.ceil(max(xx)) - math.floor(min(xx))
+        nh = math.ceil(max(yy)) - math.floor(min(yy))
+
+        # We multiply a translation matrix from the right.  Because of its
+        # special form, this is the same as taking the image of the
+        # translation vector as new translation vector.
+        matrix[2], matrix[5] = transform(-(nw - w) / 2.0, -(nh - h) / 2.0, matrix)
+        w, h = nw, nh
+        new_img = img.transform(
+            (w, h), Image.AFFINE, matrix, resample, fillcolor=fillcolor
+        )
+        # additional code EFH 2025-11-24
+        if points is None:
+            return new_img
+
+        M1 = np.array(matrix).reshape(2, 3)
+        M1 = np.vstack((M1, [0, 0, 1]))
+        shape = points.shape
+        if shape[0] == 2:
+            points = points.T
+        X1 = np.hstack((points, np.ones((points.shape[0], 1))))
+        X2 = np.dot(np.linalg.inv(M1), X1.T)
+        new_points = X2[:2, :]
+        if shape[1] == 2:
+            new_points = new_points.T
+
+    return new_img, new_points
 
 
 class GetGaugeCorners:
