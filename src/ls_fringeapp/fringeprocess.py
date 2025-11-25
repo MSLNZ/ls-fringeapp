@@ -34,6 +34,39 @@ def roipoly(image_array, cs, rs):
     return mask
 
 
+def gauge_geometry(xy):
+    """
+    inputs
+    xy :        3 row by 2 column array of Top Left, Bottom Left Bottom Right
+                coordinates of GB in image numpy array s
+                xy = array([[TLx, TLy],
+                            [BLx, BLy],
+
+    outputs
+    (width, length):
+    (ccen, rcen)   :
+    phi            : angle of left hand edge to vertical
+    """
+    length = ((xy[0, :] - xy[1, :]) ** 2).sum() ** 0.5
+    width = ((xy[1, :] - xy[2, :]) ** 2).sum() ** 0.5
+
+    # diagonal length of GB
+    diag = np.sqrt((xy[0, 1] - xy[2, 1]) ** 2 + (xy[0, 0] - xy[2, 0]) ** 2)
+
+    # angle of diagonal to x-axis
+    theta = np.arctan2((xy[2, 1] - xy[0, 1]), (xy[2, 0] - xy[0, 0]))
+    # angle of left hand edge to x-axis
+    phi = np.arctan2((xy[0, 1] - xy[1, 1]), (xy[0, 0] - xy[1, 0]))
+
+    rcen = xy[2, 0] - diag * np.cos(theta) / 2
+    ccen = xy[2, 1] - diag * np.sin(theta) / 2
+
+    rcen = rcen - 1  # match matlab
+    ccen = ccen - 1
+
+    return (width, length), (ccen, rcen), phi
+
+
 def gbroif(s, xy, border=(0.2, 0.1)):
     """
     inputs
@@ -84,26 +117,7 @@ def gbroif(s, xy, border=(0.2, 0.1)):
 
 
     """
-
-    # TODO the readability of this could be improved by using more
-    # numpy type arrays
-
-    # diagonal length of GB
-    lh = np.sqrt((xy[0, 1] - xy[2, 1]) ** 2 + (xy[0, 0] - xy[2, 0]) ** 2)
-    # left hand length of GB
-    leng = np.sqrt((xy[0, 1] - xy[1, 1]) ** 2 + (xy[0, 0] - xy[1, 0]) ** 2)
-    # bottom width of GB
-    wid = np.sqrt((xy[1, 1] - xy[2, 1]) ** 2 + (xy[1, 0] - xy[2, 0]) ** 2)
-    # angle of diagonal to x-axis
-    theta = np.arctan2((xy[2, 1] - xy[0, 1]), (xy[2, 0] - xy[0, 0]))
-    # angle of left hand edge to x-axis
-    phi = np.arctan2((xy[0, 1] - xy[1, 1]), (xy[0, 0] - xy[1, 0]))
-
-    rcen = xy[2, 0] - lh * np.cos(theta) / 2
-    ccen = xy[2, 1] - lh * np.sin(theta) / 2
-
-    rcen = rcen - 1  # match matlab
-    ccen = ccen - 1
+    (wid, leng), (ccen, rcen), phi = gauge_geometry(xy)
 
     # Outside border or buffer is 5 pixels
     ob = 5
@@ -779,7 +793,7 @@ def array2frac(
                             [BLx, BLy],
                             [BRx, BRy]])
     drawinfo:   output co-ordinates for plotting in FringeManager.annotate_fig
-    circle_frac:  circle is centered on gauge with radius in pixels = gauge_width  * circle_radius
+    circle_radius:  circle is centered on gauge with radius in pixels = gauge_width  * circle_radius
     border: (col, row) fraction of gauge height and width to exclude from inside gauge
     col_start_frac: position of the colunm used to start looking for gauge fringes, as fraction of circle radius
     OUTPUTS

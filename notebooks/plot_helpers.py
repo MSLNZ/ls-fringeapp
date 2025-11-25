@@ -5,7 +5,7 @@ from matplotlib.pyplot import figure, show
 from matplotlib.patches import Circle
 import numpy as np
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 
 
 import tkinter as tk
@@ -13,6 +13,7 @@ from tkinter import filedialog
 
 
 from ls_fringeapp.poly_lasso import PolyLasso
+from ls_fringeapp import fringeprocess as fp
 
 
 # local version of FringeManager.annotate_fig
@@ -182,9 +183,73 @@ def rotate(
     return new_img, new_points
 
 
+def make_square_gauge(img: Image, xygb, crop_margin=(200, 50)):
+    """
+    create a square gauge image by scaling and rotating a
+    rectangular gauge image.
+
+    gauge in new image should have equal length sides and 90 degree corners.
+    """
+    (width, length), (ccen, rcen), phi = fp.gauge_geometry(xygb)
+    # rotate gauge square to axis
+    # swap x and y axis
+    pa = pa = xygb[:, [1, 0]]
+    img1, xy1 = rotate(img, angle=-180 - np.rad2deg(phi), expand=True, points=pa)
+    # scale along x
+    scale = length / width
+    size = (int(scale * img1.size[0]), img1.size[1])
+    img2 = img1.resize(size)
+    S = np.array(((scale, 0), (0, 1)))
+    xy2 = np.dot(S, xy1.T).T
+    # rotate back
+    img3, xy3 = rotate(img2, angle=180 + np.rad2deg(phi), expand=True, points=xy2)
+    # crop to a little outside square
+    box = (
+        min(xy3[:, 0]) - crop_margin[0],
+        min(xy3[:, 1]) - crop_margin[1],
+        max(xy3[:, 0]) + crop_margin[0],
+        max(xy3[:, 1]) + crop_margin[1],
+    )
+    img4 = img3.crop(box)
+    xy4 = xy3 - (box[0], box[1])
+    # swap x and y axis back
+    xygb4 = xy4[:, [1, 0]]
+    return img4, xygb4
+
+
+def blur_gauge_hole(img, xygb, circle_radius=0.25):
+    """
+    takes an image of a square gauge and adds a blured circle
+    at the center of the gauge
+
+    circle_radius:  circle is centered on gauge with radius in pixels = gauge_width  * circle_radius
+    """
+    (width, length), (ccen, rcen), phi = fp.gauge_geometry(xygb)
+    mask = Image.new(mode="L", size=img.size)
+    draw = ImageDraw.Draw(mask)
+    radius_px = circle_radius * width
+
+    circle = (ccen - radius_px, rcen - radius_px, ccen + radius_px, rcen + radius_px)
+    draw.ellipse(circle, fill="white", outline="white")
+    blurred = img.filter(ImageFilter.GaussianBlur(40))
+    img_sq_hole = img.copy()
+    img_sq_hole.paste(blurred, mask=mask)
+    return img_sq_hole
+
+
 class GetGaugeCorners:
     """
-    a cut down version of fringe manager for retrieving gauge block co-ordinates from a list of file
+    a cut down version of fringe manager
+    asks user via dialog for a list of image files
+    presents images to user for user to select gauge corners via mouse clicks
+    left mouse click on  top left gauge corner
+    left click on bottom left gauge corner
+    left click on bottom right gauge corner
+    right click anywher to finish
+
+    gauge co-ordinates are written to terminal
+
+
     """
 
     def __init__(self, ax, img_list=None):
