@@ -245,8 +245,11 @@ class FringeManager:
         print(self.img_filename)
 
         img = Image.open(self.img_filename)
-        img.convert("L")
+        # PIL uses a weighted average of the RGB channels
+        # L = R * 299/1000 + G * 587/1000 + B * 114/1000
+        # img = img.convert("L")
         self.img_array = np.asarray(img)
+        # use an unweighted average of the RGB channels
         if self.img_array.ndim > 2:
             self.img_array = self.img_array.mean(axis=2)
         self.axes.clear()
