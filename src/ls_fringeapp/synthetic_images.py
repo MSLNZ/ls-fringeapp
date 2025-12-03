@@ -64,8 +64,16 @@ def synthetic_image_with_gauge(
     # shift by fringe_fraction
     yshift = (1, 0, 0, 0, 1, ffrac * fringe_spacing_px)
     img3 = img2.transform(img2.size, Image.Transform.AFFINE, data=yshift)
-    gb_box = (0, 0, gb_size_px[1], gb_size_px[0])
+
     # crop shifted copy to gauge size
+    top_left = ((img.size[0] - gb_size_px[1]) // 2, (img.size[1] - gb_size_px[0]) // 2)
+
+    gb_box = (
+        top_left[0],
+        top_left[1],
+        top_left[0] + gb_size_px[1],
+        top_left[1] + gb_size_px[0],
+    )
     img4 = img3.crop(gb_box)
     # paste to centre of image
     top_left = ((img.size[0] - gb_size_px[1]) // 2, (img.size[1] - gb_size_px[0]) // 2)
