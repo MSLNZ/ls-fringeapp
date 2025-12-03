@@ -29,9 +29,9 @@ def draw_gauge(axes, img_array, drawdata: dict):
         axes.plot(x, peaks, "+y")
     maxx = img_array.shape[1]
     for cepts in drawdata["interceptsp"]:
-        axes.plot([0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m", lw=5)
+        axes.plot([0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m", lw=2)
     for cepts in drawdata["interceptsg"]:
-        axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-", lw=5)
+        axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-", lw=2)
 
     if drawdata["circle"] is not None:
         xy = (drawdata["ccen"], drawdata["rcen"])
