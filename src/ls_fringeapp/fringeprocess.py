@@ -7,6 +7,21 @@ import matplotlib.mlab
 from matplotlib.path import Path
 
 
+def img2greyarray(img: Image) -> np.ndarray[tuple[int, int], np.dtype[np.float64]]:
+    """
+    conversion function for PIL image to numpy array,
+    here so that all tests and notebooks use the same conversion
+    different conversions can result in small differences in fringe fraction
+    max seen 0.0028 ff ~= 0.9 nm
+    mean 0 nm
+    stdev seen 0.0008 ff ~= 0.25 nm
+    """
+    img_array = np.asarray(img)
+    if img_array.ndim > 2:
+        img_array = img_array.mean(axis=2)
+    return img_array
+
+
 def roipoly(image_array, cs, rs):
     """
     Returns a polygon mask whose vertices are given by cs,rs
