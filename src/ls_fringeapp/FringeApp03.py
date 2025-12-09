@@ -22,14 +22,17 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-mpl.use("tkagg")
-
 
 from ls_fringeapp.poly_lasso import PolyLasso
 from ls_fringeapp import fringeprocess
 from ls_fringeapp import gauge_length
 
 from ls_fringeapp import load_equipment_data
+
+mpl.use("tkagg")
+mpl.rcParams["toolbar"] = "None"
+
+DPI = 150
 
 USE_GREEN = True
 ObliquityCorrection = 1.00000013
@@ -92,18 +95,7 @@ DTR = np.dtype(
 class FringeManager:
     """simple gauge block picking interface and ff calculator"""
 
-    def __init__(self, ax, menu):
-        self.app_win = tk.Tk()
-
-        self.app_win.withdraw()
-        self.axes = ax
-        self.figure = ax.figure
-        self.canvas = ax.figure.canvas
-        self.filetext = self.figure.text(0.5, 0.05, " ", horizontalalignment="center")
-        self.fftext = self.figure.text(0.5, 0.02, " ", horizontalalignment="center")
-        self.canvas.mpl_connect("button_press_event", self.onpress)
-        self.canvas.mpl_connect("key_press_event", self.keypress)
-
+    def __init__(self):
         self.ffrac = {}
         self.gauge_data = []
         self.gauge_data_filename: Path
@@ -119,8 +111,122 @@ class FringeManager:
         self.shelf_filename: Path
         self.red_green = USE_GREEN
 
-        self.fig_menu = menu
         self.check_wavelengths()
+        self.make_gui()
+
+    def make_gui(self):
+        # self.app_win = tk.Tk()
+        # self.app_win.withdraw()
+
+        self.fig_menu = plt.figure(figsize=(10, 6), num="Control Panel", dpi=DPI)
+
+        fig_gb = plt.figure(figsize=(6, 6), num="Gauge Image", dpi=DPI)
+        self.axes_gb = fig_gb.add_axes([0.1, 0.1, 0.8, 0.8])
+
+        self.figure = self.axes_gb.figure
+        self.canvas = self.figure.canvas
+
+        self.canvas.mpl_connect("button_press_event", self.onpress)
+        self.canvas.mpl_connect("key_press_event", self.keypress)
+
+        # control panel text
+        self.filetext = self.figure.text(0.5, 0.05, " ", horizontalalignment="center")
+        self.fftext = self.figure.text(0.5, 0.02, " ", horizontalalignment="center")
+
+        self.input_file_path = self.fig_menu.text(
+            0.5,
+            0.95,
+            "",
+            horizontalalignment="center",
+            fontsize=12,
+        )
+
+        if self.red_wavelength:
+            message = f"Wavelengths loaded from\n{load_equipment_data.path_register}\n"
+            message += f"red      {self.red_wavelength} nm\n"
+            message += f"green    {self.green_wavelength} nm\n"
+        else:
+            message = (
+                f"Problem loading wavlengths from\n{load_equipment_data.path_register}"
+            )
+
+        self.fig_menu.text(0.6, 0.0, message, fontsize=8)
+
+        # fix the fonts for tkinter dialog boxes
+        for f in tk.font.names():
+            ff = tk.font.nametofont(f)
+            ff.config(size=16)
+
+        # add button controls
+        axload = self.fig_menu.add_axes([0.1, 0.825, 0.2, 0.075])
+        axprev = self.fig_menu.add_axes([0.1, 0.725, 0.2, 0.075])
+        axnext = self.fig_menu.add_axes([0.1, 0.625, 0.2, 0.075])
+        axredo = self.fig_menu.add_axes([0.1, 0.525, 0.2, 0.075])
+        axcalc0 = self.fig_menu.add_axes([0.1, 0.425, 0.2, 0.075])
+        axcalcAll = self.fig_menu.add_axes([0.1, 0.325, 0.2, 0.075])
+
+        bload = mpl.widgets.Button(axload, "Load")
+        bload.on_clicked(self.load)
+
+        bnext = mpl.widgets.Button(axnext, "Next")
+        bnext.on_clicked(self.next)
+
+        bprev = mpl.widgets.Button(axprev, "Previous")
+        bprev.on_clicked(self.prev)
+
+        bredo = mpl.widgets.Button(axredo, "Redo")
+        bredo.on_clicked(self.redo)
+
+        bcalc0 = mpl.widgets.Button(axcalc0, "Calculate Zero Order")
+        bcalc0.on_clicked(self.calc0)
+
+        bcalcAll = mpl.widgets.Button(axcalcAll, "Calculate All Orders")
+        bcalcAll.on_clicked(self.calcall)
+
+        # check box for square gauges with hole
+        sq_check = self.fig_menu.add_axes([0.1, 0.225, 0.2, 0.075])
+        self.check_box = mpl.widgets.CheckButtons(
+            ax=sq_check,
+            labels=["square with hole"],
+        )
+        self.check_box._checks.set_sizes(np.array([100]), dpi=150)
+        self.check_box._frames.set_sizes(np.array([100]), dpi=150)
+
+        self.check_box.on_clicked(self.sq_check_change)
+
+        # three sliders for border and hole size
+
+        ax08 = self.fig_menu.add_axes([0.1, 0.18, 0.2, 0.03])
+        self.hole_size_slider = mpl.widgets.Slider(
+            ax=ax08,
+            label="hole radius",
+            valmin=0.05,
+            valmax=0.3,
+            valinit=0.1,
+        )
+        self.fig_menu.text(0.1, 0.13, "gauge border", fontsize=10)
+        ax09 = self.fig_menu.add_axes([0.1, 0.08, 0.2, 0.03])
+        self.xborder_size_slider = mpl.widgets.Slider(
+            ax=ax09,
+            label="X",
+            valmin=0.05,
+            valmax=0.3,
+            valinit=0.1,
+        )
+        ax10 = self.fig_menu.add_axes([0.1, 0.03, 0.2, 0.03])
+        self.yborder_size_slider = mpl.widgets.Slider(
+            ax=ax10,
+            label="Y",
+            valmin=0.05,
+            valmax=0.3,
+            valinit=0.1,
+        )
+
+        plt.show()
+
+    def sq_check_change(self, label):
+        print(f"{label=}")
+        print(self.check_box.get_status())
 
     def process_image(self, _ax, _lasso_line, verts):
         """called after polylasso finished, processes image and prints ff"""
@@ -210,6 +316,7 @@ class FringeManager:
         self.prev_image()
 
     def load(self, _):
+        print("in FringeManger.load")
         self.load_gauge_data()
 
     def redo(self, _):
@@ -247,17 +354,12 @@ class FringeManager:
         print(self.img_filename)
 
         img = Image.open(self.img_filename)
-        # PIL uses a weighted average of the RGB channels
-        # L = R * 299/1000 + G * 587/1000 + B * 114/1000
-        # img = img.convert("L")
-        self.img_array = np.asarray(img)
-        # use an unweighted average of the RGB channels
-        if self.img_array.ndim > 2:
-            self.img_array = self.img_array.mean(axis=2)
-        self.axes.clear()
-        self.axes.imshow(self.img_array, cmap=mpl.cm.gray)
-        self.axes.axis("image")
-        self.axes.axis("off")
+
+        self.img_array = fringeprocess.img2greyarray(img)
+        self.axes_gb.clear()
+        self.axes_gb.imshow(self.img_array, cmap=mpl.cm.gray)
+        self.axes_gb.axis("image")
+        self.axes_gb.axis("off")
 
         self.filetext.set_text(img_basename)
         self.fftext.set_text(" ")
@@ -321,20 +423,12 @@ class FringeManager:
         db.close()
 
     def check_wavelengths(self):
-        "load wavelengths and display to user"
+        "load wavelengths"
         wavelengths = load_equipment_data.laser_wavelengths
         print(self.red_green)
         print(wavelengths)
-        if wavelengths["red"]:
-            message = "Wavelengths Used\n"
-            self.red_wavelength = wavelengths["red"]
-            message += f"red vacuum wavelength = {self.red_wavelength} nm\n"
-            if self.red_green:
-                self.green_wavelength = wavelengths["green"]
-                message += f"green vacuum wavelength = {self.green_wavelength} nm\n"
-        else:
-            message = "Problem loading vacuumn wavelengths"
-        messagebox.showinfo("Vacuum Wavelengths", message)
+        self.red_wavelength = wavelengths.get("red", None)
+        self.green_wavelength = wavelengths.get("green", None)
 
     def make_text_for_control_window(self):
         # make list of images on left of figure
@@ -346,14 +440,14 @@ class FringeManager:
 
         text = self.fig_menu.text(
             0.35,
-            0.95,
+            0.85,
             self.image_folder.as_posix(),
             horizontalalignment="left",
             fontsize=12,
             color="black",
         )
 
-        ypos = 0.9
+        ypos = 0.8
         for gauge in self.gauge_data:
             img_basename = PureWindowsPath(gauge["RedFileName"]).name
             redtext = img_basename
@@ -446,10 +540,14 @@ class FringeManager:
                     return
 
         print(f"image folder (after dialog): {image_folder}")
+
+        print(f"{self.gauge_data_filename=}")
+        self.input_file_path.set_text(str(self.gauge_data_filename))
+
         self.make_image_list(image_folder)
         self.load_shelf_file()
         self.make_text_for_control_window()
-
+        self.fig_menu.canvas.draw()
         self.open_image()
 
     def annotate_fig(self, drawdata: [dict | list]):
@@ -457,27 +555,31 @@ class FringeManager:
             # reading older shelf file
             drawdata = fringeprocess.convert_drawdata_list_to_dict(drawdata)
 
-        self.axes.plot(drawdata["xy"][:, 1], drawdata["xy"][:, 0], "or")
-        self.axes.plot(drawdata["ccen"], drawdata["rcen"], "+c", ms=20)
-        self.axes.plot(drawdata["co"], drawdata["ro"], "w-")
-        self.axes.plot(drawdata["ci"], drawdata["ri"], "c-")
+        self.axes_gb.plot(drawdata["xy"][:, 1], drawdata["xy"][:, 0], "or")
+        self.axes_gb.plot(drawdata["ccen"], drawdata["rcen"], "+c", ms=20)
+        self.axes_gb.plot(drawdata["co"], drawdata["ro"], "w-")
+        self.axes_gb.plot(drawdata["ci"], drawdata["ri"], "c-")
         for col, peaks in enumerate(drawdata["pklist"]):
             x = col * np.ones_like(peaks)
-            self.axes.plot(x, peaks, "+y")
+            self.axes_gb.plot(x, peaks, "+y")
         maxx = self.img_array.shape[1]
         for cepts in drawdata["interceptsp"]:
-            self.axes.plot([0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m")
+            self.axes_gb.plot(
+                [0, maxx], [cepts, drawdata["slopep"] * maxx + cepts], "-m"
+            )
         for cepts in drawdata["interceptsg"]:
-            self.axes.plot([0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-")
+            self.axes_gb.plot(
+                [0, maxx], [cepts, drawdata["slopeg"] * maxx + cepts], "g-"
+            )
 
-        if drawdata["circle"] is not None:
+        if drawdata.get("circle", None) is not None:
             xy = (drawdata["ccen"], drawdata["rcen"])
             r = drawdata["circle"]
             circle_patch = mpl.widgets.Circle(xy, r, ec="c", lw=2)
             circle_patch.set_facecolor((0, 0, 0, 0))
-            self.axes.add_artist(circle_patch)
-
-        self.axes.axvline(x=drawdata["col_start"], ls="-.", c="c", lw=1)
+            self.axes_gb.add_artist(circle_patch)
+        if drawdata.get("col_start", None) is not None:
+            self.axes_gb.axvline(x=drawdata["col_start"], ls="-.", c="c", lw=1)
 
         key = self.img_filename.name
         print(key, type(key))
@@ -618,40 +720,4 @@ class FringeManager:
 
 
 if __name__ == "__main__":
-    fig = plt.figure(figsize=(6, 6), dpi=80)
-    axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-    fig_menu = plt.figure(figsize=(10, 6), dpi=80)
-
-    print(f"{tk.TkVersion=}")
-    for f in tk.font.names():
-        ff = tk.font.nametofont(f)
-        ff.config(size=16)
-    lman = FringeManager(axes, fig_menu)
-
-    axload = fig_menu.add_axes([0.1, 0.825, 0.2, 0.075])
-    axprev = fig_menu.add_axes([0.1, 0.725, 0.2, 0.075])
-    axnext = fig_menu.add_axes([0.1, 0.625, 0.2, 0.075])
-    axredo = fig_menu.add_axes([0.1, 0.525, 0.2, 0.075])
-    axcalc0 = fig_menu.add_axes([0.1, 0.425, 0.2, 0.075])
-    axcalcAll = fig_menu.add_axes([0.1, 0.325, 0.2, 0.075])
-
-    bload = mpl.widgets.Button(axload, "Load")
-    bload.on_clicked(lman.load)
-
-    bnext = mpl.widgets.Button(axnext, "Next")
-    bnext.on_clicked(lman.next)
-
-    bprev = mpl.widgets.Button(axprev, "Previous")
-    bprev.on_clicked(lman.prev)
-
-    bredo = mpl.widgets.Button(axredo, "Redo")
-    bredo.on_clicked(lman.redo)
-
-    bcalc0 = mpl.widgets.Button(axcalc0, "Calculate Zero Order")
-    bcalc0.on_clicked(lman.calc0)
-
-    bcalcAll = mpl.widgets.Button(axcalcAll, "Calculate All Orders")
-    bcalcAll.on_clicked(lman.calcall)
-
-    lman.load_gauge_data()
-    plt.show()
+    lman = FringeManager()
