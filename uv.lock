@@ -569,6 +569,7 @@ dependencies = [
     { name = "lxml" },
     { name = "matplotlib" },
     { name = "numpy" },
+    { name = "pillow" },
     { name = "pillow-affine" },
 ]
 
@@ -587,6 +588,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.0.2" },
     { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "numpy", specifier = ">=2.3.4" },
+    { name = "pillow", specifier = ">=12.0.0" },
     { name = "pillow-affine", specifier = ">=0.1" },
 ]
 

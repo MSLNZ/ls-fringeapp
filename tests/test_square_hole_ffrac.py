@@ -13,6 +13,7 @@ import numpy as np
 from ls_fringeapp import fringeprocess as fp
 from ls_fringeapp.load_equipment_data import repo_folder
 from ls_fringeapp import plot_helpers as ph
+from ls_fringeapp import synthetic_images as si
 
 
 TEST_DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -46,7 +47,7 @@ def test_square_ffrac(row):
 
     img = Image.open(img_filename)
 
-    img_sq, xy_sq = ph.make_square_gauge(img, xygb)
+    img_sq, xy_sq = si.make_square_gauge(img, xygb)
     # get ffrac for square image with no hole
     ffrac_sq = fp.array2frac(
         fp.img2greyarray(img_sq),
@@ -55,7 +56,7 @@ def test_square_ffrac(row):
         border=(0.1, 0.1),
     )
     # add blurred hole
-    img_hole = ph.blur_gauge_hole(img_sq, xy_sq, circle_radius=0.25)
+    img_hole = si.blur_gauge_hole(img_sq, xy_sq, circle_radius=0.25)
     ffrac_hole = fp.array2frac(
         fp.img2greyarray(img_hole),
         xy_sq,

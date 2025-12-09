@@ -11,19 +11,19 @@ from pathlib import Path, PureWindowsPath
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+
 import datetime
 import shelve
 
 from PIL import Image
 import numpy as np
-import matplotlib
-
-matplotlib.use("tkagg")
 
 
-from matplotlib.pyplot import figure, show
-from matplotlib.widgets import Button
-from matplotlib.patches import Circle
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+mpl.use("tkagg")
+
 
 from ls_fringeapp.poly_lasso import PolyLasso
 from ls_fringeapp import fringeprocess
@@ -94,6 +94,7 @@ class FringeManager:
 
     def __init__(self, ax, menu):
         self.app_win = tk.Tk()
+
         self.app_win.withdraw()
         self.axes = ax
         self.figure = ax.figure
@@ -117,8 +118,9 @@ class FringeManager:
         self.gn_text_dict = {}
         self.shelf_filename: Path
         self.red_green = USE_GREEN
-        self.check_wavelengths()
+
         self.fig_menu = menu
+        self.check_wavelengths()
 
     def process_image(self, _ax, _lasso_line, verts):
         """called after polylasso finished, processes image and prints ff"""
@@ -253,7 +255,7 @@ class FringeManager:
         if self.img_array.ndim > 2:
             self.img_array = self.img_array.mean(axis=2)
         self.axes.clear()
-        self.axes.imshow(self.img_array, cmap=matplotlib.cm.gray)
+        self.axes.imshow(self.img_array, cmap=mpl.cm.gray)
         self.axes.axis("image")
         self.axes.axis("off")
 
@@ -405,7 +407,6 @@ class FringeManager:
         # Build a list of tuples for each file type the file dialog should display
         my_filetypes = [("all files", ".*"), ("text files", ".txt")]
         txt_name = filedialog.askopenfilename(
-            parent=self.app_win,
             initialdir=WorkingDir,
             title="Select text file written Gauge Block File Writer App",
             filetypes=my_filetypes,
@@ -472,7 +473,7 @@ class FringeManager:
         if drawdata["circle"] is not None:
             xy = (drawdata["ccen"], drawdata["rcen"])
             r = drawdata["circle"]
-            circle_patch = Circle(xy, r, ec="c", lw=2)
+            circle_patch = mpl.widgets.Circle(xy, r, ec="c", lw=2)
             circle_patch.set_facecolor((0, 0, 0, 0))
             self.axes.add_artist(circle_patch)
 
@@ -617,10 +618,14 @@ class FringeManager:
 
 
 if __name__ == "__main__":
-    fig = figure(figsize=(6, 6), dpi=80)
+    fig = plt.figure(figsize=(6, 6), dpi=80)
     axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-    fig_menu = figure(figsize=(10, 6), dpi=80)
+    fig_menu = plt.figure(figsize=(10, 6), dpi=80)
 
+    print(f"{tk.TkVersion=}")
+    for f in tk.font.names():
+        ff = tk.font.nametofont(f)
+        ff.config(size=16)
     lman = FringeManager(axes, fig_menu)
 
     axload = fig_menu.add_axes([0.1, 0.825, 0.2, 0.075])
@@ -630,24 +635,23 @@ if __name__ == "__main__":
     axcalc0 = fig_menu.add_axes([0.1, 0.425, 0.2, 0.075])
     axcalcAll = fig_menu.add_axes([0.1, 0.325, 0.2, 0.075])
 
-    bload = Button(axload, "Load")
+    bload = mpl.widgets.Button(axload, "Load")
     bload.on_clicked(lman.load)
 
-    bnext = Button(axnext, "Next")
+    bnext = mpl.widgets.Button(axnext, "Next")
     bnext.on_clicked(lman.next)
 
-    bprev = Button(axprev, "Previous")
+    bprev = mpl.widgets.Button(axprev, "Previous")
     bprev.on_clicked(lman.prev)
 
-    bredo = Button(axredo, "Redo")
+    bredo = mpl.widgets.Button(axredo, "Redo")
     bredo.on_clicked(lman.redo)
 
-    bcalc0 = Button(axcalc0, "Calculate Zero Order")
+    bcalc0 = mpl.widgets.Button(axcalc0, "Calculate Zero Order")
     bcalc0.on_clicked(lman.calc0)
 
-    bcalcAll = Button(axcalcAll, "Calculate All Orders")
+    bcalcAll = mpl.widgets.Button(axcalcAll, "Calculate All Orders")
     bcalcAll.on_clicked(lman.calcall)
 
     lman.load_gauge_data()
-
-    show()
+    plt.show()
