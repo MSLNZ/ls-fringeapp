@@ -28,11 +28,15 @@ from ls_fringeapp import fringeprocess
 from ls_fringeapp import gauge_length
 
 from ls_fringeapp import load_equipment_data
+from ls_fringeapp.file_formats import DTRG, DTR
 
 mpl.use("tkagg")
 mpl.rcParams["toolbar"] = "None"
 
 DPI = 150
+# slider colors
+OFF_COLOR = (0.83, 0.83, 0.83, 1.0)
+ON_COLOR = (0.12, 0.47, 0.71, 1.0)
 
 USE_GREEN = True
 ObliquityCorrection = 1.00000013
@@ -45,51 +49,6 @@ WorkingDir = r"C:\Users\c.young\OneDrive - Callaghan Innovation\Jobs"
 """
 For processing gauge block interferograms
 """
-
-# data type for reading in comma delimited files specifying measurement data and file names
-DTRG = np.dtype(
-    [
-        ("NominalSize", float),
-        ("SerialNo", (str, 16)),
-        ("RedDateTime", float),
-        ("GreenDateTime", float),
-        ("SetId", (str, 16)),
-        ("PlatenId", int),
-        ("Observer", (str, 16)),
-        ("Side", int),
-        ("ExpCoeff", float),
-        ("Units", (str, 16)),
-        ("TRAir", float),
-        ("TGAir", float),
-        ("TR", float),
-        ("TG", float),
-        ("PR", float),
-        ("PG", float),
-        ("HR", float),
-        ("HG", float),
-        ("RedFileName", (str, 256)),
-        ("GreenFileName", (str, 256)),
-    ]
-)
-
-DTR = np.dtype(
-    [
-        ("NominalSize", float),
-        ("SerialNo", (str, 16)),
-        ("RedDateTime", float),
-        ("SetId", (str, 16)),
-        ("PlatenId", int),
-        ("Observer", (str, 16)),
-        ("Side", int),
-        ("ExpCoeff", float),
-        ("Units", (str, 16)),
-        ("TRAir", float),
-        ("TR", float),
-        ("PR", float),
-        ("HR", float),
-        ("RedFileName", (str, 256)),
-    ]
-)
 
 
 class FringeManager:
@@ -110,6 +69,11 @@ class FringeManager:
         self.gn_text_dict = {}
         self.shelf_filename: Path
         self.red_green = USE_GREEN
+
+        # attributes for square gauges with hole
+        self.circle_radius = None
+        self.border = (0.2, 0.1)
+        self.col_start_frac = 0.2
 
         self.check_wavelengths()
         self.make_gui()
@@ -202,8 +166,13 @@ class FringeManager:
             label="hole radius",
             valmin=0.05,
             valmax=0.3,
-            valinit=0.1,
+            valinit=0.25,
         )
+        # disable slider initially
+        self.hole_size_slider.set_active(False)
+        self.hole_size_slider.poly.set_facecolor(OFF_COLOR)
+        self.hole_size_slider.on_changed(self.hole_size_change)
+
         self.fig_menu.text(0.1, 0.13, "gauge border", fontsize=10)
         ax09 = self.fig_menu.add_axes([0.1, 0.08, 0.2, 0.03])
         self.xborder_size_slider = mpl.widgets.Slider(
@@ -211,8 +180,10 @@ class FringeManager:
             label="X",
             valmin=0.05,
             valmax=0.3,
-            valinit=0.1,
+            valinit=0.2,
         )
+
+        self.xborder_size_slider.on_changed(self.border_change)
         ax10 = self.fig_menu.add_axes([0.1, 0.03, 0.2, 0.03])
         self.yborder_size_slider = mpl.widgets.Slider(
             ax=ax10,
@@ -221,12 +192,37 @@ class FringeManager:
             valmax=0.3,
             valinit=0.1,
         )
+        self.yborder_size_slider.on_changed(self.border_change)
 
         plt.show()
 
     def sq_check_change(self, label):
-        print(f"{label=}")
-        print(self.check_box.get_status())
+        if self.check_box.get_status()[0]:
+            self.circle_radius = self.hole_size_slider.val
+            # make hole size slider active and change color
+            self.hole_size_slider.poly.set_facecolor(ON_COLOR)
+            self.hole_size_slider.set_active(True)
+            # set border to default for square gauges
+            self.xborder_size_slider.set_val(0.1)
+            self.yborder_size_slider.set_val(0.1)
+            self.border = (0.1, 0.1)
+        else:
+            self.circle_radius = None
+            # make hole size slider inactive and change color
+            self.hole_size_slider.poly.set_facecolor(OFF_COLOR)
+            self.hole_size_slider.set_active(False)
+            # set border to default for rectangular gauges
+            self.xborder_size_slider.set_val(0.2)
+            self.yborder_size_slider.set_val(0.1)
+            self.border = (0.2, 0.1)
+        # change value of hol e size slider to update color
+        self.hole_size_slider.set_val(self.hole_size_slider.val)
+
+    def hole_size_change(self, val):
+        self.circle_radius = self.hole_size_slider.val
+
+    def border_change(self, val):
+        self.border = (self.xborder_size_slider.val, self.yborder_size_slider.val)
 
     def process_image(self, _ax, _lasso_line, verts):
         """called after polylasso finished, processes image and prints ff"""
