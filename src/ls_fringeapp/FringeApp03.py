@@ -233,7 +233,14 @@ class FringeManager:
         self.canvas.draw_idle()
         self.canvas.widgetlock.release(self.lasso)
         del self.lasso
-        ffrac, drawdata = fringeprocess.array2frac(self.img_array, xygb, drawinfo=True)
+        ffrac, drawdata = fringeprocess.array2frac(
+            self.img_array,
+            xygb,
+            drawinfo=True,
+            circle_radius=self.circle_radius,
+            border=self.border,
+            col_start_frac=self.col_start_frac,
+        )
         img_basename = self.img_filename.name
         self.ffrac[img_basename] = ffrac
         self.annotate_fig(drawdata)
@@ -571,7 +578,7 @@ class FringeManager:
         if drawdata.get("circle", None) is not None:
             xy = (drawdata["ccen"], drawdata["rcen"])
             r = drawdata["circle"]
-            circle_patch = mpl.widgets.Circle(xy, r, ec="c", lw=2)
+            circle_patch = mpl.patches.Circle(xy, r, ec="c", lw=2)
             circle_patch.set_facecolor((0, 0, 0, 0))
             self.axes_gb.add_artist(circle_patch)
         if drawdata.get("col_start", None) is not None:
@@ -589,7 +596,6 @@ class FringeManager:
         out_filename = self.gauge_data_filename.with_name("output-calcs-py.txt")
 
         out_filename = filedialog.asksaveasfilename(
-            parent=self.app_win,
             initialfile=out_filename,
             title="Select text file to save calculated resuts to",
             filetypes=my_filetypes,

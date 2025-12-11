@@ -3,7 +3,7 @@ create synthetic fringe images for testing fringe fraction determination
 """
 
 import math
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 import numpy as np
 
 from ls_fringeapp import fringeprocess as fp
@@ -207,6 +207,7 @@ def synthetic_image_with_gauge(
     )
     # convert to PIL image
     img = Image.fromarray(img_array)
+    img = img.convert(mode="L")
     # make a copy so the  orignal image is not altered
     img2 = img.copy()
 
@@ -224,6 +225,8 @@ def synthetic_image_with_gauge(
         top_left[1] + gb_size_px[0],
     )
     img4 = img3.crop(gb_box)
+    # make gauge a little brighter than background
+    img4 = ImageEnhance.Brightness(img4).enhance(1.1)
     # paste to centre of image
     top_left = ((img.size[0] - gb_size_px[1]) // 2, (img.size[1] - gb_size_px[0]) // 2)
     img2.paste(img4, top_left)

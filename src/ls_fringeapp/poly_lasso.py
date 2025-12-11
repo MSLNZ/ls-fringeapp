@@ -50,6 +50,14 @@ class PolyLasso(Widget):
             self.axes.draw_artist(self.line)
         self.canvas.blit(self.axes.bbox)
 
+    def reset(self):
+        """
+        start again
+        """
+        print("start lasso again")
+        self.verts = []
+        self.line = None
+
     def cleanup(self):
         """Remove the lasso line."""
         # Clear out callbacks
@@ -61,9 +69,9 @@ class PolyLasso(Widget):
     def finalize(self):
         """Called when user makes the final right click"""
         # all done with callbacks pertaining to adding verts to the polygon
-        for cid in self.cids:
-            self.canvas.mpl_disconnect(cid)
-        self.cids = []
+        # for cid in self.cids:
+        #     self.canvas.mpl_disconnect(cid)
+        # self.cids = []
         # print 'right click'
         # Greater than three verts, since a triangle
         # has a duplicate point to close the poly.
@@ -84,7 +92,7 @@ class PolyLasso(Widget):
 
         else:
             print("Need at least three vertices to make a polygon")
-            self.cleanup()
+            # self.cleanup()
 
     def draw_update(self):
         """Adjust the polygon line, and blit it to the screen"""
@@ -98,7 +106,7 @@ class PolyLasso(Widget):
 
     def onmove(self, event):
         """Update the next vertex position"""
-        if self.line == None:
+        if self.line is None:
             return
         self.verts[-1] = (event.xdata, event.ydata)
         if self.line_to_next:
@@ -123,7 +131,7 @@ class PolyLasso(Widget):
         if event.button != 1:
             return
 
-        if self.line == None:
+        if self.line is None:
             # Deal with the first click
             self.line = Line2D(
                 [event.xdata],
@@ -138,7 +146,7 @@ class PolyLasso(Widget):
             self.axes.add_line(self.line)
             self.verts.append((event.xdata, event.ydata))
 
-        # finalize vertex at this click, set up a new on that changes as mouse moves
+        # finalize vertex at this click, set up a new line that changes as mouse moves
         self.verts[-1] = (event.xdata, event.ydata)
         self.verts.append((event.xdata, event.ydata))
 

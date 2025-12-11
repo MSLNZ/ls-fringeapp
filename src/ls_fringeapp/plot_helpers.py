@@ -12,7 +12,6 @@ from tkinter import filedialog
 
 
 from ls_fringeapp.poly_lasso import PolyLasso
-from ls_fringeapp import fringeprocess as fp
 
 
 # local version of FringeManager.annotate_fig
