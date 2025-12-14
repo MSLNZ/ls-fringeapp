@@ -14,6 +14,7 @@ from tkinter import messagebox
 
 import datetime
 import shelve
+import platform
 
 from PIL import Image
 import numpy as np
@@ -33,7 +34,14 @@ from ls_fringeapp.file_formats import DTRG, DTR
 mpl.use("tkagg")
 mpl.rcParams["toolbar"] = "None"
 
-DPI = 150
+if platform.system() == "Windows":
+    from ctypes import windll
+
+    windll.shcore.SetProcessDpiAwareness(1)
+    DPI = 100
+else:
+    DPI = 150
+
 # slider colors
 OFF_COLOR = (0.83, 0.83, 0.83, 1.0)
 ON_COLOR = (0.12, 0.47, 0.71, 1.0)
