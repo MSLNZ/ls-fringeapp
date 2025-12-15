@@ -185,7 +185,7 @@ class FringeManager:
         ax09 = self.fig_menu.add_axes([0.1, 0.08, 0.2, 0.03])
         self.xborder_size_slider = mpl.widgets.Slider(
             ax=ax09,
-            label="X",
+            label="height",
             valmin=0.05,
             valmax=0.3,
             valinit=0.2,
@@ -195,7 +195,7 @@ class FringeManager:
         ax10 = self.fig_menu.add_axes([0.1, 0.03, 0.2, 0.03])
         self.yborder_size_slider = mpl.widgets.Slider(
             ax=ax10,
-            label="Y",
+            label="width",
             valmin=0.05,
             valmax=0.3,
             valinit=0.1,

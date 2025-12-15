@@ -8,12 +8,12 @@ The previous code is archived in the `pre-square-gauge-code` branch
 
 ## Installlation
 
-The recommended method to install and run this code is to use `git` and the `uv` package manager. Instead of git you could downlaod the files directly from github, and/or run from an IDE. 
+The recommended method to install and run this code is to use `git` and the `uv` package manager. Instead of git you could download the files directly from github, and/or run from an IDE. Without `uv` getting the right version of python and dependecies is up to you.
 
 
 ### Use git
 1. Install git https://git-scm.com/install/windows
-2. Set up to work with github git https://docs.github.com/en/get-started/git-basics/set-up-git
+2. Set up to work with github and git https://docs.github.com/en/get-started/git-basics/set-up-git
    ```
    git clone https://github.com/MSLNZ/ls-fringeapp.git
    git clone https://github.com/MSLNZ/Length_Stds_Equipment_Register.git
@@ -44,9 +44,9 @@ The recommended method to install and run this code is to use `git` and the `uv`
 1. Open a powershell window in `ls_fringeapp` folder  
 2. `uv run ls_fringeapp`
 
-The first time this is run the correct version of python and the required dependencies will be installed.  Use the same command to run again.
+The first time this is run the correct version of python and the required dependencies will be installed (in a local environment).  Use the same command to run again.
 
-If running without `uv` (from an IDE for instance), just run `FringeApp03.py` in the `src/ls_fringeapp` folder.
+If running without `uv` (from an IDE for instance), just run `FringeApp03.py` in the `src/ls_fringeapp` folder. See the end of [progress_notes](progress_notes.md) for more details on file and folder organisation.
 
 ## Usage
 On startup you'll see the folowing.
@@ -54,7 +54,7 @@ On startup you'll see the folowing.
 ![startup screen shot](readme-images/2025-12-15_12-06.png)
 The window on the left will show the gauge images as they are processed. The window on the right is a control panel.
 
-The wavelengths of the lasers used are retrieved from the Length Standards Equipment Register xml file. This will be in the right place if the above installation process was followed. Otherwsie an error will be shown in the bottom right of the control panel.
+The wavelengths of the lasers used are retrieved from the Length Standards Equipment Register xml file. This will be in the corret relative folder if the above installation process was followed. Otherwsie an error will be shown in the bottom right of the control panel.
 
 Use the "Load" button to open a file written by the [Gauge-Block-File-Writer](https://github.com/MSLNZ/Gauge-Block-File-Writer). The file fomat is described below.
 
@@ -76,9 +76,9 @@ Then the bottom left, then the bottom right
 
 ![gauge selection](readme-images/2025-12-15_12-27.png)
 
-Finally right-click anywhere to finish the gauge selection. Right clicks before 3 corners are selected are ignored. Extra left-clicks after the first three are also ignored. 
+Finally right-click anywhere to finish the gauge selection. A right-click before 3 corners are selected is ignored. Extra left-clicks after the first three are also ignored. 
 
-After the right click the software will analyse the fringe image and annotate it.
+After the right-click the software will analyse the fringe image and annotate it.
 
 
 ![gauge selection](readme-images/2025-12-15_12-27_1.png)
@@ -96,9 +96,9 @@ Annotations:
 
 The calculated fringe fraction is displayed beneath the image and beside the filename on the control panel. Check visually it looks OK.
 
-If you messed up click "Redo" in the control panel. Otherwise  click "Next" to work through all  the images.
+If you messed up, click "Redo" in the control panel. Otherwise  click "Next" to work through all  the images.
 
-When finished click either "Calculate Zero Order" to calculate the gauge length closest to nominal or "Calulate All Orders" to calculate lenghts for 5 fringe orders either side of nominal. Choose the file to save the results to. This will produce a csv file, with columns as detailed below.
+When finished click either "Calculate Zero Order" to calculate the gauge length closest to nominal or "Calulate All Orders" to calculate lengths for 5 fringe orders either side of nominal. Choose the file to save the results to. This will produce a csv file, with columns as detailed below.
 
 Other output files produced:
  - fflog.txt -  a running list of all the attempts at calculating fringe fractions
