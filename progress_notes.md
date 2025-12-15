@@ -107,30 +107,31 @@ New code that allows analysis of fringe images for square gauges with a central 
 
 The previous code is archived in the `pre-square-gauge-code` branch.
 
-I've also changed the code layout to a `src layout` to make it easier to work with the uv package manager.
+I've also changed the code layout to a `src layout` to make it easier to work with the UV package manager.
 
 The starting point of the code is in `src/ls_fringeapp/FringeApp03.py`.  
 `uv run ls_fringeapp` will run the code in `src/ls_fringeapp/__init__.py` which just creates an instance of the `FringeManager` class from `src/ls_fringeapp/FringeApp03.py`. If running without `uv` ( from an IDE for instance), just run `FringeApp03.py`
 
-- `src/ls_fringeapp/file_formats.py` - definition of the file formats for csv files
+- `src/ls_fringeapp/file_formats.py` - definition of the file formats for CSV files
 - `src/ls_fringeapp/FringeApp03.py` - main `FringeManager` class
 - `src/ls_fringeapp/fringeprocess.py` - code to process fringe images - not dependent on GUI.
 - `src/ls_fringeapp/gauge_length.py` - calculate gauge length from fringe fractions and gauge data - not dependent on GUI
 - `src/ls_fringeapp/load_equipment_data.py` - load the red and green wavelengths for equipment register - separate for easy updates
-- `src/ls_fringeapp/plot_helpers.py` - function for annotation image outside  `FringeManager` - used in  notebooks
+- `src/ls_fringeapp/plot_helpers.py` - function for annotation image outside `FringeManager` - used in notebooks
 - `src/ls_fringeapp/poly_lasso.py` - code to provide the gauge selection widget used in the matplotlib gauge image
-- `src/ls_fringeapp/refractiveindex.py` - calculation of the refractive of air for wavelength and air temperature, pressure and humidity
-- `src/ls_fringeapp/synthetic_images.py` - code to produce synthetic images - used intest and notebooks
+- `src/ls_fringeapp/refractiveindex.py` - calculation of the refractive of air for wavelength and air temperature, pressure, and humidity
+- `src/ls_fringeapp/synthetic_images.py` - code to produce synthetic images - used in tests and notebooks
 - `tests` - test for code - run with `pytest`
-- `tests/data` - fringe images etc to use with tests and notebooks
-- `notebooks` - jupyter notebooks used during code development
+- `tests/data` - fringe images etc. to use with tests and notebooks
+- `notebooks` - Jupyter notebooks used during code development
 
 
 # Code History
-This code goes way back to some old matlab code (2002) written in conjunction with Lionel Watkins and Sze Tan then at the  Department of Physics, Auckland University.   
+
+This code goes way back to some old Matlab code (2002) written in conjunction with Lionel Watkins and Sze Tan then at the Department of Physics, Auckland University.   
 see:  
 Howick, E.F.; Watkins, L.R.; Tan, S.M. 2003. Automation of a 1960's Hilger gauge block interferometer. Metrologia. Vol.40 (4),
 
 Eleanor Howick translated it to python in ~2009. (May have been earlier). All mistakes are probably mine.
 
-The code uses matplotlib for the GUI, (historical reasons - what was avaliable/known at the time) with some Tkinter dialogs. Is a bit of an odd design but mostly works. I've resisted desires to rewrite in something a bit more modern or flexible.
+The code uses matplotlib for the GUI, (historical reasons - what was available/known at the time) with some TKinter dialogs. Is a bit of an odd design but mostly works. I've resisted desires to rewrite in something a bit more modern or flexible.

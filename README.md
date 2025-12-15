@@ -1,25 +1,25 @@
 # ls-fringeapp
-for processing gauge block fringe images
+For processing gauge block fringe images
 
 ## Changes 2025-12-15
 
 This is new code that allows analysis of fringe images for square gauges with a central round hole.
 The previous code is archived in the `pre-square-gauge-code` branch
 
-## Installlation
+## Installation
 
-The recommended method to install and run this code is to use `git` and the `uv` package manager. Instead of git you could download the files directly from github, and/or run from an IDE. Without `uv` getting the right version of python and dependecies is up to you.
+The recommended method to install and run this code is to use `git` and the `uv` package manager. Instead of git you could download the files directly from GitHub, and/or run from an IDE. Without `uv` getting the right version of python and dependencies is up to you.
 
 
 ### Use git
 1. Install git https://git-scm.com/install/windows
-2. Set up to work with github and git https://docs.github.com/en/get-started/git-basics/set-up-git
+2. Set up to work with GitHub and git https://docs.github.com/en/get-started/git-basics/set-up-git
    ```
    git clone https://github.com/MSLNZ/ls-fringeapp.git
    git clone https://github.com/MSLNZ/Length_Stds_Equipment_Register.git
    ```
 
-### Or just download from github
+### Or Just Download from GitHub
 1. download the zips file form the "<> Code" button dropdown for both  
    a. https://github.com/MSLNZ/ls-fringeapp  
    b. https://github.com/MSLNZ/Length_Stds_Equipment_Register
@@ -36,27 +36,27 @@ The recommended method to install and run this code is to use `git` and the `uv`
 
    ```
 
-### Install uv 
+### Install UV
 1. https://docs.astral.sh/uv/getting-started/installation
 
 ### RUN 
 
-1. Open a powershell window in `ls_fringeapp` folder  
+1. Open a PowerShell window in `ls_fringeapp` folder  
 2. `uv run ls_fringeapp`
 
-The first time this is run the correct version of python and the required dependencies will be installed (in a local environment).  Use the same command to run again.
+The first time this is run the correct version of python and the required dependencies will be installed (in a local environment). Use the same command to run again.
 
 If running without `uv` (from an IDE for instance), just run `FringeApp03.py` in the `src/ls_fringeapp` folder. See the end of [progress_notes](progress_notes.md) for more details on file and folder organisation.
 
 ## Usage
-On startup you'll see the folowing.
+On startup you'll see the following.
 
 ![startup screen shot](readme-images/2025-12-15_12-06.png)
 The window on the left will show the gauge images as they are processed. The window on the right is a control panel.
 
-The wavelengths of the lasers used are retrieved from the Length Standards Equipment Register xml file. This will be in the corret relative folder if the above installation process was followed. Otherwsie an error will be shown in the bottom right of the control panel.
+The wavelengths of the lasers used are retrieved from the Length Standards Equipment Register XML file. This will be in the correct relative folder if the above installation process was followed. Otherwise, an error will be shown in the bottom right of the control panel.
 
-Use the "Load" button to open a file written by the [Gauge-Block-File-Writer](https://github.com/MSLNZ/Gauge-Block-File-Writer). The file fomat is described below.
+Use the "Load" button to open a file written by the [Gauge-Block-File-Writer](https://github.com/MSLNZ/Gauge-Block-File-Writer). The file format is described below.
 
 This will list the images found in the input file and display the first image.
 
@@ -64,11 +64,11 @@ This will list the images found in the input file and display the first image.
 
 The screenshot shows some mock images found in `tests\data\mock_square_gauges`  
 
-For the square gauges, select `square with hole` and set the hole radius to a little larger than the hole. The slider sets the radius as a proportion of the width of the gauge determined in this next step.  You'l probably have to have a couple of attempts to get the right size for the real gauges. Once set it should be the same for all gauges.
+For the square gauges, select `square with hole` and set the hole radius to a little larger than the hole. The slider sets the radius as a proportion of the width of the gauge determined in this next step. You'll probably have to have a couple of attempts to get the right size for the real gauges. Once set it should be the same for all gauges.
 
 The gauge border sliders control an area inside the gauge that is ignored. The sliders again set this as a proportion of the width and height of the gauge. For rectangular gauges the default is 0.1 for the width and 0.2 for the height. For square gauges the default is 0.1 for both. This shouldn't need changing.
 
-In the "Gauge Image" window. use the mouse to click on the top left of the gauge.
+In the "Gauge Image" window, use the mouse to click on the top left of the gauge.
 
 ![gauge selection](readme-images/2025-12-15_12-26.png)
 
@@ -91,26 +91,26 @@ Annotations:
 - cyan circle - mask for central gauge hole - square with hole only
 - cyan dot-dash line - starting column for finding gauge fringes
 - yellow crosses - peaks of each fringe, 
-- pink lines - lines fiited to the peaks of the platen fringes,
-- green lines - lines fitted to the paeks of the gauge fringes
+- pink lines - lines fitted to the peaks of the platen fringes,
+- green lines - lines fitted to the peaks of the gauge fringes
 
 The calculated fringe fraction is displayed beneath the image and beside the filename on the control panel. Check visually it looks OK.
 
-If you messed up, click "Redo" in the control panel. Otherwise  click "Next" to work through all  the images.
+If you messed up, click "Redo" in the control panel. Otherwise, click "Next" to work through all the images.
 
-When finished click either "Calculate Zero Order" to calculate the gauge length closest to nominal or "Calulate All Orders" to calculate lengths for 5 fringe orders either side of nominal. Choose the file to save the results to. This will produce a csv file, with columns as detailed below.
+When finished click either "Calculate Zero Order" to calculate the gauge length closest to nominal or "Calculate All Orders" to calculate lengths for 5 fringe orders either side of nominal. Choose the file to save the results to. This will produce a CSV file, with columns as detailed below.
 
 Other output files produced:
- - fflog.txt -  a running list of all the attempts at calculating fringe fractions
- - info.shf.db - a binary file storing the annotation data for each image - this will be loaded if avaliable, and annotations shown for previously processed images.
+ - fflog.txt - a running list of all the attempts at calculating fringe fractions
+ - info.shf.db - a binary file storing the annotation data for each image - this will be loaded if available, and annotations shown for previously processed images.
 
 
-## Input and output file formats
+## Input and Output File Formats
 
 This program takes as input a comma separated text file where each 
 line represents the data on one gauge wring.
 
-This should have no headers, with  the following columns
+This should have no headers, with the following columns
 
 If both red and green images have been taken:
 ```
@@ -214,7 +214,7 @@ If only red images have been taken
 
 fflog.txt
 
-A tab separated file  of attempts at measuring fringe fractions
+A tab separated file of attempts at measuring fringe fractions
 columns are
 - fringe fraction - 0 to 1
 - file name
