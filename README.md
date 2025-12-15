@@ -51,8 +51,7 @@ If running without `uv` (from an IDE for instance), just run `FringeApp03.py` in
 ## Usage
 On startup you'll see the folowing.
 
-![startup screen shot](readme-images\2025-12-15_12-06.png)
-
+![startup screen shot](readme-images/2025-12-15_12-06.png)
 The window on the left will show the gauge images as they are processed. The window on the right is a control panel.
 
 The wavelengths of the lasers used are retrieved from the Length Standards Equipment Register xml file. This will be in the right place if the above installation process was followed. Otherwsie an error will be shown in the bottom right of the control panel.
@@ -61,7 +60,7 @@ Use the "Load" button to open a file written by the [Gauge-Block-File-Writer](ht
 
 This will list the images found in the input file and display the first image.
 
-![first image](readme-images\2025-12-15_12-14.png)
+![first image](readme-images/2025-12-15_12-14.png)
 
 The screenshot shows some mock images found in `tests\data\mock_square_gauges`  
 
